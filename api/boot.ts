@@ -1,9 +1,58 @@
+import { Hono } from "hono";
+import { bodyLimit } from "hono/body-limit";
+import type { HttpBindings } from "@hono/node-server";
+import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+import { appRouter } from "./router";
+import { createContext } from "./context";
+import { env } from "./lib/env";
+import { registerUploadRoutes } from "./upload-handler";
+import { getDb } from "./queries/connection";
+import { tours, cities, blogPosts, admins, siteSettings } from "@db/schema";
+import { eq, and, sql } from "drizzle-orm";
+import bcrypt from "bcryptjs";
+import fs from "fs";
+import path from "path";
+
+const app = new Hono<{ Bindings: HttpBindings }>();
+
+app.use(bodyLimit({ maxSize: 50 * 1024 * 1024 }));
+
+// Auto-create tables on first boot (Railway-safe)
+async function ensureTables() {
+  try {
+    const db = getDb();
+    const initSqlPath = path.resolve(import.meta.dirname, "../db/init.sql");
+    if (!fs.existsSync(initSqlPath)) {
+      console.log("[ensureTables] init.sql not found, skipping auto-migration");
+      return;
+    }
+    const initSql = fs.readFileSync(initSqlPath, "utf-8");
+    const statements = initSql
+      .split(";")
+      .map((s) => s.trim())
+      .filter((s) => s.length > 10);
+    for (const stmt of statements) {
+      try {
+        await db.execute(sql.raw(stmt + ";"));
+      } catch (err: any) {
+        if (err?.message?.includes("already exists")) {
+          // ignore
+        } else {
+          console.log("[ensureTables] Statement skipped:", err.message);
+        }
+      }
+    }
+    console.log("[ensureTables] All tables ensured");
+  } catch (err: any) {
+    console.log("[ensureTables] Error:", err.message);
+  }
+}
+
 // Seed route - creates admin account and default settings
 app.get("/api/seed", async (c) => {
   try {
     const db = getDb();
 
-    // Check if admin already exists
     let existing: any[] = [];
     try {
       existing = await db
@@ -14,8 +63,8 @@ app.get("/api/seed", async (c) => {
     } catch (tableErr: any) {
       if (tableErr?.message?.includes("doesn't exist") || tableErr?.message?.includes("does not exist") || tableErr?.code === "ER_NO_SUCH_TABLE") {
         return c.json({
-          error: "Database tables do not exist yet. Please ensure db:push has been executed.",
-          hint: "Wait for the Railway container to finish its first startup, or check Railway logs.",
+          error: "Database tables do not exist yet.",
+          hint: "The server will auto-create tables on its first startup. Wait 30 seconds and retry, or redeploy.",
           detail: tableErr.message,
         }, 500);
       }
@@ -26,7 +75,6 @@ app.get("/api/seed", async (c) => {
       return c.json({ message: "Already seeded", adminExists: true });
     }
 
-    // Create admin
     const hash = await bcrypt.hash("Admin@12345", 12);
     await db.insert(admins).values({
       email: "admin@morocco-incoming.com",
@@ -35,7 +83,6 @@ app.get("/api/seed", async (c) => {
       role: "super_admin",
     });
 
-    // Create site settings
     const settings = [
       { key: "agency_name", value: "Suenos Travel", group: "general" },
       { key: "email", value: "resa@suenos-travel.com", group: "general" },
@@ -77,3 +124,77 @@ app.get("/api/seed", async (c) => {
     return c.json({ error: err.message || "Seed failed" }, 500);
   }
 });
+
+// Upload routes
+registerUploadRoutes(app);
+
+// Sitemap.xml
+app.get("/sitemap.xml", async (c) => {
+  const baseUrl = "https://www.morocco-incoming.com";
+  const db = getDb();
+  let urls = [
+    `<url><loc>${baseUrl}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>`,
+    `<url><loc>${baseUrl}/circuits</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>`,
+    `<url><loc>${baseUrl}/destinations</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>`,
+    `<url><loc>${baseUrl}/services</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`,
+    `<url><loc>${baseUrl}/about</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`,
+    `<url><loc>${baseUrl}/mice</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`,
+    `<url><loc>${baseUrl}/b2b</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`,
+    `<url><loc>${baseUrl}/blog</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
+    `<url><loc>${baseUrl}/contact</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>`,
+    `<url><loc>${baseUrl}/quote</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>`,
+  ];
+
+  const tourRows = await db.select({ slug: tours.slug }).from(tours).where(eq(tours.active, 1));
+  for (const t of tourRows) {
+    urls.push(`<url><loc>${baseUrl}/circuits/${t.slug}</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`);
+  }
+  const cityRows = await db.select({ slug: cities.slug }).from(cities).where(eq(cities.active, 1));
+  for (const c of cityRows) {
+    urls.push(`<url><loc>${baseUrl}/destinations/${c.slug}</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>`);
+  }
+  const blogRows = await db.select({ slug: blogPosts.slug }).from(blogPosts).where(and(eq(blogPosts.status, "published"), eq(blogPosts.active, 1)));
+  for (const b of blogRows) {
+    urls.push(`<url><loc>${baseUrl}/blog/${b.slug}</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`);
+  }
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.join("\n")}
+</urlset>`;
+  return c.text(xml, 200, { "Content-Type": "application/xml" });
+});
+
+// robots.txt
+app.get("/robots.txt", (c) => {
+  const baseUrl = "https://www.morocco-incoming.com";
+  return c.text(`User-agent: *\nAllow: /\nSitemap: ${baseUrl}/sitemap.xml`, 200, { "Content-Type": "text/plain" });
+});
+
+// tRPC endpoint
+app.use("/api/trpc/*", async (c) => {
+  return fetchRequestHandler({
+    endpoint: "/api/trpc",
+    req: c.req.raw,
+    router: appRouter,
+    createContext,
+  });
+});
+
+app.all("/api/*", (c) => c.json({ error: "Not Found" }, 404));
+
+export default app;
+
+if (env.isProduction) {
+  const { serve } = await import("@hono/node-server");
+  const { serveStaticFiles } = await import("./lib/vite");
+  serveStaticFiles(app);
+
+  // Ensure tables exist before starting
+  await ensureTables();
+
+  const port = parseInt(process.env.PORT || "3000");
+  serve({ fetch: app.fetch, port }, () => {
+    console.log(`Server running on http://localhost:${port}/`);
+  });
+}

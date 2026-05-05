@@ -8,9 +8,10 @@ COPY package.json package-lock.json ./
 RUN npm ci --prefer-offline --no-audit
 
 # 2. Source + Build
-RUN echo "cache-bust-v4-dbpush" > /tmp/cache-bust
+RUN echo "cache-bust-v5-radical" > /tmp/cache-bust
 COPY . .
 RUN mkdir -p public/uploads
+RUN rm -rf dist
 ENV NODE_ENV=production
 RUN npm run build
 
@@ -29,9 +30,5 @@ COPY --from=builder /app/tsconfig.server.json ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
 
-# Startup script (runs db:push then starts server)
-COPY --from=builder /app/start.sh ./
-RUN chmod +x start.sh
-
 EXPOSE 3000
-CMD ["./start.sh"]
+CMD ["npm", "start"]

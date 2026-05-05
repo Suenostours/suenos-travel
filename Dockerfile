@@ -9,6 +9,8 @@ COPY package.json package-lock.json ./
 RUN npm ci --prefer-offline --no-audit
 
 # 2. Code source + Build
+# Force rebuild sans cache (changer ce numero si vous voulez forcer un nouveau rebuild)
+RUN echo "cache-bust-v2" > /tmp/cache-bust
 COPY . .
 RUN mkdir -p public/uploads
 ENV NODE_ENV=production

@@ -6,6 +6,7 @@ import { appRouter } from "./router";
 import { createContext } from "./context";
 import { env } from "./lib/env";
 import { registerUploadRoutes } from "./upload-handler";
+import { registerSeedRoute } from "./route-seed";
 import { getDb } from "./queries/connection";
 import { tours, cities, blogPosts } from "@db/schema";
 import { eq, and } from "drizzle-orm";
@@ -13,7 +14,7 @@ import { eq, and } from "drizzle-orm";
 const app = new Hono<{ Bindings: HttpBindings }>();
 
 app.use(bodyLimit({ maxSize: 50 * 1024 * 1024 }));
-
+registerSeedRoute(app);
 // Upload routes
 registerUploadRoutes(app);
 

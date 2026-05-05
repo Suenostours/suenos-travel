@@ -15,15 +15,11 @@ const app = new Hono<{ Bindings: HttpBindings }>();
 
 app.use(bodyLimit({ maxSize: 50 * 1024 * 1024 }));
 
-// Seed route - creates admin account and default settings
+// SEED ROUTE - creates admin and default settings
 app.get("/api/seed", async (c) => {
   try {
     const db = getDb();
-    const existing = await db
-      .select()
-      .from(admins)
-      .where(sql`${admins.email} = "admin@morocco-incoming.com"`)
-      .limit(1);
+    const existing = await db.select().from(admins).where(sql`${admins.email} = "admin@morocco-incoming.com"`).limit(1);
 
     if (existing.length > 0) {
       return c.json({ message: "Already seeded", adminExists: true });
@@ -54,12 +50,7 @@ app.get("/api/seed", async (c) => {
 
     return c.json({
       success: true,
-      message: "Database seeded successfully",
-      admin: {
-        email: "admin@morocco-incoming.com",
-        password: "Admin@12345",
-      },
-      settingsCreated: settings.length,
+      admin: { email: "admin@morocco-incoming.com", password: "Admin@12345" },
     });
   } catch (err: any) {
     return c.json({ error: err.message || "Seed failed" }, 500);
@@ -68,6 +59,7 @@ app.get("/api/seed", async (c) => {
 
 registerUploadRoutes(app);
 
+// Sitemap
 app.get("/sitemap.xml", async (c) => {
   const baseUrl = "https://www.morocco-incoming.com";
   const db = getDb();
@@ -104,11 +96,13 @@ ${urls.join("\n")}
   return c.text(xml, 200, { "Content-Type": "application/xml" });
 });
 
+// robots.txt
 app.get("/robots.txt", (c) => {
   const baseUrl = "https://www.morocco-incoming.com";
   return c.text(`User-agent: *\nAllow: /\nSitemap: ${baseUrl}/sitemap.xml`, 200, { "Content-Type": "text/plain" });
 });
 
+// tRPC endpoint
 app.use("/api/trpc/*", async (c) => {
   return fetchRequestHandler({
     endpoint: "/api/trpc",

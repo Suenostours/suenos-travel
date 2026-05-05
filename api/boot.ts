@@ -10,19 +10,23 @@ import { getDb } from "./queries/connection";
 import { tours, cities, blogPosts, admins, siteSettings } from "@db/schema";
 import { eq, and, sql } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+import mysql from "mysql2/promise";
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
 app.use(bodyLimit({ maxSize: 50 * 1024 * 1024 }));
 
-// ─── Auto-create all tables on first /api/seed call ───
-const CREATE_TABLES_SQL = `
+// ─── Auto-create tables using raw mysql2 (Drizzle blocks DDL) ───
+async function initTables() {
+  try {
+    const conn = await mysql.createConnection(env.databaseUrl);
+    const statements = `
 CREATE TABLE IF NOT EXISTS admins (
   id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   email varchar(320) NOT NULL UNIQUE,
   password_hash varchar(255) NOT NULL,
   name varchar(255) NOT NULL,
-  role enum('super_admin', 'admin', 'editor') NOT NULL DEFAULT 'editor',
+  role enum('super_admin','admin','editor') NOT NULL DEFAULT 'editor',
   created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -41,7 +45,7 @@ CREATE TABLE IF NOT EXISTS users (
   name varchar(255),
   email varchar(320),
   avatar text,
-  role enum('user', 'admin') NOT NULL DEFAULT 'user',
+  role enum('user','admin') NOT NULL DEFAULT 'user',
   createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   lastSignInAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -60,7 +64,7 @@ CREATE TABLE IF NOT EXISTS cities (
 CREATE TABLE IF NOT EXISTS city_translations (
   id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   city_id bigint unsigned NOT NULL,
-  locale enum('fr', 'en') NOT NULL DEFAULT 'en',
+  locale enum('fr','en') NOT NULL DEFAULT 'en',
   name varchar(255) NOT NULL,
   description text,
   meta_title varchar(255),
@@ -73,7 +77,7 @@ CREATE TABLE IF NOT EXISTS tours (
   main_image text,
   gallery json,
   duration varchar(50),
-  \`type\` enum('private', 'small_group', 'corporate', 'desert', 'family', 'luxury', 'cultural', 'adventure', 'short_break', 'coast', 'sports', 'wellness', 'romantic') NOT NULL DEFAULT 'private',
+  \`type\` enum('private','small_group','corporate','desert','family','luxury','cultural','adventure','short_break','coast','sports','wellness','romantic') NOT NULL DEFAULT 'private',
   featured tinyint unsigned NOT NULL DEFAULT 0,
   active tinyint unsigned NOT NULL DEFAULT 1,
   created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -83,7 +87,7 @@ CREATE TABLE IF NOT EXISTS tours (
 CREATE TABLE IF NOT EXISTS tour_translations (
   id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   tour_id bigint unsigned NOT NULL,
-  locale enum('fr', 'en') NOT NULL DEFAULT 'en',
+  locale enum('fr','en') NOT NULL DEFAULT 'en',
   title varchar(255) NOT NULL,
   description text,
   program text,
@@ -115,7 +119,7 @@ CREATE TABLE IF NOT EXISTS excursions (
 CREATE TABLE IF NOT EXISTS excursion_translations (
   id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   excursion_id bigint unsigned NOT NULL,
-  locale enum('fr', 'en') NOT NULL DEFAULT 'en',
+  locale enum('fr','en') NOT NULL DEFAULT 'en',
   title varchar(255) NOT NULL,
   description text,
   highlights text,
@@ -129,7 +133,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
   main_image text,
   category varchar(100),
   tags json,
-  \`status\` enum('draft', 'published') NOT NULL DEFAULT 'draft',
+  \`status\` enum('draft','published') NOT NULL DEFAULT 'draft',
   published_at timestamp NULL,
   active tinyint unsigned NOT NULL DEFAULT 1,
   created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -139,7 +143,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
 CREATE TABLE IF NOT EXISTS blog_translations (
   id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   post_id bigint unsigned NOT NULL,
-  locale enum('fr', 'en') NOT NULL DEFAULT 'en',
+  locale enum('fr','en') NOT NULL DEFAULT 'en',
   title varchar(255) NOT NULL,
   content text,
   meta_title varchar(255),
@@ -163,7 +167,7 @@ CREATE TABLE IF NOT EXISTS contact_requests (
   phone varchar(50),
   subject varchar(255),
   message text NOT NULL,
-  \`status\` enum('new', 'treated', 'archived') NOT NULL DEFAULT 'new',
+  \`status\` enum('new','treated','archived') NOT NULL DEFAULT 'new',
   created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -186,7 +190,7 @@ CREATE TABLE IF NOT EXISTS quote_requests (
   guide_language varchar(50),
   budget_range varchar(100),
   special_requests text,
-  \`status\` enum('new', 'treated', 'archived') NOT NULL DEFAULT 'new',
+  \`status\` enum('new','treated','archived') NOT NULL DEFAULT 'new',
   created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -200,7 +204,7 @@ CREATE TABLE IF NOT EXISTS partner_requests (
   whatsapp varchar(50),
   business_type varchar(100),
   expected_volume varchar(100),
-  \`status\` enum('new', 'treated', 'archived') NOT NULL DEFAULT 'new',
+  \`status\` enum('new','treated','archived') NOT NULL DEFAULT 'new',
   created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -213,17 +217,14 @@ CREATE TABLE IF NOT EXISTS seo_settings (
   canonical text,
   updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-`;
-
-async function initTables() {
-  try {
-    const db = getDb();
-    const statements = CREATE_TABLES_SQL.split(";")
+    `
+      .split(";")
       .map((s) => s.trim())
       .filter((s) => s.length > 20);
+
     for (const stmt of statements) {
       try {
-        await db.execute(sql.raw(stmt + ";"));
+        await conn.query(stmt + ";");
       } catch (err: any) {
         if (err?.message?.includes("already exists")) {
           // ignore
@@ -232,10 +233,11 @@ async function initTables() {
         }
       }
     }
+    await conn.end();
     console.log("[initTables] All tables ensured");
     return true;
   } catch (err: any) {
-    console.log("[initTables] Error:", err.message);
+    console.log("[initTables] Connection error:", err.message);
     return false;
   }
 }
@@ -246,7 +248,10 @@ app.get("/api/seed", async (c) => {
     const db = getDb();
 
     // Create tables first if they don't exist
-    await initTables();
+    const tablesOk = await initTables();
+    if (!tablesOk) {
+      return c.json({ error: "Failed to initialize database tables" }, 500);
+    }
 
     // Check if admin already exists
     let existing: any[] = [];

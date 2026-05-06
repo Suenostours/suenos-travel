@@ -10,7 +10,7 @@ RUN npm ci --prefer-offline --no-audit
 
 # 2. Code source + Build
 # Force rebuild sans cache (changer ce numero si vous voulez forcer un nouveau rebuild)
-RUN echo "cache-bust-v6-stable" > /tmp/cache-bust
+RUN echo "cache-bust-v7-mysql2" > /tmp/cache-bust
 COPY . .
 RUN mkdir -p public/uploads
 ENV NODE_ENV=production

@@ -10,16 +10,18 @@ import { getDb } from "./queries/connection";
 import { tours, cities, blogPosts, admins, siteSettings } from "@db/schema";
 import { eq, and, sql } from "drizzle-orm";
 import bcrypt from "bcryptjs";
-import mysql from "mysql2/promise";
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
 app.use(bodyLimit({ maxSize: 50 * 1024 * 1024 }));
 
-// ─── Auto-create tables using raw mysql2 (Drizzle blocks DDL) ───
+// ─── Auto-create tables using mysql2 loaded dynamically at runtime ───
+// (mysql2 must NOT be bundled by esbuild — loaded from node_modules at runtime)
 async function initTables() {
   try {
-    const conn = await mysql.createConnection(env.databaseUrl);
+    const { createConnection } = await import("mysql2/promise");
+    const conn = await createConnection(env.databaseUrl);
+    
     const statements = `
 CREATE TABLE IF NOT EXISTS admins (
   id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -234,10 +236,10 @@ CREATE TABLE IF NOT EXISTS seo_settings (
       }
     }
     await conn.end();
-    console.log("[initTables] All tables ensured");
+    console.log("[initTables] All tables ensured via mysql2");
     return true;
   } catch (err: any) {
-    console.log("[initTables] Connection error:", err.message);
+    console.log("[initTables] Connection error:", err.message || err);
     return false;
   }
 }
@@ -250,7 +252,7 @@ app.get("/api/seed", async (c) => {
     // Create tables first if they don't exist
     const tablesOk = await initTables();
     if (!tablesOk) {
-      return c.json({ error: "Failed to initialize database tables" }, 500);
+      return c.json({ error: "Failed to initialize database tables. Check Railway Deploy Logs for details." }, 500);
     }
 
     // Check if admin already exists

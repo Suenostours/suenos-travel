@@ -11,6 +11,8 @@ import { tours, cities, blogPosts, admins, siteSettings } from "@db/schema";
 import { eq, and, sql } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import mysql from "mysql2/promise";
+import path from "path";
+import fs from "fs";
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
@@ -188,6 +190,35 @@ app.get("/robots.txt", (c) => {
   const baseUrl = "https://www.morocco-incoming.com";
   return c.text(`User-agent: *\nAllow: /\nSitemap: ${baseUrl}/sitemap.xml`, 200, { "Content-Type": "text/plain" });
 });
+
+// ─── SEO: Explicit frontend routes (serve index.html) ───
+function serveIndexHtml(c: any) {
+  try {
+    const filePath = path.resolve(import.meta.dirname, "../dist/public/index.html");
+    const content = fs.readFileSync(filePath, "utf-8");
+    return c.html(content, 200);
+  } catch {
+    return c.json({ error: "index.html not found" }, 500);
+  }
+}
+
+// Public SEO pages
+app.get("/circuits", serveIndexHtml);
+app.get("/circuits/:slug", serveIndexHtml);
+app.get("/destinations", serveIndexHtml);
+app.get("/destinations/:slug", serveIndexHtml);
+app.get("/services", serveIndexHtml);
+app.get("/about", serveIndexHtml);
+app.get("/mice", serveIndexHtml);
+app.get("/b2b", serveIndexHtml);
+app.get("/blog", serveIndexHtml);
+app.get("/blog/:slug", serveIndexHtml);
+app.get("/contact", serveIndexHtml);
+app.get("/quote", serveIndexHtml);
+app.get("/privacy", serveIndexHtml);
+app.get("/terms", serveIndexHtml);
+app.get("/admin", serveIndexHtml);
+app.get("/admin/:path", serveIndexHtml);
 
 // tRPC endpoint
 app.use("/api/trpc/*", async (c) => {

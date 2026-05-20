@@ -3,7 +3,7 @@ import { useI18n } from "@/providers/i18n";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { trpc } from "@/providers/trpc";
 import { Helmet } from "react-helmet-async";
-import { MapPin, Phone, Mail, MessageCircle, Clock, Send, Check, Shield } from "lucide-react";
+import { MapPin, Phone, Mail, Send, Check, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

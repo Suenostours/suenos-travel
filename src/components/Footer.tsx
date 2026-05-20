@@ -1,9 +1,19 @@
 import { Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { Mail, MapPin, MessageCircle } from "lucide-react";
 
 export default function Footer() {
   const { t } = useI18n();
+  const {
+    email,
+    phone,
+    whatsapp,
+    addressAgadir,
+    addressCasablanca,
+    license,
+    iata,
+  } = useSiteSettings();
 
   return (
     <footer className="bg-[#0F172A] text-gray-300">
@@ -15,14 +25,16 @@ export default function Footer() {
               Suenos Travel
             </h3>
             <p className="text-sm text-gray-400 leading-relaxed">
-              Your trusted DMC partner in Morocco. Licensed agency and IATA member. Tailor-made travel experiences for international agencies, tour operators, and corporate groups.
+              Your trusted DMC partner in Morocco. Licensed agency and IATA
+              member. Tailor-made travel experiences for international agencies,
+              tour operators, and corporate groups.
             </p>
             <div className="flex flex-wrap items-center gap-2 text-sm">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#A91D2D]/20 text-[#E8A0A0] text-xs font-medium">
-                Licensed Agency ODV-0564
+                Licensed Agency {license}
               </span>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-medium">
-                IATA 54273844
+                IATA {iata}
               </span>
             </div>
           </div>
@@ -90,28 +102,31 @@ export default function Footer() {
               </Link>
               <div className="space-y-2 pt-2">
                 <a
-                  href="https://wa.me/212661925611"
+                  href={`https://wa.me/${whatsapp.replace(/\D/g, "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
                 >
                   <MessageCircle className="h-4 w-4 text-green-400" />
-                  WhatsApp +212 661 925 611
+                  WhatsApp {whatsapp}
                 </a>
                 <a
-                  href="mailto:resa@suenos-travel.com"
+                  href={`mailto:${email}`}
                   className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
                 >
                   <Mail className="h-4 w-4" />
-                  resa@suenos-travel.com
+                  {email}
                 </a>
                 <div className="flex items-start gap-2 text-sm text-gray-400">
                   <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
-                  <span>Casablanca & Agadir, Morocco</span>
+                  <span>Casablanca &amp; Agadir, Morocco</span>
                 </div>
-                <div className="text-xs text-gray-500 pl-6">
-                  <p>Philips Business Center 304 Bd Mohamed 5, 6e Bur 602</p>
-                  <p>Hay Salam Imm Elbssita Av Ahaj Messoud & Av Abdellah Guenon Bur 13</p>
+                <div className="text-xs text-gray-500 pl-6 space-y-0.5">
+                  <p>{addressCasablanca}</p>
+                  <p>{addressAgadir}</p>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-400 pt-1">
+                  <span className="text-xs">Phone: {phone}</span>
                 </div>
               </div>
             </div>
@@ -121,7 +136,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-gray-500">
-            © {new Date().getFullYear()} Suenos Travel. {t("footer.rights")}
+            &copy; {new Date().getFullYear()} Suenos Travel. {t("footer.rights")}
           </p>
           <div className="flex items-center gap-4 text-xs text-gray-500">
             <Link to="/privacy" className="hover:text-gray-300 transition-colors">

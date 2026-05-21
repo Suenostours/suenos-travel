@@ -295,33 +295,89 @@ function ToursManager() {
 
 function TourForm({ tour, onCancel, onSaved }: { tour: any; onCancel: () => void; onSaved: () => void }) {
   const isEdit = !!tour.id;
+  const enTranslation = tour.translations?.find((t: any) => t.locale === "en");
+  const frTranslation = tour.translations?.find((t: any) => t.locale === "fr");
   const [slug, setSlug] = useState(tour.slug || "");
+  const [mainImage, setMainImage] = useState(tour.mainImage || "");
   const [duration, setDuration] = useState(tour.duration || "");
   const [type, setType] = useState(tour.type || "private");
   const [active, setActive] = useState(tour.active !== undefined ? tour.active : true);
   const [featured, setFeatured] = useState(tour.featured || false);
-  const [titleEn, setTitleEn] = useState(tour.translations?.find((t: any) => t.locale === "en")?.title || "");
-  const [titleFr, setTitleFr] = useState(tour.translations?.find((t: any) => t.locale === "fr")?.title || "");
-  const [descEn, setDescEn] = useState(tour.translations?.find((t: any) => t.locale === "en")?.description || "");
-  const [descFr, setDescFr] = useState(tour.translations?.find((t: any) => t.locale === "fr")?.description || "");
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const [titleEn, setTitleEn] = useState(enTranslation?.title || "");
+  const [titleFr, setTitleFr] = useState(frTranslation?.title || "");
+  const [descEn, setDescEn] = useState(enTranslation?.description || "");
+  const [descFr, setDescFr] = useState(frTranslation?.description || "");
+  const [programEn, setProgramEn] = useState(enTranslation?.program || "");
+  const [programFr, setProgramFr] = useState(frTranslation?.program || "");
+  const [highlightsEn, setHighlightsEn] = useState(enTranslation?.highlights || "");
+  const [highlightsFr, setHighlightsFr] = useState(frTranslation?.highlights || "");
+  const [inclusionsEn, setInclusionsEn] = useState(enTranslation?.inclusions || "");
+  const [inclusionsFr, setInclusionsFr] = useState(frTranslation?.inclusions || "");
+  const [exclusionsEn, setExclusionsEn] = useState(enTranslation?.exclusions || "");
+  const [exclusionsFr, setExclusionsFr] = useState(frTranslation?.exclusions || "");
 
   const createMutation = trpc.tours.create.useMutation({ onSuccess: onSaved });
   const updateMutation = trpc.tours.update.useMutation({ onSuccess: onSaved });
+
+  const handleMainImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImage(true);
+    setUploadError("");
+    const formData = new FormData();
+    formData.append("files", file);
+    try {
+      const response = await fetch("/api/upload", { method: "POST", body: formData, credentials: "include" });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result?.error || "Upload failed");
+      }
+      const uploadedUrl = result?.files?.[0]?.url;
+      if (!uploadedUrl) {
+        throw new Error("Upload succeeded but no image URL was returned");
+      }
+      setMainImage(uploadedUrl);
+    } catch (err: any) {
+      setUploadError(err?.message || "Upload failed. Please try again.");
+    } finally {
+      setUploadingImage(false);
+      e.target.value = "";
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const data = {
       slug,
+      mainImage,
       duration,
       type,
       active,
       featured,
       translations: [
-        { locale: "en" as const, title: titleEn, description: descEn },
-        { locale: "fr" as const, title: titleFr || titleEn, description: descFr || descEn },
+        {
+          locale: "en" as const,
+          title: titleEn,
+          description: descEn,
+          program: programEn,
+          highlights: highlightsEn,
+          inclusions: inclusionsEn,
+          exclusions: exclusionsEn,
+        },
+        {
+          locale: "fr" as const,
+          title: titleFr || titleEn,
+          description: descFr || descEn,
+          program: programFr || programEn,
+          highlights: highlightsFr || highlightsEn,
+          inclusions: inclusionsFr || inclusionsEn,
+          exclusions: exclusionsFr || exclusionsEn,
+        },
       ],
-      cityIds: [],
-      gallery: [],
+      cityIds: tour.cityIds || [],
+      gallery: tour.gallery || [],
     };
     if (isEdit) {
       updateMutation.mutate({ id: tour.id, ...data });
@@ -343,6 +399,19 @@ function TourForm({ tour, onCancel, onSaved }: { tour: any; onCancel: () => void
           <Input value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="e.g. 7-9 days" />
         </div>
       </div>
+
+      <div className="space-y-3">
+        <Label>Main Image</Label>
+        {mainImage && (
+          <div className="w-full max-w-sm overflow-hidden rounded-xl border border-gray-100 bg-gray-50">
+            <img src={mainImage} alt="Tour main image preview" className="h-48 w-full object-cover" />
+          </div>
+        )}
+        <Input type="file" accept="image/*" onChange={handleMainImageUpload} disabled={uploadingImage} />
+        {uploadingImage && <p className="text-xs text-[#6B7280]">Uploading image...</p>}
+        {uploadError && <p className="text-xs text-red-600">{uploadError}</p>}
+      </div>
+
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
           <Label>Type</Label>
@@ -381,6 +450,22 @@ function TourForm({ tour, onCancel, onSaved }: { tour: any; onCancel: () => void
             <Label>Description (EN)</Label>
             <Textarea value={descEn} onChange={(e) => setDescEn(e.target.value)} rows={4} />
           </div>
+          <div>
+            <Label>Program / Itinerary (EN)</Label>
+            <Textarea value={programEn} onChange={(e) => setProgramEn(e.target.value)} rows={6} />
+          </div>
+          <div>
+            <Label>Highlights (EN)</Label>
+            <Textarea value={highlightsEn} onChange={(e) => setHighlightsEn(e.target.value)} rows={4} />
+          </div>
+          <div>
+            <Label>Inclusions (EN)</Label>
+            <Textarea value={inclusionsEn} onChange={(e) => setInclusionsEn(e.target.value)} rows={4} />
+          </div>
+          <div>
+            <Label>Exclusions (EN)</Label>
+            <Textarea value={exclusionsEn} onChange={(e) => setExclusionsEn(e.target.value)} rows={4} />
+          </div>
         </TabsContent>
         <TabsContent value="fr" className="space-y-3">
           <div>
@@ -390,6 +475,22 @@ function TourForm({ tour, onCancel, onSaved }: { tour: any; onCancel: () => void
           <div>
             <Label>Description (FR)</Label>
             <Textarea value={descFr} onChange={(e) => setDescFr(e.target.value)} rows={4} />
+          </div>
+          <div>
+            <Label>Program / Itinerary (FR)</Label>
+            <Textarea value={programFr} onChange={(e) => setProgramFr(e.target.value)} rows={6} />
+          </div>
+          <div>
+            <Label>Highlights (FR)</Label>
+            <Textarea value={highlightsFr} onChange={(e) => setHighlightsFr(e.target.value)} rows={4} />
+          </div>
+          <div>
+            <Label>Inclusions (FR)</Label>
+            <Textarea value={inclusionsFr} onChange={(e) => setInclusionsFr(e.target.value)} rows={4} />
+          </div>
+          <div>
+            <Label>Exclusions (FR)</Label>
+            <Textarea value={exclusionsFr} onChange={(e) => setExclusionsFr(e.target.value)} rows={4} />
           </div>
         </TabsContent>
       </Tabs>

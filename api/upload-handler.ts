@@ -1,4 +1,5 @@
 import type { Hono } from "hono";
+import { serveStatic } from "@hono/node-server/serve-static";
 import { existsSync, mkdirSync } from "fs";
 import { writeFile, unlink } from "fs/promises";
 import path from "path";
@@ -13,6 +14,8 @@ if (!existsSync(UPLOAD_DIR)) {
 }
 
 export function registerUploadRoutes(app: Hono<any>) {
+  app.use("/uploads/*", serveStatic({ root: "./public" }));
+
   app.post("/api/upload", async (c) => {
     const auth = c.req.header("cookie");
     if (!auth || !auth.includes("admin_token=")) {

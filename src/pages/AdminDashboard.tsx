@@ -297,12 +297,17 @@ function TourForm({ tour, onCancel, onSaved }: { tour: any; onCancel: () => void
   const isEdit = !!tour.id;
   const enTranslation = tour.translations?.find((t: any) => t.locale === "en");
   const frTranslation = tour.translations?.find((t: any) => t.locale === "fr");
+  const normalizeBoolean = (value: unknown, fallback: boolean) => {
+    if (value === true || value === 1 || value === "1") return true;
+    if (value === false || value === 0 || value === "0") return false;
+    return fallback;
+  };
   const [slug, setSlug] = useState(tour.slug || "");
   const [mainImage, setMainImage] = useState(tour.mainImage || "");
   const [duration, setDuration] = useState(tour.duration || "");
   const [type, setType] = useState(tour.type || "private");
-  const [active, setActive] = useState(tour.active !== undefined ? tour.active : true);
-  const [featured, setFeatured] = useState(tour.featured || false);
+  const [active, setActive] = useState(normalizeBoolean(tour.active, true));
+  const [featured, setFeatured] = useState(normalizeBoolean(tour.featured, false));
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [titleEn, setTitleEn] = useState(enTranslation?.title || "");
@@ -354,8 +359,8 @@ function TourForm({ tour, onCancel, onSaved }: { tour: any; onCancel: () => void
       mainImage,
       duration,
       type,
-      active,
-      featured,
+      active: Boolean(active),
+      featured: Boolean(featured),
       translations: [
         {
           locale: "en" as const,

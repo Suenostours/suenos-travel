@@ -217,18 +217,45 @@ function ToursManager() {
   const { data: tours, refetch } = trpc.tours.list.useQuery();
   const deleteMutation = trpc.tours.delete.useMutation({ onSuccess: () => refetch() });
   const [editing, setEditing] = useState<any>(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const { data: fullTour, isLoading: fullTourLoading } = trpc.tours.getById.useQuery(
+    { id: editingId ?? 0 },
+    { enabled: editingId !== null },
+  );
+
+  const closeForm = () => {
+    setEditing(null);
+    setEditingId(null);
+  };
+
+  const handleSaved = () => {
+    closeForm();
+    refetch();
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-[#1F2937]">Tours / Circuits</h1>
-        <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full" onClick={() => setEditing({})}>
+        <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full" onClick={() => { setEditingId(null); setEditing({}); }}>
           <Plus className="h-4 w-4 mr-2" /> Add Tour
         </Button>
       </div>
 
-      {editing && (
-        <TourForm tour={editing} onCancel={() => setEditing(null)} onSaved={() => { setEditing(null); refetch(); }} />
+      {editingId !== null && fullTourLoading && (
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-sm text-[#6B7280]">Loading tour details...</div>
+      )}
+
+      {editingId !== null && !fullTourLoading && fullTour === null && (
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-sm text-red-600">Tour details could not be loaded.</div>
+      )}
+
+      {editingId !== null && fullTour && (
+        <TourForm tour={fullTour} onCancel={closeForm} onSaved={handleSaved} />
+      )}
+
+      {editingId === null && editing && (
+        <TourForm tour={editing} onCancel={closeForm} onSaved={handleSaved} />
       )}
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -253,7 +280,7 @@ function ToursManager() {
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex gap-2">
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => setEditing(t)}><Pencil className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { setEditing(null); setEditingId(t.id); }}><Pencil className="h-4 w-4" /></Button>
                     <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-500" onClick={() => { if (confirm("Delete this tour?")) deleteMutation.mutate({ id: t.id }); }}><Trash2 className="h-4 w-4" /></Button>
                   </div>
                 </td>

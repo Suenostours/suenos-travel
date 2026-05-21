@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
+import { trpc } from "@/providers/trpc";
 import { Helmet } from "react-helmet-async";
 import {
   ArrowRight,
@@ -44,63 +45,6 @@ const servicesData = [
   { icon: Gift, title: "Incentive Travel", desc: "Reward programs and motivational trips that create lasting memories for teams and clients." },
 ];
 
-const circuitsData = [
-  {
-    slug: "imperial-cities-morocco",
-    title: "Imperial Cities of Morocco",
-    duration: "7-9 days",
-    type: "cultural",
-    image: "/images/circuit-imperial.jpg",
-    desc: "A deep journey through Morocco's four imperial capitals — from Casablanca's modern elegance to Fes's ancient medina.",
-    cities: "Casablanca, Rabat, Meknes, Volubilis, Fes",
-  },
-  {
-    slug: "sahara-desert-experience",
-    title: "Sahara Desert Experience",
-    duration: "4-6 days",
-    type: "adventure",
-    image: "/images/circuit-sahara.jpg",
-    desc: "Cross the High Atlas, visit Ait Ben Haddou, and sleep under a million stars in a luxury desert camp.",
-    cities: "Marrakech, High Atlas, Ait Ben Haddou, Ouarzazate, Merzouga",
-  },
-  {
-    slug: "marrakech-atlas-mountains",
-    title: "Marrakech & Atlas Mountains",
-    duration: "4-5 days",
-    type: "short_break",
-    image: "/images/circuit-atlas.jpg",
-    desc: "Explore the red city and escape to the Atlas Mountains for Berber villages and breathtaking panoramas.",
-    cities: "Marrakech, Ourika Valley, Imlil, Agafay Desert",
-  },
-  {
-    slug: "morocco-luxury-escape",
-    title: "Morocco Luxury Escape",
-    duration: "6-10 days",
-    type: "luxury",
-    image: "/images/circuit-luxury.jpg",
-    desc: "A refined journey blending luxury riads, spa retreats, private dining, and helicopter transfers.",
-    cities: "Marrakech, Atlas Mountains, Agafay, Essaouira",
-  },
-  {
-    slug: "morocco-honeymoon-tour",
-    title: "Morocco Honeymoon Tour",
-    duration: "7-10 days",
-    type: "romantic",
-    image: "/images/circuit-honeymoon.jpg",
-    desc: "Romantic escapes with candlelit dinners, sunset camel rides, and private suites with stunning views.",
-    cities: "Marrakech, Atlas Mountains, Sahara Desert, Essaouira",
-  },
-  {
-    slug: "grand-morocco-tour",
-    title: "Grand Morocco Tour",
-    duration: "10-14 days",
-    type: "private",
-    image: "/images/circuit-grand.jpg",
-    desc: "The ultimate comprehensive circuit covering coast, mountains, desert, and all imperial cities.",
-    cities: "Casablanca, Rabat, Chefchaouen, Fes, Marrakech, Sahara",
-  },
-];
-
 const testimonials = [
   { name: "Sarah Mitchell", role: "Tour Operator, UK", text: "Suenos Travel has been our Morocco DMC for 3 years. Their attention to detail and local knowledge is unmatched. Every group comes back delighted." },
   { name: "Jean-Pierre Dubois", role: "Travel Agency Director, France", text: "A reliable partner who understands the B2B relationship. Competitive rates, excellent guides, and seamless logistics every time." },
@@ -108,25 +52,44 @@ const testimonials = [
 ];
 
 const typeLabels: Record<string, string> = {
+  private: "Comprehensive & Adventure",
+  small_group: "Small Group",
+  corporate: "Corporate",
+  desert: "Desert",
+  family: "Family",
+  luxury: "Luxury & Wellness",
   cultural: "Cultural & Historical",
   adventure: "Adventure & Nature",
   short_break: "City & Nature",
-  luxury: "Luxury & Wellness",
+  coast: "Coast",
+  sports: "Sports",
+  wellness: "Wellness",
   romantic: "Romantic & Luxury",
-  private: "Comprehensive & Adventure",
 };
 
 const typeColors: Record<string, string> = {
+  private: "bg-teal-100 text-teal-800",
+  small_group: "bg-indigo-100 text-indigo-800",
+  corporate: "bg-slate-100 text-slate-800",
+  desert: "bg-orange-100 text-orange-800",
+  family: "bg-lime-100 text-lime-800",
+  luxury: "bg-purple-100 text-purple-800",
   cultural: "bg-amber-100 text-amber-800",
   adventure: "bg-emerald-100 text-emerald-800",
   short_break: "bg-sky-100 text-sky-800",
-  luxury: "bg-purple-100 text-purple-800",
+  coast: "bg-cyan-100 text-cyan-800",
+  sports: "bg-blue-100 text-blue-800",
+  wellness: "bg-green-100 text-green-800",
   romantic: "bg-rose-100 text-rose-800",
-  private: "bg-teal-100 text-teal-800",
 };
 
+function getTypeLabel(type: string) {
+  return typeLabels[type] ?? type.replace(/_/g, " ");
+}
+
 export default function Home() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const { data: featuredTours = [], isLoading: featuredToursLoading } = trpc.public.listTours.useQuery({ locale, featured: true });
 
   return (
     <>
@@ -287,33 +250,52 @@ export default function Home() {
               View All <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {circuitsData.map((c) => (
-              <div key={c.slug} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all">
-                <div className="relative h-56 overflow-hidden">
-                  <img src={c.image} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <div className="absolute top-3 left-3">
-                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${typeColors[c.type]}`}>
-                      {typeLabels[c.type]}
-                    </span>
+          {featuredToursLoading && (
+            <div className="text-center text-sm text-[#6B7280]">Loading featured tours...</div>
+          )}
+
+          {!featuredToursLoading && featuredTours.length === 0 && (
+            <div className="bg-[#F9F7F4] rounded-2xl border border-gray-100 p-8 text-center text-[#4B5563] shadow-sm">
+              No featured tours available yet.
+            </div>
+          )}
+
+          {!featuredToursLoading && featuredTours.length > 0 && (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featuredTours.map((tour) => (
+                <div key={tour.slug} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all">
+                  <div className="relative h-56 overflow-hidden">
+                    {tour.mainImage ? (
+                      <img src={tour.mainImage} alt={tour.title ?? tour.slug} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                      <div className="w-full h-full bg-[#F3EDE8] flex items-center justify-center px-6 text-center text-sm text-[#6B7280]">
+                        {tour.title ?? tour.slug}
+                      </div>
+                    )}
+                    <div className="absolute top-3 left-3">
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${typeColors[tour.type] ?? "bg-gray-100 text-gray-700"}`}>
+                        {getTypeLabel(tour.type)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-5 space-y-3">
+                    <h3 className="font-semibold text-lg text-[#1F2937]">{tour.title ?? tour.slug}</h3>
+                    {tour.duration && (
+                      <div className="flex items-center gap-4 text-xs text-[#6B7280]">
+                        <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {tour.duration}</span>
+                      </div>
+                    )}
+                    {tour.description && <p className="text-sm text-[#4B5563] line-clamp-2">{tour.description}</p>}
+                    <Link to={`/circuits/${tour.slug}`}>
+                      <Button variant="ghost" className="text-[#A91D2D] hover:text-[#8a1824] p-0 h-auto text-sm font-medium">
+                        {t("circuits.cta")} <ArrowRight className="ml-1 h-4 w-4" />
+                      </Button>
+                    </Link>
                   </div>
                 </div>
-                <div className="p-5 space-y-3">
-                  <h3 className="font-semibold text-lg text-[#1F2937]">{c.title}</h3>
-                  <div className="flex items-center gap-4 text-xs text-[#6B7280]">
-                    <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {c.duration}</span>
-                  </div>
-                  <p className="text-sm text-[#4B5563] line-clamp-2">{c.desc}</p>
-                  <p className="text-xs text-[#6B7280]"><span className="font-medium">{t("circuits.cities")}:</span> {c.cities}</p>
-                  <Link to={`/circuits/${c.slug}`}>
-                    <Button variant="ghost" className="text-[#A91D2D] hover:text-[#8a1824] p-0 h-auto text-sm font-medium">
-                      {t("circuits.cta")} <ArrowRight className="ml-1 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

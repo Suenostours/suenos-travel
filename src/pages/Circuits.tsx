@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
 import { trpc } from "@/providers/trpc";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -69,10 +69,12 @@ export default function Circuits() {
 
   return (
     <>
-      <Helmet>
-        <title>Morocco Circuits | Suenos Travel DMC</title>
-        <meta name="description" content="Discover our curated Morocco circuits: Imperial Cities, Sahara Desert, Atlas Mountains, Luxury Tours, and more." />
-      </Helmet>
+      <SEO
+        title="Morocco Private & Group Tours for Agencies | DMC Morocco"
+        description="Explore Morocco circuits for travel agencies and tour operators: private tours, group tours, Sahara, imperial cities, luxury, family and incentive itineraries."
+        canonical="/circuits"
+        image="/images/circuit-sahara.jpg"
+      />
 
       <section className="bg-[#F9F7F4] py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 
 const destinations = [
   { slug: "marrakech", name: "Marrakech", nameFr: "Marrakech", image: "/images/circuit-imperial.jpg", desc: "The red city — vibrant souks, stunning palaces, and the famous Jemaa el-Fnaa square.", descFr: "La ville rouge — souks vibrants, palais magnifiques et la célèbre place Jemaa el-Fnaa." },
@@ -19,10 +19,12 @@ export default function Destinations() {
 
   return (
     <>
-      <Helmet>
-        <title>Morocco Destinations | Suenos Travel DMC</title>
-        <meta name="description" content="Explore Morocco's top destinations: Marrakech, Fes, Casablanca, Agadir, Essaouira, Sahara and more." />
-      </Helmet>
+      <SEO
+        title="Morocco Destinations for B2B Tours | Suenos Travel DMC"
+        description="Plan Morocco programs for agencies and groups across Marrakech, Fes, Casablanca, Agadir, Essaouira, the Atlas Mountains and Sahara."
+        canonical="/destinations"
+        image="/images/circuit-imperial.jpg"
+      />
 
       <section className="bg-[#F9F7F4] py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -1,5 +1,5 @@
 import { useI18n } from "@/providers/i18n";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { Shield, MapPin, Users, Award, Globe, Heart } from "lucide-react";
 
 export default function About() {
@@ -8,10 +8,12 @@ export default function About() {
 
   return (
     <>
-      <Helmet>
-        <title>About Us | Suenos Travel DMC Morocco</title>
-        <meta name="description" content="Suenos Travel is a licensed Moroccan DMC based in Agadir and Casablanca, specializing in B2B incoming tourism since 2015." />
-      </Helmet>
+      <SEO
+        title="About Suenos Travel | Licensed Morocco DMC"
+        description="Learn about Suenos Travel, a licensed Morocco DMC based in Agadir and Casablanca serving agencies, tour operators, companies and B2B travel partners."
+        canonical="/about"
+        image="/images/about-riad.jpg"
+      />
 
       <section className="bg-[#F9F7F4]">
         {/* Hero */}

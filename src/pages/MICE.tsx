@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { Building2, Users, Calendar, Mic, PartyPopper, Bus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -19,10 +19,12 @@ export default function MICE() {
 
   return (
     <>
-      <Helmet>
-        <title>MICE & Corporate Travel | Suenos Travel DMC Morocco</title>
-        <meta name="description" content="Professional MICE services in Morocco: meetings, incentives, conferences, corporate events, and team building." />
-      </Helmet>
+      <SEO
+        title="MICE Morocco | Incentive Travel & Corporate Events DMC"
+        description="Plan meetings, incentives, conferences, team building and corporate events in Morocco with a local DMC for agencies and companies."
+        canonical="/mice"
+        image="/images/circuit-luxury.jpg"
+      />
 
       <section className="bg-[#0F172A] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">

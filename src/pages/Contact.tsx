@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useI18n } from "@/providers/i18n";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { trpc } from "@/providers/trpc";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { MapPin, Phone, Mail, Send, Check, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,9 +29,12 @@ export default function Contact() {
   if (submitted) {
     return (
       <main className="min-h-screen bg-[#F8F7F4] pt-24 pb-16 flex items-center justify-center">
-        <Helmet>
-          <title>{isFr ? "Message envoyé" : "Message Sent"} | Suenos Travel</title>
-        </Helmet>
+        <SEO
+          title="Contact Suenos Travel | DMC Morocco for Agencies"
+          description="Contact Suenos Travel, a Morocco DMC for agencies, tour operators, companies, MICE and group travel requests."
+          canonical="/contact"
+          image="/images/about-riad.jpg"
+        />
         <div className="text-center max-w-md mx-auto px-4">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Check className="h-8 w-8 text-green-600" />
@@ -54,10 +57,12 @@ export default function Contact() {
 
   return (
     <main className="min-h-screen bg-[#F8F7F4]">
-      <Helmet>
-        <title>{isFr ? "Contact" : "Contact"} | Suenos Travel DMC</title>
-        <meta name="description" content={isFr ? "Contactez Suenos Travel DMC Maroc." : "Contact Suenos Travel DMC Morocco."} />
-      </Helmet>
+      <SEO
+        title="Contact Suenos Travel | DMC Morocco for Agencies"
+        description="Contact Suenos Travel, a Morocco DMC for agencies, tour operators, companies, MICE and group travel requests."
+        canonical="/contact"
+        image="/images/about-riad.jpg"
+      />
 
       <section className="bg-gradient-to-br from-[#A91D2D] to-[#1F2937] py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 text-center">

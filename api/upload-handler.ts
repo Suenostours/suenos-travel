@@ -1,5 +1,6 @@
 import type { Hono } from "hono";
 import { serveStatic } from "@hono/node-server/serve-static";
+import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
 import { existsSync, mkdirSync } from "fs";
 import { writeFile, unlink } from "fs/promises";
 import path from "path";
@@ -11,6 +12,42 @@ const UPLOAD_DIR = path.resolve(process.cwd(), "public", "uploads");
 
 if (!existsSync(UPLOAD_DIR)) {
   mkdirSync(UPLOAD_DIR, { recursive: true });
+}
+
+function hasCloudinaryConfig() {
+  return Boolean(
+    process.env.CLOUDINARY_CLOUD_NAME &&
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET,
+  );
+}
+
+function uploadToCloudinary(buffer: Buffer, file: File) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+
+  return new Promise<UploadApiResponse>((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: process.env.CLOUDINARY_FOLDER || "morocco-incoming",
+        resource_type: "image",
+        use_filename: true,
+        unique_filename: true,
+      },
+      (error, result) => {
+        if (error || !result) {
+          reject(error || new Error("Cloudinary upload failed"));
+          return;
+        }
+        resolve(result);
+      },
+    );
+
+    stream.end(buffer);
+  });
 }
 
 export function registerUploadRoutes(app: Hono<any>) {
@@ -43,19 +80,28 @@ export function registerUploadRoutes(app: Hono<any>) {
       const timestamp = Date.now();
       const ext = path.extname(file.name) || ".jpg";
       const filename = `${timestamp}-${Math.random().toString(36).slice(2)}${ext}`;
-      const filepath = path.join(UPLOAD_DIR, filename);
-      await writeFile(filepath, buffer);
+      let storedFilename = filename;
+      let fileUrl = `/uploads/${filename}`;
+
+      if (hasCloudinaryConfig()) {
+        const uploaded = await uploadToCloudinary(buffer, file);
+        storedFilename = uploaded.public_id;
+        fileUrl = uploaded.secure_url;
+      } else {
+        const filepath = path.join(UPLOAD_DIR, filename);
+        await writeFile(filepath, buffer);
+      }
 
       const db = getDb();
       const result = await db.insert(media).values({
-        filename,
+        filename: storedFilename,
         originalName: file.name,
-        path: `/uploads/${filename}`,
+        path: fileUrl,
         mimeType: file.type,
         size: buffer.length,
       });
       const id = Number(result[0].insertId);
-      results.push({ id, url: `/uploads/${filename}`, filename });
+      results.push({ id, url: fileUrl, filename: storedFilename });
     }
 
     return c.json({ files: results });

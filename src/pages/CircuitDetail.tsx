@@ -2,8 +2,14 @@ import { useParams, Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
 import { trpc } from "@/providers/trpc";
 import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { ArrowLeft, Clock, MapPin, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+const BASE_URL = "https://www.morocco-incoming.com";
+const DEFAULT_TOUR_IMAGE = "/images/hero-desert.jpg";
+const DEFAULT_TOUR_DESCRIPTION =
+  "Tailor-made Morocco tour for travel agencies, tour operators, groups and B2B partners with Suenos Travel DMC.";
 
 function splitText(text?: string | null) {
   if (!text) return [];
@@ -16,6 +22,25 @@ function splitText(text?: string | null) {
 
 function formatType(type?: string) {
   return type ? type.replace(/_/g, " ") : "-";
+}
+
+function cleanText(value?: string | null) {
+  return value?.replace(/\s+/g, " ").trim() ?? "";
+}
+
+function trimDescription(value?: string | null, maxLength = 155) {
+  const text = cleanText(value);
+  if (text.length <= maxLength) return text;
+
+  const trimmed = text.slice(0, maxLength).trim();
+  const lastSpace = trimmed.lastIndexOf(" ");
+  return `${(lastSpace > 80 ? trimmed.slice(0, lastSpace) : trimmed).trim()}...`;
+}
+
+function toAbsoluteUrl(value: string) {
+  if (/^https?:\/\//i.test(value)) return value;
+  const path = value.startsWith("/") ? value : `/${value}`;
+  return `${BASE_URL}${path}`;
 }
 
 export default function CircuitDetail() {
@@ -73,12 +98,68 @@ export default function CircuitDetail() {
   const excludedItems = splitText(translation.exclusions);
   const title = translation.title ?? tour.slug;
   const description = translation.description ?? "";
+  const tourSlug = slug ?? tour.slug;
+  const canonicalPath = `/circuits/${tourSlug}`;
+  const seoTitle =
+    cleanText(translation.metaTitle ?? translation.meta_title) ||
+    `${title} | Morocco DMC Tour for Agencies`;
+  const seoDescription =
+    trimDescription(translation.metaDescription ?? translation.meta_description) ||
+    trimDescription(description) ||
+    DEFAULT_TOUR_DESCRIPTION;
+  const seoImage = tour.mainImage || DEFAULT_TOUR_IMAGE;
+  const absoluteUrl = toAbsoluteUrl(canonicalPath);
+  const absoluteImage = toAbsoluteUrl(seoImage);
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: BASE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Circuits",
+        item: `${BASE_URL}/circuits`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: title,
+        item: absoluteUrl,
+      },
+    ],
+  };
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: title,
+    description: seoDescription,
+    image: absoluteImage,
+    brand: {
+      "@type": "Organization",
+      name: "Suenos Travel",
+      url: BASE_URL,
+    },
+    category: "Morocco Tour / DMC Program",
+    url: absoluteUrl,
+  };
 
   return (
     <>
+      <SEO
+        title={seoTitle}
+        description={seoDescription}
+        canonical={canonicalPath}
+        image={seoImage}
+      />
       <Helmet>
-        <title>{title} | Suenos Travel</title>
-        {description && <meta name="description" content={description} />}
+        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
+        <script type="application/ld+json">{JSON.stringify(productJsonLd)}</script>
       </Helmet>
 
       <section className="bg-[#F9F7F4]">

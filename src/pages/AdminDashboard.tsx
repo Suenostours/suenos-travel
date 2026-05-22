@@ -5,7 +5,7 @@ import { trpc } from "@/providers/trpc";
 import { Helmet } from "react-helmet-async";
 import {
   LayoutDashboard, Map, MapPin, Compass, FileText, Image, Settings, Shield,
-  Users, MessageSquare, Mail, LogOut, Menu, Plus, Pencil, Trash2, Save
+  Users, MessageSquare, Mail, LogOut, Menu, Plus, Pencil, Trash2, Save, Handshake
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +25,7 @@ const navItems = [
   { icon: Shield, label: "SEO / Pixels", path: "/admin/seo" },
   { icon: MessageSquare, label: "Contacts", path: "/admin/contacts" },
   { icon: Mail, label: "Quotes", path: "/admin/quotes" },
+  { icon: Handshake, label: "B2B Partners", path: "/admin/partners" },
   { icon: Users, label: "Admins", path: "/admin/admins" },
 ];
 
@@ -129,6 +130,7 @@ export default function AdminDashboard() {
               <Route path="/seo" element={<SeoManager />} />
               <Route path="/contacts" element={<ContactsManager />} />
               <Route path="/quotes" element={<QuotesManager />} />
+              <Route path="/partners" element={<PartnersManager />} />
               <Route path="/admins" element={<AdminsManager />} />
             </Routes>
           </div>
@@ -142,6 +144,7 @@ export default function AdminDashboard() {
 function DashboardOverview() {
   const { data: contacts } = trpc.forms.listContacts.useQuery();
   const { data: quotes } = trpc.forms.listQuotes.useQuery();
+  const { data: partners } = trpc.forms.listPartners.useQuery();
   const { data: toursList } = trpc.tours.list.useQuery();
   const { data: citiesList } = trpc.cities.list.useQuery();
   const { data: blogList } = trpc.blog.list.useQuery();
@@ -152,6 +155,7 @@ function DashboardOverview() {
     { label: "Blog Posts", value: blogList?.length ?? 0, icon: FileText },
     { label: "Contact Requests", value: contacts?.length ?? 0, icon: MessageSquare },
     { label: "Quote Requests", value: quotes?.length ?? 0, icon: Mail },
+    { label: "B2B Requests", value: partners?.length ?? 0, icon: Handshake },
   ];
 
   return (
@@ -953,6 +957,29 @@ function SeoManager() {
 }
 
 // ─── Contacts Manager ───
+function formatRequestDate(value: Date | string | null | undefined) {
+  if (!value) return "-";
+  return new Date(value).toLocaleString();
+}
+
+function DetailField({ label, value, className = "" }: { label: string; value: unknown; className?: string }) {
+  const displayValue = value === null || value === undefined || value === "" ? "-" : String(value);
+  return (
+    <div className={className}>
+      <p className="text-xs uppercase tracking-wider text-[#6B7280] mb-1">{label}</p>
+      <p className="text-sm text-[#1F2937] whitespace-pre-wrap break-words">{displayValue}</p>
+    </div>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  return (
+    <span className={`text-xs px-2 py-1 rounded-full ${status === "new" ? "bg-amber-100 text-amber-800" : status === "treated" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"}`}>
+      {status}
+    </span>
+  );
+}
+
 function ContactsManager() {
   const { data: contacts, refetch } = trpc.forms.listContacts.useQuery();
   const updateStatus = trpc.forms.updateContactStatus.useMutation({ onSuccess: () => refetch() });
@@ -960,29 +987,33 @@ function ContactsManager() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-[#1F2937]">Contact Requests</h1>
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50">
-            <tr><th className="px-4 py-3 text-left font-medium text-[#6B7280]">Name</th><th className="px-4 py-3 text-left font-medium text-[#6B7280]">Email</th><th className="px-4 py-3 text-left font-medium text-[#6B7280]">Subject</th><th className="px-4 py-3 text-left font-medium text-[#6B7280]">Status</th><th className="px-4 py-3 text-left font-medium text-[#6B7280]">Actions</th></tr>
-          </thead>
-          <tbody>
-            {contacts?.map((c) => (
-              <tr key={c.id} className="border-t border-gray-100">
-                <td className="px-4 py-3 font-medium text-[#1F2937]">{c.name}</td>
-                <td className="px-4 py-3 text-[#6B7280]">{c.email}</td>
-                <td className="px-4 py-3 text-[#6B7280]">{c.subject || "-"}</td>
-                <td className="px-4 py-3"><span className={`text-xs px-2 py-1 rounded-full ${c.status === "new" ? "bg-amber-100 text-amber-800" : c.status === "treated" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"}`}>{c.status}</span></td>
-                <td className="px-4 py-3">
-                  <div className="flex gap-1">
-                    {["new", "treated", "archived"].map((s) => (
-                      <Button key={s} variant="ghost" size="sm" className={`h-7 text-xs ${c.status === s ? "bg-gray-100" : ""}`} onClick={() => updateStatus.mutate({ id: c.id, status: s as any })}>{s}</Button>
-                    ))}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="space-y-4">
+        {contacts?.map((c) => (
+          <div key={c.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="font-semibold text-[#1F2937]">{c.name}</h2>
+                <p className="text-sm text-[#6B7280]">{c.email}</p>
+              </div>
+              <StatusBadge status={c.status} />
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <DetailField label="Name" value={c.name} />
+              <DetailField label="Email" value={c.email} />
+              <DetailField label="Phone" value={c.phone} />
+              <DetailField label="Subject" value={c.subject} />
+              <DetailField label="Created At" value={formatRequestDate(c.createdAt)} />
+              <DetailField label="Status" value={c.status} />
+              <DetailField label="Message" value={c.message} className="sm:col-span-2 lg:col-span-3" />
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {["new", "treated", "archived"].map((s) => (
+                <Button key={s} variant="ghost" size="sm" className={`h-7 text-xs ${c.status === s ? "bg-gray-100" : ""}`} onClick={() => updateStatus.mutate({ id: c.id, status: s as any })}>{s}</Button>
+              ))}
+            </div>
+          </div>
+        ))}
+        {(contacts?.length ?? 0) === 0 && <p className="text-sm text-[#6B7280]">No contact requests yet.</p>}
       </div>
     </div>
   );
@@ -996,29 +1027,87 @@ function QuotesManager() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-[#1F2937]">Quote Requests</h1>
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50">
-            <tr><th className="px-4 py-3 text-left font-medium text-[#6B7280]">Agency</th><th className="px-4 py-3 text-left font-medium text-[#6B7280]">Contact</th><th className="px-4 py-3 text-left font-medium text-[#6B7280]">Email</th><th className="px-4 py-3 text-left font-medium text-[#6B7280]">Status</th><th className="px-4 py-3 text-left font-medium text-[#6B7280]">Actions</th></tr>
-          </thead>
-          <tbody>
-            {quotes?.map((q) => (
-              <tr key={q.id} className="border-t border-gray-100">
-                <td className="px-4 py-3 font-medium text-[#1F2937]">{q.agencyName || "-"}</td>
-                <td className="px-4 py-3 text-[#6B7280]">{q.contactPerson || "-"}</td>
-                <td className="px-4 py-3 text-[#6B7280]">{q.email}</td>
-                <td className="px-4 py-3"><span className={`text-xs px-2 py-1 rounded-full ${q.status === "new" ? "bg-amber-100 text-amber-800" : q.status === "treated" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"}`}>{q.status}</span></td>
-                <td className="px-4 py-3">
-                  <div className="flex gap-1">
-                    {["new", "treated", "archived"].map((s) => (
-                      <Button key={s} variant="ghost" size="sm" className={`h-7 text-xs ${q.status === s ? "bg-gray-100" : ""}`} onClick={() => updateStatus.mutate({ id: q.id, status: s as any })}>{s}</Button>
-                    ))}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="space-y-4">
+        {quotes?.map((q) => (
+          <div key={q.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="font-semibold text-[#1F2937]">{q.agencyName || q.contactPerson || "Quote Request"}</h2>
+                <p className="text-sm text-[#6B7280]">{q.email}</p>
+              </div>
+              <StatusBadge status={q.status} />
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <DetailField label="Agency Name" value={q.agencyName} />
+              <DetailField label="Contact Person" value={q.contactPerson} />
+              <DetailField label="Email" value={q.email} />
+              <DetailField label="WhatsApp" value={q.whatsapp} />
+              <DetailField label="Country" value={q.country} />
+              <DetailField label="Travel Type" value={q.travelType} />
+              <DetailField label="Dates" value={q.dates} />
+              <DetailField label="Duration" value={q.duration} />
+              <DetailField label="Adults" value={q.adults} />
+              <DetailField label="Children" value={q.children} />
+              <DetailField label="Preferred Destinations" value={q.preferredDestinations} />
+              <DetailField label="Preferred Circuit" value={q.preferredCircuit} />
+              <DetailField label="Hotel Category" value={q.hotelCategory} />
+              <DetailField label="Transport Type" value={q.transportType} />
+              <DetailField label="Guide Language" value={q.guideLanguage} />
+              <DetailField label="Budget Range" value={q.budgetRange} />
+              <DetailField label="Created At" value={formatRequestDate(q.createdAt)} />
+              <DetailField label="Status" value={q.status} />
+              <DetailField label="Special Requests" value={q.specialRequests} className="sm:col-span-2 lg:col-span-3" />
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {["new", "treated", "archived"].map((s) => (
+                <Button key={s} variant="ghost" size="sm" className={`h-7 text-xs ${q.status === s ? "bg-gray-100" : ""}`} onClick={() => updateStatus.mutate({ id: q.id, status: s as any })}>{s}</Button>
+              ))}
+            </div>
+          </div>
+        ))}
+        {(quotes?.length ?? 0) === 0 && <p className="text-sm text-[#6B7280]">No quote requests yet.</p>}
+      </div>
+    </div>
+  );
+}
+
+function PartnersManager() {
+  const { data: partners, refetch } = trpc.forms.listPartners.useQuery();
+  const updateStatus = trpc.forms.updatePartnerStatus.useMutation({ onSuccess: () => refetch() });
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold text-[#1F2937]">B2B Partner Requests</h1>
+      <div className="space-y-4">
+        {partners?.map((p) => (
+          <div key={p.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="font-semibold text-[#1F2937]">{p.agencyName}</h2>
+                <p className="text-sm text-[#6B7280]">{p.email}</p>
+              </div>
+              <StatusBadge status={p.status} />
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <DetailField label="Agency Name" value={p.agencyName} />
+              <DetailField label="Country" value={p.country} />
+              <DetailField label="Website" value={p.website} />
+              <DetailField label="Contact Person" value={p.contactPerson} />
+              <DetailField label="Email" value={p.email} />
+              <DetailField label="WhatsApp" value={p.whatsapp} />
+              <DetailField label="Business Type" value={p.businessType} />
+              <DetailField label="Expected Volume" value={p.expectedVolume} />
+              <DetailField label="Created At" value={formatRequestDate(p.createdAt)} />
+              <DetailField label="Status" value={p.status} />
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {["new", "treated", "archived"].map((s) => (
+                <Button key={s} variant="ghost" size="sm" className={`h-7 text-xs ${p.status === s ? "bg-gray-100" : ""}`} onClick={() => updateStatus.mutate({ id: p.id, status: s as any })}>{s}</Button>
+              ))}
+            </div>
+          </div>
+        ))}
+        {(partners?.length ?? 0) === 0 && <p className="text-sm text-[#6B7280]">No B2B partner requests yet.</p>}
       </div>
     </div>
   );

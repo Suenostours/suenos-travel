@@ -97,6 +97,7 @@ export default function B2B() {
                   setError("");
                   if (!email.trim()) { setError(isFr ? "L'email est requis" : "Email is required"); return; }
                   if (!agencyName.trim()) { setError(isFr ? "Le nom de l'agence est requis" : "Agency name is required"); return; }
+                  if (!contactPerson.trim()) { setError(isFr ? "La personne à contacter est requise" : "Contact person is required"); return; }
                   createPartner.mutate({ agencyName, country, contactPerson, email, whatsapp, businessType, expectedVolume });
                 }} className="space-y-5">
                   <h2 className="font-serif text-xl font-bold text-[#1F2937] mb-4">
@@ -114,8 +115,8 @@ export default function B2B() {
                   </div>
 
                   <div>
-                    <Label>{isFr ? "Personne à contacter" : "Contact Person"}</Label>
-                    <Input className="mt-1" value={contactPerson} onChange={(e) => setContactPerson(e.target.value)} />
+                    <Label>{isFr ? "Personne à contacter" : "Contact Person"} *</Label>
+                    <Input required className="mt-1" value={contactPerson} onChange={(e) => setContactPerson(e.target.value)} />
                   </div>
 
                   <div className="grid sm:grid-cols-2 gap-4">

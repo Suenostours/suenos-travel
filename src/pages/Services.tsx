@@ -1,5 +1,5 @@
 import { useI18n } from "@/providers/i18n";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { Compass, Network, Landmark, Tent, Briefcase, Crown, Baby, Car, BedDouble, UserCheck, Mountain, Gift } from "lucide-react";
 
 const services = [
@@ -23,10 +23,12 @@ export default function Services() {
 
   return (
     <>
-      <Helmet>
-        <title>Our Services | Suenos Travel DMC Morocco</title>
-        <meta name="description" content="Comprehensive DMC services in Morocco: tailor-made tours, B2B services, MICE, luxury travel, desert experiences, and more." />
-      </Helmet>
+      <SEO
+        title="Morocco DMC Services for Agencies, Groups & MICE"
+        description="Full-service Morocco DMC support for agencies and tour operators: ground handling, tailor-made tours, hotels, guides, transport, MICE and incentives."
+        canonical="/services"
+        image="/images/about-riad.jpg"
+      />
 
       <section className="bg-[#F9F7F4] py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

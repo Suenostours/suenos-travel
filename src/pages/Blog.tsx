@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { ArrowRight, Calendar, Tag } from "lucide-react";
 
 const blogPosts = [
@@ -42,10 +42,12 @@ export default function Blog() {
 
   return (
     <>
-      <Helmet>
-        <title>Blog | Suenos Travel DMC Morocco</title>
-        <meta name="description" content="Travel guides, tips, and insights about Morocco from Suenos Travel DMC." />
-      </Helmet>
+      <SEO
+        title="Morocco Travel Blog for Agencies & Tour Operators"
+        description="Morocco travel insights, destination guides and DMC advice for agencies, tour operators, groups and corporate travel planners."
+        canonical="/blog"
+        image="/images/hero-desert.jpg"
+      />
 
       <section className="bg-[#F9F7F4] py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

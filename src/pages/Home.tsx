@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
 import { trpc } from "@/providers/trpc";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import {
   ArrowRight,
   Shield,
@@ -93,10 +93,12 @@ export default function Home() {
 
   return (
     <>
-      <Helmet>
-        <title>Morocco Incoming by Suenos Travel | DMC Morocco</title>
-        <meta name="description" content="Your trusted DMC partner in Morocco. Tailor-made tours, MICE, B2B services for travel agencies and tour operators." />
-      </Helmet>
+      <SEO
+        title="DMC Morocco | Morocco Incoming Agency for Travel Professionals"
+        description="Suenos Travel is a Morocco DMC and incoming agency for tour operators, travel agencies and companies. Tailor-made tours, groups, MICE and incentives."
+        canonical="/"
+        image="/images/hero-desert.jpg"
+      />
 
       {/* ─── HERO ─── */}
       <section className="relative bg-[#F9F7F4] overflow-hidden">

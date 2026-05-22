@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useI18n } from "@/providers/i18n";
 import { trpc } from "@/providers/trpc";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { Check, Globe, Handshake, DollarSign, Clock, Headphones, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,9 +28,12 @@ export default function B2B() {
   if (submitted) {
     return (
       <main className="min-h-screen bg-[#F8F7F4] pt-24 pb-16 flex items-center justify-center">
-        <Helmet>
-          <title>{isFr ? "Demande envoyée" : "Request Sent"} | Suenos Travel</title>
-        </Helmet>
+        <SEO
+          title="Morocco B2B Travel Agency Partner | Incoming DMC Morocco"
+          description="Partner with Suenos Travel for Morocco B2B travel services, net agency rates, tailor-made tours, group programs, MICE and incoming support."
+          canonical="/b2b"
+          image="/images/hero-desert.jpg"
+        />
         <div className="text-center max-w-md mx-auto px-4">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Check className="h-8 w-8 text-green-600" />
@@ -53,10 +56,12 @@ export default function B2B() {
 
   return (
     <main className="min-h-screen bg-[#F8F7F4]">
-      <Helmet>
-        <title>{isFr ? "Devenir partenaire B2B" : "Become a B2B Partner"} | Suenos Travel DMC</title>
-        <meta name="description" content={isFr ? "Devenez partenaire B2B avec Suenos Travel DMC Maroc." : "Become a B2B partner with Suenos Travel DMC Morocco."} />
-      </Helmet>
+      <SEO
+        title="Morocco B2B Travel Agency Partner | Incoming DMC Morocco"
+        description="Partner with Suenos Travel for Morocco B2B travel services, net agency rates, tailor-made tours, group programs, MICE and incoming support."
+        canonical="/b2b"
+        image="/images/hero-desert.jpg"
+      />
 
       <section className="bg-gradient-to-br from-[#1F2937] to-[#A91D2D] py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 text-center">

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useI18n } from "@/providers/i18n";
 import { trpc } from "@/providers/trpc";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { Send, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,9 +39,12 @@ export default function Quote() {
   if (submitted) {
     return (
       <main className="min-h-screen bg-[#F8F7F4] pt-24 pb-16 flex items-center justify-center">
-        <Helmet>
-          <title>{isFr ? "Demande envoyée" : "Request Sent"} | Suenos Travel</title>
-        </Helmet>
+        <SEO
+          title="Request a Morocco DMC Quote | B2B Tours, Groups & MICE"
+          description="Request a custom Morocco travel quote for agencies, groups, private tours, MICE and incentives with Suenos Travel DMC."
+          canonical="/quote"
+          image="/images/hero-desert.jpg"
+        />
         <div className="text-center max-w-md mx-auto px-4">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Check className="h-8 w-8 text-green-600" />
@@ -64,10 +67,12 @@ export default function Quote() {
 
   return (
     <main className="min-h-screen bg-[#F8F7F4]">
-      <Helmet>
-        <title>{isFr ? "Demander un devis" : "Request a Quote"} | Suenos Travel DMC</title>
-        <meta name="description" content={isFr ? "Demandez un devis personnalisé pour vos groupes au Maroc." : "Request a tailor-made quote for your Morocco groups."} />
-      </Helmet>
+      <SEO
+        title="Request a Morocco DMC Quote | B2B Tours, Groups & MICE"
+        description="Request a custom Morocco travel quote for agencies, groups, private tours, MICE and incentives with Suenos Travel DMC."
+        canonical="/quote"
+        image="/images/hero-desert.jpg"
+      />
 
       <section className="bg-gradient-to-br from-[#A91D2D] to-[#1F2937] py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 text-center">

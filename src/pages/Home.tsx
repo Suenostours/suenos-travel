@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
 import { trpc } from "@/providers/trpc";
 import SEO from "@/components/SEO";
+import GlobalStructuredData from "@/components/GlobalStructuredData";
 import {
   ArrowRight,
   Shield,
@@ -99,6 +100,7 @@ export default function Home() {
         canonical="/"
         image="/images/hero-desert.jpg"
       />
+      <GlobalStructuredData />
 
       {/* ─── HERO ─── */}
       <section className="relative bg-[#F9F7F4] overflow-hidden">

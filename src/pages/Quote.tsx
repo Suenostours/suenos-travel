@@ -80,7 +80,7 @@ export default function Quote() {
             {isFr ? "Demander un devis" : "Request a Quote"}
           </h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            {isFr ? "Décrivez votre projet et nous vous enverrons un programme personnalisé sous 24h." : "Describe your project and we will send you a tailor-made program within 24 hours."}
+            {isFr ? "Decrivez votre projet et notre equipe DMC locale vous repondra sous 24-48h." : "Describe your project and our local Morocco DMC team will respond within 24-48 hours."}
           </p>
         </div>
       </section>
@@ -90,12 +90,13 @@ export default function Quote() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="md:col-span-1 space-y-6">
               <div className="bg-white rounded-2xl shadow-sm border border-[#E5E7EB] p-6">
-                <h3 className="font-serif text-lg font-bold text-[#1F2937] mb-4">{isFr ? "Pourquoi nous ?" : "Why us?"}</h3>
+                <h3 className="font-serif text-lg font-bold text-[#1F2937] mb-4">{isFr ? "Pour agences et MICE" : "For agencies and MICE"}</h3>
                 <ul className="space-y-3 text-sm text-[#6B7280]">
-                  <li>{isFr ? "Devis gratuit sous 24h" : "Free quote within 24h"}</li>
-                  <li>{isFr ? "Programmes sur mesure" : "Tailor-made programs"}</li>
-                  <li>{isFr ? "Tarifs nets pour agences" : "Net rates for agencies"}</li>
-                  <li>{isFr ? "Support 24/7 sur place" : "24/7 on-site support"}</li>
+                  <li>{isFr ? "Reponse sous 24-48h, sans engagement" : "24-48h response, no commitment"}</li>
+                  <li>{isFr ? "Pour agences, tour-operateurs et planners MICE" : "For agencies, tour operators and MICE planners"}</li>
+                  <li>{isFr ? "Tarifs nets agences et programmes sur mesure" : "Net agency rates and tailor-made programs"}</li>
+                  <li>{isFr ? "Suivi par une equipe DMC locale au Maroc" : "Handled by a local Morocco DMC team"}</li>
+                  <li>{isFr ? "Assistance sur place pour les groupes" : "On-site support for groups"}</li>
                 </ul>
               </div>
             </div>

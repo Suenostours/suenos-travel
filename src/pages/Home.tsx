@@ -115,7 +115,9 @@ export default function Home() {
                 <span className="text-[#A91D2D]">DMC</span> Partner in Morocco
               </h1>
               <p className="text-lg text-[#4B5563] max-w-lg leading-relaxed">
-                {t("hero.subtitle")}
+                {locale === "fr"
+                  ? "Programmes Maroc sur mesure pour agences de voyage, tour-operateurs, groupes MICE et entreprises."
+                  : "Tailor-made Morocco programs for travel agencies, tour operators, groups, MICE planners, and companies."}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link to="/quote">
@@ -165,11 +167,12 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-wrap justify-center md:justify-between gap-6 md:gap-4">
             {[
-              { icon: Shield, label: t("trust.licensed"), sub: "ODV-0564" },
+              { icon: Shield, label: locale === "fr" ? "DMC locale agreee" : "Licensed local DMC", sub: "ODV-0564" },
               { icon: MapPin, label: t("trust.locations") },
-              { icon: Users, label: t("trust.b2b") },
-              { icon: Sparkles, label: t("trust.tailor") },
-              { icon: Network, label: t("trust.network") },
+              { icon: Users, label: locale === "fr" ? "Tarifs nets agences" : "Net agency rates" },
+              { icon: Sparkles, label: locale === "fr" ? "Programmes sur mesure" : "Tailor-made programs" },
+              { icon: Network, label: locale === "fr" ? "Reponse 24-48h" : "24-48h response" },
+              { icon: UserCheck, label: locale === "fr" ? "Support multilingue" : "Multilingual support" },
             ].map((item) => (
               <div key={item.label} className="flex items-center gap-2 text-sm text-[#4B5563]">
                 <item.icon className="h-5 w-5 text-[#A91D2D]" />

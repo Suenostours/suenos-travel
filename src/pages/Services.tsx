@@ -1,6 +1,8 @@
 import { useI18n } from "@/providers/i18n";
 import SEO from "@/components/SEO";
+import { Link } from "react-router";
 import { Compass, Network, Landmark, Tent, Briefcase, Crown, Baby, Car, BedDouble, UserCheck, Mountain, Gift } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const services = [
   { icon: Compass, title: "Tailor-Made Morocco Tours", titleFr: "Circuits Sur Mesure", desc: "Custom-designed itineraries crafted to match your clients' preferences, pace, and interests. Every detail personalized.", descFr: "Itinéraires conçus sur mesure pour correspondre aux préférences, au rythme et aux intérêts de vos clients." },
@@ -51,6 +53,29 @@ export default function Services() {
                 <p className="text-sm text-[#4B5563] leading-relaxed">{isFr ? s.descFr : s.desc}</p>
               </div>
             ))}
+          </div>
+
+          <div className="mt-12 bg-white rounded-2xl border border-gray-100 p-8 md:p-10 text-center shadow-sm">
+            <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1F2937]">
+              {isFr ? "Besoin d'un support DMC fiable au Maroc ?" : "Need reliable DMC support in Morocco?"}
+            </h2>
+            <p className="mt-4 text-[#4B5563] max-w-2xl mx-auto">
+              {isFr
+                ? "Envoyez-nous votre demande groupe et notre equipe locale preparera une proposition sur mesure avec des conditions adaptees aux agences."
+                : "Send us your group request and our local team will prepare a tailor-made proposal with agency-friendly conditions."}
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-4">
+              <Link to="/quote">
+                <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+                  {isFr ? "Demander un devis" : "Request a Quote"}
+                </Button>
+              </Link>
+              <Link to="/contact">
+                <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                  {isFr ? "Nous contacter" : "Contact Us"}
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

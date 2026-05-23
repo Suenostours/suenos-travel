@@ -100,6 +100,11 @@ export default function Footer() {
                   {t("nav.quote")}
                 </button>
               </Link>
+              <Link to="/b2b">
+                <button className="w-full border border-white/20 hover:bg-white/10 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors">
+                  Become a B2B Partner
+                </button>
+              </Link>
               <div className="space-y-2 pt-2">
                 <a
                   href={`https://wa.me/${whatsapp.replace(/\D/g, "")}`}

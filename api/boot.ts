@@ -18,6 +18,26 @@ const app = new Hono<{ Bindings: HttpBindings }>();
 
 app.use(bodyLimit({ maxSize: 50 * 1024 * 1024 }));
 
+function formatSitemapDate(value?: Date | string | null) {
+  const fallback = new Date();
+  const date = value ? new Date(value) : fallback;
+
+  if (Number.isNaN(date.getTime())) {
+    return fallback.toISOString().slice(0, 10);
+  }
+
+  return date.toISOString().slice(0, 10);
+}
+
+function sitemapEntry(loc: string, lastmod: string, changefreq: string, priority: string) {
+  return `<url>
+  <loc>${loc}</loc>
+  <lastmod>${lastmod}</lastmod>
+  <changefreq>${changefreq}</changefreq>
+  <priority>${priority}</priority>
+</url>`;
+}
+
 // ─── Auto-create tables using mysql2 pool (same method as connection.ts) ───
 async function initTables() {
   try {
@@ -152,30 +172,31 @@ registerUploadRoutes(app);
 app.get("/sitemap.xml", async (c) => {
   const baseUrl = "https://www.morocco-incoming.com";
   const db = getDb();
+  const today = formatSitemapDate();
   let urls = [
-    `<url><loc>${baseUrl}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>`,
-    `<url><loc>${baseUrl}/circuits</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>`,
-    `<url><loc>${baseUrl}/destinations</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>`,
-    `<url><loc>${baseUrl}/services</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`,
-    `<url><loc>${baseUrl}/about</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`,
-    `<url><loc>${baseUrl}/mice</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`,
-    `<url><loc>${baseUrl}/b2b</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`,
-    `<url><loc>${baseUrl}/blog</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
-    `<url><loc>${baseUrl}/contact</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>`,
-    `<url><loc>${baseUrl}/quote</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>`,
+    sitemapEntry(`${baseUrl}/`, today, "weekly", "1.0"),
+    sitemapEntry(`${baseUrl}/circuits`, today, "weekly", "0.9"),
+    sitemapEntry(`${baseUrl}/destinations`, today, "weekly", "0.9"),
+    sitemapEntry(`${baseUrl}/services`, today, "monthly", "0.8"),
+    sitemapEntry(`${baseUrl}/about`, today, "monthly", "0.8"),
+    sitemapEntry(`${baseUrl}/mice`, today, "monthly", "0.8"),
+    sitemapEntry(`${baseUrl}/b2b`, today, "monthly", "0.8"),
+    sitemapEntry(`${baseUrl}/blog`, today, "weekly", "0.8"),
+    sitemapEntry(`${baseUrl}/contact`, today, "monthly", "0.7"),
+    sitemapEntry(`${baseUrl}/quote`, today, "monthly", "0.7"),
   ];
 
-  const tourRows = await db.select({ slug: tours.slug }).from(tours).where(eq(tours.active, 1));
+  const tourRows = await db.select({ slug: tours.slug, updatedAt: tours.updatedAt }).from(tours).where(eq(tours.active, 1));
   for (const t of tourRows) {
-    urls.push(`<url><loc>${baseUrl}/circuits/${t.slug}</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`);
+    urls.push(sitemapEntry(`${baseUrl}/circuits/${t.slug}`, formatSitemapDate(t.updatedAt), "monthly", "0.8"));
   }
-  const cityRows = await db.select({ slug: cities.slug }).from(cities).where(eq(cities.active, 1));
+  const cityRows = await db.select({ slug: cities.slug, updatedAt: cities.updatedAt }).from(cities).where(eq(cities.active, 1));
   for (const c of cityRows) {
-    urls.push(`<url><loc>${baseUrl}/destinations/${c.slug}</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>`);
+    urls.push(sitemapEntry(`${baseUrl}/destinations/${c.slug}`, formatSitemapDate(c.updatedAt), "monthly", "0.7"));
   }
-  const blogRows = await db.select({ slug: blogPosts.slug }).from(blogPosts).where(and(eq(blogPosts.status, "published"), eq(blogPosts.active, 1)));
+  const blogRows = await db.select({ slug: blogPosts.slug, updatedAt: blogPosts.updatedAt }).from(blogPosts).where(and(eq(blogPosts.status, "published"), eq(blogPosts.active, 1)));
   for (const b of blogRows) {
-    urls.push(`<url><loc>${baseUrl}/blog/${b.slug}</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>`);
+    urls.push(sitemapEntry(`${baseUrl}/blog/${b.slug}`, formatSitemapDate(b.updatedAt), "monthly", "0.6"));
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

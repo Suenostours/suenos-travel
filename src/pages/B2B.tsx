@@ -71,7 +71,7 @@ export default function B2B() {
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
             {isFr
               ? "Rejoignez notre réseau d'agences partenaires et bénéficiez de nos services DMC au Maroc."
-              : "Join our partner agency network and benefit from our DMC services in Morocco."}
+              : "Join our partner agency network for net rates, tailor-made programs, and local DMC support across Morocco."}
           </p>
         </div>
       </section>
@@ -81,13 +81,13 @@ export default function B2B() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="md:col-span-1 space-y-6">
               <div className="bg-white rounded-2xl shadow-sm border border-[#E5E7EB] p-6">
-                <h3 className="font-serif text-lg font-bold text-[#1F2937] mb-4">{isFr ? "Avantages" : "Benefits"}</h3>
+                <h3 className="font-serif text-lg font-bold text-[#1F2937] mb-4">{isFr ? "Ce que vous recevez" : "What partners receive"}</h3>
                 <ul className="space-y-3 text-sm text-[#6B7280]">
                   <li className="flex items-center gap-2"><Globe className="h-4 w-4 text-[#A91D2D]" /> {isFr ? "Tarifs nets agences" : "Net agency rates"}</li>
-                  <li className="flex items-center gap-2"><Handshake className="h-4 w-4 text-[#A91D2D]" /> {isFr ? "Support dédié" : "Dedicated support"}</li>
-                  <li className="flex items-center gap-2"><DollarSign className="h-4 w-4 text-[#A91D2D]" /> {isFr ? "Devis rapides" : "Fast quotations"}</li>
-                  <li className="flex items-center gap-2"><Clock className="h-4 w-4 text-[#A91D2D]" /> {isFr ? "Réponse 24-48h" : "24-48h response"}</li>
-                  <li className="flex items-center gap-2"><Headphones className="h-4 w-4 text-[#A91D2D]" /> {isFr ? "Assistance 24/7" : "24/7 assistance"}</li>
+                  <li className="flex items-center gap-2"><Handshake className="h-4 w-4 text-[#A91D2D]" /> {isFr ? "Programmes sur mesure et white-label" : "Tailor-made and white-label programs"}</li>
+                  <li className="flex items-center gap-2"><DollarSign className="h-4 w-4 text-[#A91D2D]" /> {isFr ? "Support devis prioritaire" : "Priority quotation support"}</li>
+                  <li className="flex items-center gap-2"><Clock className="h-4 w-4 text-[#A91D2D]" /> {isFr ? "Coordination fournisseurs locaux" : "Local supplier coordination"}</li>
+                  <li className="flex items-center gap-2"><Headphones className="h-4 w-4 text-[#A91D2D]" /> {isFr ? "Assistance sur place pour groupes" : "On-site assistance for groups"}</li>
                 </ul>
               </div>
             </div>

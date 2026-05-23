@@ -85,6 +85,11 @@ export default function Circuits() {
                 ? "Circuits soigneusement concus pour les agences de voyage, tour-operateurs et groupes corporate."
                 : "Carefully crafted itineraries for travel agencies, tour operators, and corporate groups."}
             </p>
+            <p className="mt-3 text-sm text-[#6B7280] max-w-3xl mx-auto">
+              {locale === "fr"
+                ? "Tous les programmes peuvent etre adaptes pour groupes prives, departs en serie, incentives et demandes white-label agence."
+                : "All programs can be adapted for private groups, series departures, incentives and agency white-label requests."}
+            </p>
           </div>
 
           <div className="flex flex-wrap justify-center gap-2 mb-12">
@@ -161,6 +166,29 @@ export default function Circuits() {
               ))}
             </div>
           )}
+
+          <div className="mt-12 bg-white rounded-2xl border border-gray-100 p-8 md:p-10 text-center shadow-sm">
+            <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1F2937]">
+              {locale === "fr" ? "Besoin d'un programme Maroc sur mesure ?" : "Need a custom Morocco program?"}
+            </h2>
+            <p className="mt-4 text-[#4B5563] max-w-2xl mx-auto">
+              {locale === "fr"
+                ? "Partagez vos dates, la taille du groupe et le budget cible. Nous preparerons un itineraire sur mesure pour votre agence ou entreprise."
+                : "Share your dates, group size and target budget. We will prepare a tailor-made itinerary for your agency or company."}
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-4">
+              <Link to="/quote">
+                <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+                  {locale === "fr" ? "Demander un devis sur mesure" : "Request a Custom Quote"}
+                </Button>
+              </Link>
+              <Link to="/b2b">
+                <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                  {locale === "fr" ? "Devenir partenaire B2B" : "Become a B2B Partner"}
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </>

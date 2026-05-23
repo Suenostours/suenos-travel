@@ -28,6 +28,7 @@ export default function Header() {
     { label: t("nav.home"), path: "/" },
     { label: t("nav.circuits"), path: "/circuits" },
     { label: t("nav.destinations"), path: "/destinations" },
+    { label: t("nav.services"), path: "/services" },
     { label: t("nav.mice"), path: "/mice" },
     { label: t("nav.b2b"), path: "/b2b" },
   ];
@@ -150,6 +151,15 @@ export default function Header() {
               <Globe className="h-4 w-4" />
               {locale === "fr" ? "Switch to English" : "Passer en Français"}
             </button>
+            <a
+              href="https://wa.me/212661925611"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[#A91D2D]"
+            >
+              <Phone className="h-4 w-4" />
+              WhatsApp +212 661 925 611
+            </a>
             <Link
               to="/quote"
               onClick={() => setMobileOpen(false)}

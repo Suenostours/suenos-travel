@@ -2,6 +2,7 @@ import { Outlet } from "react-router";
 import { HelmetProvider } from "react-helmet-async";
 import { I18nProvider } from "@/providers/i18n";
 import { MessageCircle } from "lucide-react";
+import Analytics from "@/components/Analytics";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -9,6 +10,7 @@ export default function Layout() {
   return (
     <HelmetProvider>
       <I18nProvider>
+        <Analytics />
         <div className="min-h-screen flex flex-col bg-[#F9F7F4]">
           <Header />
           <main className="flex-1">

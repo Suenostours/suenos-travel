@@ -10,6 +10,7 @@ declare global {
 
 export default function Analytics() {
   const location = useLocation();
+  const hasTrackedInitialPageView = useRef(false);
   const lastTrackedPath = useRef<string | null>(null);
 
   useEffect(() => {
@@ -17,6 +18,13 @@ export default function Analytics() {
     if (location.pathname.startsWith("/admin")) return;
 
     const pagePath = `${location.pathname}${location.search}`;
+
+    if (!hasTrackedInitialPageView.current) {
+      hasTrackedInitialPageView.current = true;
+      lastTrackedPath.current = pagePath;
+      return;
+    }
+
     if (lastTrackedPath.current === pagePath) return;
     lastTrackedPath.current = pagePath;
 

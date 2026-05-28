@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useI18n } from "@/providers/i18n";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { trpc } from "@/providers/trpc";
+import { trackContactFormSubmit } from "@/lib/tracking";
 import SEO from "@/components/SEO";
 import { MapPin, Phone, Mail, Send, Check, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,10 @@ export default function Contact() {
   const [message, setMessage] = useState("");
 
   const createContact = trpc.forms.createContact.useMutation({
-    onSuccess: () => setSubmitted(true),
+    onSuccess: () => {
+      trackContactFormSubmit();
+      setSubmitted(true);
+    },
     onError: (err) => setError(err.message),
   });
 

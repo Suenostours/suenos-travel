@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
+import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, Tag } from "lucide-react";
 
 const blogPosts: Record<string, {
@@ -93,7 +94,7 @@ Standard camps provide comfortable beds in traditional Berber tents with shared 
 
 ## Camps de luxe
 
-Les camps de luxe offrent des tents avec salle de bain, vrais lits, douches chaudes et dining gastronomique. Parfait pour les lunes de miel.
+Les camps de luxe offrent des tentes avec salle de bain, vrais lits, douches chaudes et restauration gastronomique. Parfait pour les lunes de miel.
 
 ## Camps standard
 
@@ -140,7 +141,7 @@ Some of the most beautiful riads are tucked away in quiet medina alleys, offerin
 
 ## Tips
 
-Visit the tanneries early morning, explore the Mellah (Jewish quarter), and get lost in the souks — that's where the real discoveries happen.`,
+Visit the tanneries early morning, explore the Mellah (Jewish quarter), and get lost in the souks - that's where the real discoveries happen.`,
     contentFr: `Au-delà de la célèbre Jemaa el-Fnaa et du Jardin Majorelle, Marrakech cache d'innombrables endroits secrets.
 
 ## Jardins secrets
@@ -165,6 +166,14 @@ Visitez les tanneries tôt le matin, explorez le Mellah (quartier juif) et perde
   },
 };
 
+function toMetaDescription(value: string) {
+  return value
+    .replace(/[#*_`-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 155);
+}
+
 export default function BlogDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { locale } = useI18n();
@@ -173,12 +182,18 @@ export default function BlogDetail() {
   const post = slug ? blogPosts[slug] : null;
   if (!post) return <div className="py-24 text-center">Article not found</div>;
 
+  const title = isFr ? post.titleFr : post.title;
+  const content = isFr ? post.contentFr : post.content;
+
   return (
     <>
-      <Helmet>
-        <title>{isFr ? post.titleFr : post.title} | Suenos Travel Blog</title>
-        <meta name="description" content={isFr ? post.contentFr.slice(0, 160) : post.content.slice(0, 160)} />
-      </Helmet>
+      <SEO
+        title={`${title} | Suenos Travel Blog`}
+        description={toMetaDescription(content)}
+        canonical={`/blog/${slug}`}
+        image={post.image}
+        type="article"
+      />
 
       <section className="bg-[#F9F7F4]">
         <div className="relative h-[300px] md:h-[400px]">
@@ -192,7 +207,7 @@ export default function BlogDetail() {
               <span className="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-xs font-medium mb-3">
                 {post.category}
               </span>
-              <h1 className="font-serif text-2xl md:text-4xl font-bold text-white">{isFr ? post.titleFr : post.title}</h1>
+              <h1 className="font-serif text-2xl md:text-4xl font-bold text-white">{title}</h1>
             </div>
           </div>
         </div>
@@ -210,7 +225,7 @@ export default function BlogDetail() {
           </div>
 
           <article className="prose prose-lg max-w-none text-[#4B5563]">
-            {(isFr ? post.contentFr : post.content).split("\n\n").map((paragraph, i) => {
+            {content.split("\n\n").map((paragraph, i) => {
               if (paragraph.startsWith("## ")) {
                 return <h2 key={i} className="text-2xl font-serif font-bold text-[#1F2937] mt-8 mb-4">{paragraph.replace("## ", "")}</h2>;
               }
@@ -235,6 +250,29 @@ export default function BlogDetail() {
               return <p key={i} className="mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: paragraph.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") }} />;
             })}
           </article>
+
+          <div className="mt-12 bg-white rounded-2xl p-8 border border-gray-100 shadow-sm text-center">
+            <h2 className="font-serif text-2xl font-bold text-[#1F2937]">
+              {isFr ? "Besoin d'un programme Maroc pour votre agence ?" : "Need a Morocco program for your agency?"}
+            </h2>
+            <p className="mt-3 text-[#4B5563]">
+              {isFr
+                ? "Demandez une proposition sur mesure ou devenez partenaire B2B Suenos Travel."
+                : "Request a tailor-made proposal or become a Suenos Travel B2B partner."}
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-4">
+              <Link to="/quote">
+                <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+                  {isFr ? "Demander un devis" : "Request a Quote"}
+                </Button>
+              </Link>
+              <Link to="/b2b">
+                <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                  {isFr ? "Devenir partenaire B2B" : "Become a B2B Partner"}
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </>

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { trackQuoteFormSubmit } from "@/lib/tracking";
 
 export default function Quote() {
   const { locale } = useI18n();
@@ -32,7 +33,10 @@ export default function Quote() {
   const [requests, setRequests] = useState("");
 
   const createQuote = trpc.forms.createQuote.useMutation({
-    onSuccess: () => setSubmitted(true),
+    onSuccess: () => {
+      trackQuoteFormSubmit();
+      setSubmitted(true);
+    },
     onError: (err) => setError(err.message),
   });
 
@@ -55,7 +59,7 @@ export default function Quote() {
           <p className="text-[#6B7280] mb-8">
             {isFr
               ? "Merci. Notre équipe DMC vous contactera dans les 24 à 48 heures avec un programme sur mesure."
-              : "Thank you. Our DMC team will contact you within 24–48 hours with a tailor-made program."}
+              : "Thank you. Our DMC team will contact you within 24-48 hours with a tailor-made program."}
           </p>
           <Button onClick={() => window.location.href = "/"} className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full">
             {isFr ? "Retour à l'accueil" : "Back to Home"}
@@ -80,7 +84,7 @@ export default function Quote() {
             {isFr ? "Demander un devis" : "Request a Quote"}
           </h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            {isFr ? "Decrivez votre projet et notre equipe DMC locale vous repondra sous 24-48h." : "Describe your project and our local Morocco DMC team will respond within 24-48 hours."}
+            {isFr ? "Décrivez votre projet et notre équipe DMC locale vous répondra sous 24-48h." : "Describe your project and our local Morocco DMC team will respond within 24-48 hours."}
           </p>
         </div>
       </section>
@@ -92,10 +96,10 @@ export default function Quote() {
               <div className="bg-white rounded-2xl shadow-sm border border-[#E5E7EB] p-6">
                 <h3 className="font-serif text-lg font-bold text-[#1F2937] mb-4">{isFr ? "Pour agences et MICE" : "For agencies and MICE"}</h3>
                 <ul className="space-y-3 text-sm text-[#6B7280]">
-                  <li>{isFr ? "Reponse sous 24-48h, sans engagement" : "24-48h response, no commitment"}</li>
-                  <li>{isFr ? "Pour agences, tour-operateurs et planners MICE" : "For agencies, tour operators and MICE planners"}</li>
+                  <li>{isFr ? "Réponse sous 24-48h, sans engagement" : "24-48h response, no commitment"}</li>
+                  <li>{isFr ? "Pour agences, tour-opérateurs et planners MICE" : "For agencies, tour operators and MICE planners"}</li>
                   <li>{isFr ? "Tarifs nets agences et programmes sur mesure" : "Net agency rates and tailor-made programs"}</li>
-                  <li>{isFr ? "Suivi par une equipe DMC locale au Maroc" : "Handled by a local Morocco DMC team"}</li>
+                  <li>{isFr ? "Suivi par une équipe DMC locale au Maroc" : "Handled by a local Morocco DMC team"}</li>
                   <li>{isFr ? "Assistance sur place pour les groupes" : "On-site support for groups"}</li>
                 </ul>
               </div>

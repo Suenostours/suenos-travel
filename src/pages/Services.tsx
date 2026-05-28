@@ -61,7 +61,7 @@ export default function Services() {
             </h2>
             <p className="mt-4 text-[#4B5563] max-w-2xl mx-auto">
               {isFr
-                ? "Envoyez-nous votre demande groupe et notre equipe locale preparera une proposition sur mesure avec des conditions adaptees aux agences."
+                ? "Envoyez-nous votre demande groupe et notre équipe locale préparera une proposition sur mesure avec des conditions adaptées aux agences."
                 : "Send us your group request and our local team will prepare a tailor-made proposal with agency-friendly conditions."}
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-4">

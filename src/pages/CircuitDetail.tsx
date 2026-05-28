@@ -259,7 +259,7 @@ export default function CircuitDetail() {
 
             <div className="space-y-6">
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 sticky top-24">
-                <h3 className="font-semibold text-[#1F2937] mb-4">{isFr ? "Réserver ce circuit" : "Book This Tour"}</h3>
+                <h3 className="font-semibold text-[#1F2937] mb-4">{isFr ? "Demander ce programme" : "Request this Program"}</h3>
                 <div className="space-y-3 text-sm">
                   {tour.duration && <div className="flex justify-between gap-4"><span className="text-[#6B7280]">{isFr ? "Durée" : "Duration"}</span><span className="font-medium">{tour.duration}</span></div>}
                   <div className="flex justify-between gap-4"><span className="text-[#6B7280]">{isFr ? "Type" : "Type"}</span><span className="font-medium capitalize">{formatType(tour.type)}</span></div>
@@ -267,7 +267,7 @@ export default function CircuitDetail() {
                 </div>
                 <Link to={quotePath} className="mt-6 block">
                   <Button className="w-full bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full">
-                    {isFr ? "Demander un devis" : "Request a Quote"}
+                    {isFr ? "Demander les tarifs nets" : "Request Net Rates"}
                   </Button>
                 </Link>
                 <a href="https://wa.me/212661925611" target="_blank" rel="noopener noreferrer" className="mt-3 block">

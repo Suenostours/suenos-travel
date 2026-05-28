@@ -1,16 +1,17 @@
 import { Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
 import SEO from "@/components/SEO";
+import { Button } from "@/components/ui/button";
 
 const destinations = [
-  { slug: "marrakech", name: "Marrakech", nameFr: "Marrakech", image: "/images/circuit-imperial.jpg", desc: "The red city — vibrant souks, stunning palaces, and the famous Jemaa el-Fnaa square.", descFr: "La ville rouge — souks vibrants, palais magnifiques et la célèbre place Jemaa el-Fnaa." },
+  { slug: "marrakech", name: "Marrakech", nameFr: "Marrakech", image: "/images/circuit-imperial.jpg", desc: "The red city - vibrant souks, stunning palaces, and the famous Jemaa el-Fnaa square.", descFr: "La ville rouge - souks vibrants, palais magnifiques et la célèbre place Jemaa el-Fnaa." },
   { slug: "fes", name: "Fes", nameFr: "Fès", image: "/images/circuit-grand.jpg", desc: "Morocco's spiritual and cultural heart, home to the world's oldest university.", descFr: "Le cœur spirituel et culturel du Maroc, abritant la plus ancienne université du monde." },
-  { slug: "casablanca", name: "Casablanca", nameFr: "Casablanca", image: "/images/about-riad.jpg", desc: "Morocco's economic capital — modern, cosmopolitan, with the iconic Hassan II Mosque.", descFr: "Capitale économique du Maroc — moderne, cosmopolite, avec la mosquée iconique Hassan II." },
+  { slug: "casablanca", name: "Casablanca", nameFr: "Casablanca", image: "/images/about-riad.jpg", desc: "Morocco's economic capital - modern, cosmopolitan, with the iconic Hassan II Mosque.", descFr: "Capitale économique du Maroc - moderne, cosmopolite, avec la mosquée iconique Hassan II." },
   { slug: "agadir", name: "Agadir", nameFr: "Agadir", image: "/images/circuit-honeymoon.jpg", desc: "Beautiful beaches, modern resorts, and year-round sunshine on the Atlantic coast.", descFr: "Belles plages, stations balnéaires modernes et soleil toute l'année sur la côte atlantique." },
   { slug: "essaouira", name: "Essaouira", nameFr: "Essaouira", image: "/images/circuit-luxury.jpg", desc: "A charming coastal town with fortified walls, art galleries, and fresh seafood.", descFr: "Une charmante ville côtière avec des remparts, des galeries d'art et des fruits de mer frais." },
-  { slug: "chefchaouen", name: "Chefchaouen", nameFr: "Chefchaouen", image: "/images/circuit-grand.jpg", desc: "The famous blue city nestled in the Rif Mountains — a photographer's dream.", descFr: "La célèbre ville bleue nichée dans les montagnes du Rif — le rêve d'un photographe." },
-  { slug: "merzouga", name: "Merzouga", nameFr: "Merzouga", image: "/images/circuit-sahara.jpg", desc: "Gateway to the Sahara — golden dunes, desert camps, and starlit nights.", descFr: "Porte du Sahara — dunes dorées, camps désert et nuits étoilées." },
-  { slug: "ouarzazate", name: "Ouarzazate", nameFr: "Ouarzazate", image: "/images/circuit-sahara.jpg", desc: "The Hollywood of Africa — film studios and the gateway to the desert.", descFr: "Le Hollywood de l'Afrique — studios de cinéma et porte du désert." },
+  { slug: "chefchaouen", name: "Chefchaouen", nameFr: "Chefchaouen", image: "/images/circuit-grand.jpg", desc: "The famous blue city nestled in the Rif Mountains - a photographer's dream.", descFr: "La célèbre ville bleue nichée dans les montagnes du Rif - le rêve d'un photographe." },
+  { slug: "merzouga", name: "Merzouga", nameFr: "Merzouga", image: "/images/circuit-sahara.jpg", desc: "Gateway to the Sahara - golden dunes, desert camps, and starlit nights.", descFr: "Porte du Sahara - dunes dorées, camps désert et nuits étoilées." },
+  { slug: "ouarzazate", name: "Ouarzazate", nameFr: "Ouarzazate", image: "/images/circuit-sahara.jpg", desc: "The Hollywood of Africa - film studios and the gateway to the desert.", descFr: "Le Hollywood de l'Afrique - studios de cinéma et porte du désert." },
 ];
 
 export default function Destinations() {
@@ -51,6 +52,29 @@ export default function Destinations() {
                 </div>
               </Link>
             ))}
+          </div>
+
+          <div className="mt-12 text-center bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+            <h2 className="font-serif text-2xl font-bold text-[#1F2937]">
+              {isFr ? "Besoin d'un programme Maroc par destination ?" : "Need a destination-based Morocco program?"}
+            </h2>
+            <p className="mt-3 text-[#4B5563] max-w-2xl mx-auto">
+              {isFr
+                ? "Combinez Marrakech, Fès, le Sahara, la côte Atlantique ou les montagnes dans un itinéraire adapté à votre agence ou groupe."
+                : "Combine Marrakech, Fes, the Sahara, the Atlantic coast or the mountains in an itinerary adapted for your agency or group."}
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-4">
+              <Link to="/circuits">
+                <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                  {isFr ? "Voir les circuits" : "View Circuits"}
+                </Button>
+              </Link>
+              <Link to="/quote">
+                <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+                  {isFr ? "Demander un devis" : "Request a Quote"}
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

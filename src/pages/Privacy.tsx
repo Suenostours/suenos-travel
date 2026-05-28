@@ -1,12 +1,14 @@
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 
 export default function Privacy() {
   return (
     <>
-      <Helmet>
-        <title>Privacy Policy | Suenos Travel</title>
-        <meta name="description" content="Privacy policy of Suenos Travel DMC Morocco." />
-      </Helmet>
+      <SEO
+        title="Privacy Policy | Suenos Travel"
+        description="Privacy policy of Suenos Travel DMC Morocco."
+        canonical="/privacy"
+        noindex
+      />
 
       <section className="bg-[#F9F7F4] py-16 md:py-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">

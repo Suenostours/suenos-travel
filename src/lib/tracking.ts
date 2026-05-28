@@ -37,3 +37,7 @@ export function trackLeadEvent(eventName: string, params?: EventParams) {
 export function trackContactFormSubmit() {
   trackLeadEvent("contact_form_submit");
 }
+
+export function trackQuoteFormSubmit() {
+  trackLeadEvent("quote_form_submit");
+}

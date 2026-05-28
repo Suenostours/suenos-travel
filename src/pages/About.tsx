@@ -16,7 +16,6 @@ export default function About() {
       />
 
       <section className="bg-[#F9F7F4]">
-        {/* Hero */}
         <div className="relative h-[300px] md:h-[400px]">
           <img src="/images/about-riad.jpg" alt="Morocco" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -58,7 +57,6 @@ export default function About() {
             </div>
           </div>
 
-          {/* Values */}
           <div className="text-center mb-12">
             <h2 className="font-serif text-3xl font-bold text-[#1F2937]">
               {isFr ? "Nos Valeurs" : "Our Values"}

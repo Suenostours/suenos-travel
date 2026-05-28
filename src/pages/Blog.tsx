@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
 import SEO from "@/components/SEO";
+import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Tag } from "lucide-react";
 
 const blogPosts = [
@@ -88,6 +89,29 @@ export default function Blog() {
                 </div>
               </Link>
             ))}
+          </div>
+
+          <div className="mt-12 text-center bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+            <h2 className="font-serif text-2xl font-bold text-[#1F2937]">
+              {isFr ? "Vous préparez un programme Maroc ?" : "Planning a Morocco program?"}
+            </h2>
+            <p className="mt-3 text-[#4B5563] max-w-2xl mx-auto">
+              {isFr
+                ? "Notre équipe DMC locale accompagne les agences, tour-opérateurs et groupes avec des propositions sur mesure."
+                : "Our local DMC team supports agencies, tour operators and groups with tailor-made proposals."}
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-4">
+              <Link to="/quote">
+                <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+                  {isFr ? "Demander un devis" : "Request a Quote"}
+                </Button>
+              </Link>
+              <Link to="/b2b">
+                <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                  {isFr ? "Devenir partenaire B2B" : "Become a B2B Partner"}
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

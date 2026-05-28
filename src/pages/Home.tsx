@@ -200,7 +200,7 @@ export default function Home() {
                 {t("about.title")}
               </h2>
               <p className="text-[#4B5563] leading-relaxed">
-                Based in Agadir and Casablanca, Suenos Travel is a fully licensed Moroccan DMC specializing in incoming tourism. We combine deep local expertise with international service standards to deliver seamless travel experiences for B2B partners worldwide.
+                Based in Agadir and Casablanca, Suenos Travel is a fully licensed Moroccan DMC specializing in incoming tourism. Our <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">Morocco DMC services</Link> combine deep local expertise with international service standards for B2B partners worldwide.
               </p>
               <p className="text-[#4B5563] leading-relaxed">
                 From tailor-made circuits to corporate events, desert expeditions to luxury escapes — we handle every detail on the ground so your clients enjoy Morocco to the fullest.
@@ -229,6 +229,9 @@ export default function Home() {
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#1F2937]">{t("services.title")}</h2>
             <p className="mt-4 text-[#4B5563] max-w-2xl mx-auto">
               Comprehensive ground services for travel agencies, tour operators, and corporate clients visiting Morocco.
+            </p>
+            <p className="mt-3 text-sm text-[#6B7280] max-w-3xl mx-auto">
+              Need net agency rates? Review our <Link to="/b2b" className="text-[#A91D2D] font-medium hover:underline">Morocco B2B partner</Link> conditions or <Link to="/quote" className="text-[#A91D2D] font-medium hover:underline">request a Morocco program</Link> for your next group.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

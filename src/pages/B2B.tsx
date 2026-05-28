@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
 import { trpc } from "@/providers/trpc";
 import SEO from "@/components/SEO";
@@ -89,6 +90,23 @@ export default function B2B() {
                   <li className="flex items-center gap-2"><Clock className="h-4 w-4 text-[#A91D2D]" /> {isFr ? "Coordination fournisseurs locaux" : "Local supplier coordination"}</li>
                   <li className="flex items-center gap-2"><Headphones className="h-4 w-4 text-[#A91D2D]" /> {isFr ? "Assistance sur place pour groupes" : "On-site assistance for groups"}</li>
                 </ul>
+                <div className="mt-5 pt-5 border-t border-gray-100 text-sm text-[#6B7280] space-y-2">
+                  <p>
+                    {isFr ? "Comparez nos " : "Compare our "}
+                    <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">
+                      {isFr ? "services DMC Maroc" : "Morocco DMC services"}
+                    </Link>
+                    {isFr ? ", " : ", "}
+                    <Link to="/circuits" className="text-[#A91D2D] font-medium hover:underline">
+                      {isFr ? "circuits pour agences" : "tours for agencies"}
+                    </Link>
+                    {isFr ? " et support " : " and "}
+                    <Link to="/mice" className="text-[#A91D2D] font-medium hover:underline">
+                      {isFr ? "MICE Maroc" : "Morocco MICE support"}
+                    </Link>
+                    .
+                  </p>
+                </div>
               </div>
             </div>
 

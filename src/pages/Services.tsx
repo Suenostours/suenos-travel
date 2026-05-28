@@ -41,6 +41,17 @@ export default function Services() {
                 ? "Services complets pour les agences de voyage, tour-opérateurs et clients corporate visitant le Maroc."
                 : "Comprehensive services for travel agencies, tour operators, and corporate clients visiting Morocco."}
             </p>
+            <p className="mt-3 text-sm text-[#6B7280] max-w-3xl mx-auto">
+              {isFr ? (
+                <>
+                  Pour vos demandes B2B, consultez nos <Link to="/circuits" className="text-[#A91D2D] font-medium hover:underline">circuits Maroc pour agences</Link>, notre support <Link to="/mice" className="text-[#A91D2D] font-medium hover:underline">MICE au Maroc</Link> ou nos conditions <Link to="/b2b" className="text-[#A91D2D] font-medium hover:underline">partenaire B2B Maroc</Link>.
+                </>
+              ) : (
+                <>
+                  For B2B requests, explore our <Link to="/circuits" className="text-[#A91D2D] font-medium hover:underline">Morocco tours for agencies</Link>, <Link to="/mice" className="text-[#A91D2D] font-medium hover:underline">Morocco MICE planning</Link> and <Link to="/b2b" className="text-[#A91D2D] font-medium hover:underline">Morocco B2B partner</Link> conditions.
+                </>
+              )}
+            </p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -73,6 +84,11 @@ export default function Services() {
               <Link to="/contact">
                 <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
                   {isFr ? "Nous contacter" : "Contact Us"}
+                </Button>
+              </Link>
+              <Link to="/b2b">
+                <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                  {isFr ? "Partenariat B2B" : "B2B Partnership"}
                 </Button>
               </Link>
             </div>

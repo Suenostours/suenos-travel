@@ -255,6 +255,23 @@ export default function CircuitDetail() {
                   )}
                 </div>
               )}
+
+              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                <h2 className="font-serif text-2xl font-bold text-[#1F2937] mb-3">
+                  {isFr ? "Support agence et groupes" : "Agency and Group Support"}
+                </h2>
+                <p className="text-[#4B5563] leading-relaxed">
+                  {isFr ? (
+                    <>
+                      Ce programme peut etre adapte avec nos <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">services DMC Maroc</Link>, conditions <Link to="/b2b" className="text-[#A91D2D] font-medium hover:underline">partenaire B2B</Link> et support <Link to="/mice" className="text-[#A91D2D] font-medium hover:underline">MICE Maroc</Link> pour groupes, incentives ou departs en serie.
+                    </>
+                  ) : (
+                    <>
+                      This program can be adapted with our <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">Morocco DMC services</Link>, <Link to="/b2b" className="text-[#A91D2D] font-medium hover:underline">B2B partner</Link> conditions and <Link to="/mice" className="text-[#A91D2D] font-medium hover:underline">Morocco MICE support</Link> for groups, incentives or series departures.
+                    </>
+                  )}
+                </p>
+              </div>
             </div>
 
             <div className="space-y-6">
@@ -273,6 +290,11 @@ export default function CircuitDetail() {
                 <a href="https://wa.me/212661925611" target="_blank" rel="noopener noreferrer" className="mt-3 block">
                   <Button variant="outline" className="w-full rounded-full">WhatsApp</Button>
                 </a>
+                <Link to="/b2b" className="mt-3 block">
+                  <Button variant="outline" className="w-full rounded-full">
+                    {isFr ? "Devenir partenaire B2B" : "Become a B2B Partner"}
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

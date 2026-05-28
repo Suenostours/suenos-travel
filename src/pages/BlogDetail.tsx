@@ -709,6 +709,9 @@ export default function BlogDetail() {
   const content = isFr ? post.contentFr : post.content;
   const canonicalPath = `/blog/${slug}`;
   const description = post.metaDescription ?? toMetaDescription(content);
+  const relatedPosts = Object.entries(blogPosts)
+    .filter(([relatedSlug, relatedPost]) => relatedSlug !== slug && relatedPost.category.includes("B2B"))
+    .slice(0, 2);
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -729,6 +732,30 @@ export default function BlogDetail() {
     },
     mainEntityOfPage: toAbsoluteUrl(canonicalPath),
   };
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: BASE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Blog",
+        item: `${BASE_URL}/blog`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: title,
+        item: toAbsoluteUrl(canonicalPath),
+      },
+    ],
+  };
 
   return (
     <>
@@ -741,6 +768,7 @@ export default function BlogDetail() {
       />
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(articleJsonLd)}</script>
+        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
       </Helmet>
 
       <section className="bg-[#F9F7F4]">
@@ -761,6 +789,13 @@ export default function BlogDetail() {
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <nav className="mb-6 text-sm text-[#6B7280]" aria-label="Breadcrumb">
+            <Link to="/" className="hover:text-[#A91D2D]">Home</Link>
+            <span className="mx-2">/</span>
+            <Link to="/blog" className="hover:text-[#A91D2D]">Blog</Link>
+            <span className="mx-2">/</span>
+            <span className="text-[#1F2937]">{title}</span>
+          </nav>
           <div className="flex items-center gap-4 text-sm text-[#6B7280] mb-8">
             <span className="flex items-center gap-1"><Calendar className="h-4 w-4" /> {post.date}</span>
             <div className="flex gap-2 flex-wrap">
@@ -801,6 +836,31 @@ export default function BlogDetail() {
               return <p key={i} className="mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: formatInline(paragraph) }} />;
             })}
           </article>
+
+          {relatedPosts.length > 0 && (
+            <div className="mt-10 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <h2 className="font-serif text-2xl font-bold text-[#1F2937] mb-4">
+                {isFr ? "Guides B2B liés" : "Related B2B Guides"}
+              </h2>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {relatedPosts.map(([relatedSlug, relatedPost]) => (
+                  <Link
+                    key={relatedSlug}
+                    to={`/blog/${relatedSlug}`}
+                    className="block rounded-xl border border-gray-100 p-4 hover:border-[#A91D2D]/40 hover:shadow-sm transition-all"
+                  >
+                    <p className="text-xs font-medium text-[#A91D2D] mb-2">{relatedPost.category}</p>
+                    <h3 className="font-semibold text-[#1F2937]">{isFr ? relatedPost.titleFr : relatedPost.title}</h3>
+                    <p className="mt-2 text-sm text-[#6B7280]">
+                      {relatedSlug.includes("dmc")
+                        ? "Morocco DMC services, incoming agency support and local operations."
+                        : "Morocco tours for agencies, net rates and B2B program workflow."}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="mt-12 bg-white rounded-2xl p-8 border border-gray-100 shadow-sm text-center">
             <h2 className="font-serif text-2xl font-bold text-[#1F2937]">

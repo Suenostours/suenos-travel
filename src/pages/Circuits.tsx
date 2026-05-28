@@ -90,6 +90,17 @@ export default function Circuits() {
                 ? "Tous les programmes peuvent etre adaptes pour groupes prives, departs en serie, incentives et demandes white-label agence."
                 : "All programs can be adapted for private groups, series departures, incentives and agency white-label requests."}
             </p>
+            <p className="mt-3 text-sm text-[#6B7280] max-w-3xl mx-auto">
+              {locale === "fr" ? (
+                <>
+                  Nos <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">services DMC Maroc</Link> couvrent transport, guides, hotels, desert et <Link to="/mice" className="text-[#A91D2D] font-medium hover:underline">voyages incentive Maroc</Link> pour vos groupes.
+                </>
+              ) : (
+                <>
+                  Our <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">Morocco DMC services</Link> cover transport, guides, hotels, desert programs and <Link to="/mice" className="text-[#A91D2D] font-medium hover:underline">Morocco incentive travel</Link> for agency groups.
+                </>
+              )}
+            </p>
           </div>
 
           <div className="flex flex-wrap justify-center gap-2 mb-12">
@@ -185,6 +196,11 @@ export default function Circuits() {
               <Link to="/b2b">
                 <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
                   {locale === "fr" ? "Devenir partenaire B2B" : "Become a B2B Partner"}
+                </Button>
+              </Link>
+              <Link to="/services">
+                <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                  {locale === "fr" ? "Voir les services DMC" : "View DMC Services"}
                 </Button>
               </Link>
             </div>

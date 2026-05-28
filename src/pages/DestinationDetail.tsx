@@ -141,6 +141,22 @@ export default function DestinationDetail() {
                 <h2 className="font-serif text-2xl font-bold text-[#1F2937] mb-4">{isFr ? "Meilleure période" : "Best Time to Visit"}</h2>
                 <p className="text-[#4B5563] leading-relaxed">{isFr ? dest.bestTimeFr : dest.bestTime}</p>
               </div>
+              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                <h2 className="font-serif text-2xl font-bold text-[#1F2937] mb-3">
+                  {isFr ? "Planification B2B" : "B2B Program Planning"}
+                </h2>
+                <p className="text-[#4B5563] leading-relaxed">
+                  {isFr ? (
+                    <>
+                      Integrez {title} dans un <Link to="/circuits" className="text-[#A91D2D] font-medium hover:underline">circuit Maroc pour agences</Link>, une demande <Link to="/quote" className="text-[#A91D2D] font-medium hover:underline">tarifs nets</Link> ou un programme avec nos <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">services incoming Maroc</Link>.
+                    </>
+                  ) : (
+                    <>
+                      Add {title} to a <Link to="/circuits" className="text-[#A91D2D] font-medium hover:underline">Morocco tour for agencies</Link>, a <Link to="/quote" className="text-[#A91D2D] font-medium hover:underline">request for net rates</Link> or a program supported by our <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">Morocco incoming agency services</Link>.
+                    </>
+                  )}
+                </p>
+              </div>
             </div>
 
             <div className="space-y-6">
@@ -154,6 +170,11 @@ export default function DestinationDetail() {
                 <Link to="/circuits" className="mt-3 block">
                   <Button variant="outline" className="w-full rounded-full">
                     {isFr ? "Voir les circuits liés" : "View Related Circuits"}
+                  </Button>
+                </Link>
+                <Link to="/b2b" className="mt-3 block">
+                  <Button variant="outline" className="w-full rounded-full">
+                    {isFr ? "Partenariat B2B" : "B2B Partnership"}
                   </Button>
                 </Link>
                 <a href="https://wa.me/212661925611" target="_blank" rel="noopener noreferrer" className="mt-3 block">

@@ -37,6 +37,17 @@ export default function MICE() {
                 ? "Planification professionnelle d'événements corporate au Maroc : réunions, incentives, conférences et team building."
                 : "Professional corporate event planning in Morocco: meetings, incentives, conferences, and team building."}
             </p>
+            <p className="mt-3 text-sm text-gray-400 max-w-3xl mx-auto">
+              {isFr ? (
+                <>
+                  Pour une operation complete, combinez notre support <Link to="/services" className="text-[#E8A0A0] font-medium hover:underline">DMC Maroc</Link> avec des <Link to="/circuits" className="text-[#E8A0A0] font-medium hover:underline">programmes groupes Maroc</Link> et conditions <Link to="/b2b" className="text-[#E8A0A0] font-medium hover:underline">partenaire B2B</Link>.
+                </>
+              ) : (
+                <>
+                  For complete operations, combine our <Link to="/services" className="text-[#E8A0A0] font-medium hover:underline">Morocco DMC services</Link> with <Link to="/circuits" className="text-[#E8A0A0] font-medium hover:underline">Morocco group travel programs</Link> and <Link to="/b2b" className="text-[#E8A0A0] font-medium hover:underline">B2B partner</Link> conditions.
+                </>
+              )}
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
@@ -71,6 +82,11 @@ export default function MICE() {
                   WhatsApp
                 </Button>
               </a>
+              <Link to="/b2b">
+                <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-full px-8">
+                  {isFr ? "Partenariat B2B" : "B2B Partnership"}
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

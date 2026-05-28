@@ -36,6 +36,17 @@ export default function Destinations() {
                 ? "Découvrez les plus belles destinations du Maroc, de la médina de Marrakech aux dunes du Sahara."
                 : "Discover Morocco's most beautiful destinations, from Marrakech's medina to the Sahara dunes."}
             </p>
+            <p className="mt-3 text-sm text-[#6B7280] max-w-3xl mx-auto">
+              {isFr ? (
+                <>
+                  Pour la planification de groupes, combinez ces destinations avec nos <Link to="/circuits" className="text-[#A91D2D] font-medium hover:underline">circuits Maroc B2B</Link> et nos <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">services incoming Maroc</Link>.
+                </>
+              ) : (
+                <>
+                  For group tour planning, combine these destinations with our <Link to="/circuits" className="text-[#A91D2D] font-medium hover:underline">Morocco B2B circuits</Link> and <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">Morocco incoming agency services</Link>.
+                </>
+              )}
+            </p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

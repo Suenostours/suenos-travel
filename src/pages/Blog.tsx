@@ -6,6 +6,26 @@ import { ArrowRight, Calendar, Tag } from "lucide-react";
 
 const blogPosts = [
   {
+    slug: "what-does-a-morocco-dmc-do-for-travel-agencies",
+    title: "What Does a Morocco DMC Do for Travel Agencies?",
+    titleFr: "What Does a Morocco DMC Do for Travel Agencies?",
+    image: "/images/about-riad.jpg",
+    date: "2026-05-28",
+    category: "B2B Guide",
+    excerpt: "A practical guide for travel agencies, tour operators and MICE planners on how a Morocco DMC manages programs, suppliers, net rates and operations.",
+    excerptFr: "A practical guide for travel agencies, tour operators and MICE planners on how a Morocco DMC manages programs, suppliers, net rates and operations.",
+  },
+  {
+    slug: "morocco-tours-for-travel-agencies-b2b-programs",
+    title: "Morocco Tours for Travel Agencies: How B2B Programs Work",
+    titleFr: "Morocco Tours for Travel Agencies: How B2B Programs Work",
+    image: "/images/circuit-imperial.jpg",
+    date: "2026-05-28",
+    category: "B2B Tours",
+    excerpt: "Learn how B2B Morocco tour programs are built for agencies: itinerary design, net rates, white-label support, group logistics and quote workflow.",
+    excerptFr: "Learn how B2B Morocco tour programs are built for agencies: itinerary design, net rates, white-label support, group logistics and quote workflow.",
+  },
+  {
     slug: "morocco-travel-guide-2026",
     title: "Morocco Travel Guide 2026",
     titleFr: "Guide de Voyage Maroc 2026",

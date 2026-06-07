@@ -4,14 +4,16 @@ import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 
 const destinations = [
-  { slug: "marrakech", name: "Marrakech", nameFr: "Marrakech", image: "/images/circuit-imperial.jpg", desc: "The red city - vibrant souks, stunning palaces, and the famous Jemaa el-Fnaa square.", descFr: "La ville rouge - souks vibrants, palais magnifiques et la célèbre place Jemaa el-Fnaa." },
-  { slug: "fes", name: "Fes", nameFr: "Fès", image: "/images/circuit-grand.jpg", desc: "Morocco's spiritual and cultural heart, home to the world's oldest university.", descFr: "Le cœur spirituel et culturel du Maroc, abritant la plus ancienne université du monde." },
-  { slug: "casablanca", name: "Casablanca", nameFr: "Casablanca", image: "/images/about-riad.jpg", desc: "Morocco's economic capital - modern, cosmopolitan, with the iconic Hassan II Mosque.", descFr: "Capitale économique du Maroc - moderne, cosmopolite, avec la mosquée iconique Hassan II." },
-  { slug: "agadir", name: "Agadir", nameFr: "Agadir", image: "/images/circuit-honeymoon.jpg", desc: "Beautiful beaches, modern resorts, and year-round sunshine on the Atlantic coast.", descFr: "Belles plages, stations balnéaires modernes et soleil toute l'année sur la côte atlantique." },
-  { slug: "essaouira", name: "Essaouira", nameFr: "Essaouira", image: "/images/circuit-luxury.jpg", desc: "A charming coastal town with fortified walls, art galleries, and fresh seafood.", descFr: "Une charmante ville côtière avec des remparts, des galeries d'art et des fruits de mer frais." },
-  { slug: "chefchaouen", name: "Chefchaouen", nameFr: "Chefchaouen", image: "/images/circuit-grand.jpg", desc: "The famous blue city nestled in the Rif Mountains - a photographer's dream.", descFr: "La célèbre ville bleue nichée dans les montagnes du Rif - le rêve d'un photographe." },
-  { slug: "merzouga", name: "Merzouga", nameFr: "Merzouga", image: "/images/circuit-sahara.jpg", desc: "Gateway to the Sahara - golden dunes, desert camps, and starlit nights.", descFr: "Porte du Sahara - dunes dorées, camps désert et nuits étoilées." },
-  { slug: "ouarzazate", name: "Ouarzazate", nameFr: "Ouarzazate", image: "/images/circuit-sahara.jpg", desc: "The Hollywood of Africa - film studios and the gateway to the desert.", descFr: "Le Hollywood de l'Afrique - studios de cinéma et porte du désert." },
+  { slug: "marrakech", name: "Marrakech", nameFr: "Marrakech", image: "/images/circuit-imperial.jpg", desc: "The red city for culture, incentives, Agafay events, Atlas excursions and agency programs.", descFr: "La ville rouge pour culture, incentives, événements à Agafay, excursions Atlas et programmes agences." },
+  { slug: "fes", name: "Fes", nameFr: "Fès", image: "/images/circuit-grand.jpg", desc: "Morocco's spiritual and cultural heart for medina tours, heritage routes and group programs.", descFr: "Le cœur spirituel et culturel du Maroc pour médina, patrimoine et programmes groupes." },
+  { slug: "casablanca", name: "Casablanca", nameFr: "Casablanca", image: "/images/about-riad.jpg", desc: "Morocco's business and airport gateway for corporate travel, arrivals and short extensions.", descFr: "La porte business et aérienne du Maroc pour corporate, arrivées et extensions courtes." },
+  { slug: "agadir", name: "Agadir", nameFr: "Agadir", image: "/images/circuit-honeymoon.jpg", desc: "Atlantic resort base for leisure groups, golf, retreats and Souss Massa excursions.", descFr: "Base balnéaire Atlantique pour groupes loisirs, golf, retraites et excursions Souss Massa." },
+  { slug: "essaouira", name: "Essaouira", nameFr: "Essaouira", image: "/images/circuit-luxury.jpg", desc: "A coastal extension with medina heritage, art, Atlantic activities and relaxed pacing.", descFr: "Une extension côtière avec médina, art, activités Atlantique et rythme détendu." },
+  { slug: "chefchaouen", name: "Chefchaouen", nameFr: "Chefchaouen", image: "/images/circuit-grand.jpg", desc: "The blue Rif Mountain city for photography, northern routes and private cultural programs.", descFr: "La ville bleue du Rif pour photographie, routes nord et programmes culturels privés." },
+  { slug: "merzouga", name: "Merzouga", nameFr: "Merzouga", image: "/images/circuit-sahara.jpg", desc: "Gateway to Erg Chebbi for Sahara camps, camel trekking and premium desert experiences.", descFr: "Porte d'Erg Chebbi pour camps Sahara, dromadaires et expériences désert premium." },
+  { slug: "ouarzazate", name: "Ouarzazate", nameFr: "Ouarzazate", image: "/images/circuit-sahara.jpg", desc: "Kasbah country and film heritage gateway between Marrakech, valleys and the Sahara.", descFr: "Pays des kasbahs et cinéma entre Marrakech, vallées et Sahara." },
+  { slug: "rabat", name: "Rabat", nameFr: "Rabat", image: "/images/about-riad.jpg", desc: "Morocco's capital for royal heritage, diplomatic visits, coastal culture and imperial routes.", descFr: "Capitale du Maroc pour patrimoine royal, visites diplomatiques, côte et routes impériales." },
+  { slug: "tangier", name: "Tangier", nameFr: "Tanger", image: "/images/circuit-grand.jpg", desc: "Northern Morocco gateway for Spain-linked programs, Chefchaouen, Tetouan and coastal extensions.", descFr: "Porte nord du Maroc pour programmes liés à l'Espagne, Chefchaouen, Tétouan et extensions côtières." },
 ];
 
 export default function Destinations() {
@@ -22,7 +24,7 @@ export default function Destinations() {
     <>
       <SEO
         title="Morocco Destinations for B2B Tours | Suenos Travel DMC"
-        description="Plan Morocco programs for agencies and groups across Marrakech, Fes, Casablanca, Agadir, Essaouira, the Atlas Mountains and Sahara."
+        description="Plan Morocco programs for agencies and groups across Marrakech, Fes, Casablanca, Rabat, Tangier, Agadir, Essaouira, the Atlas Mountains and Sahara."
         canonical="/destinations"
         image="/images/circuit-imperial.jpg"
       />
@@ -33,8 +35,8 @@ export default function Destinations() {
             <h1 className="font-serif text-4xl md:text-5xl font-bold text-[#1F2937]">Destinations</h1>
             <p className="mt-4 text-[#4B5563] max-w-2xl mx-auto">
               {isFr
-                ? "Découvrez les plus belles destinations du Maroc, de la médina de Marrakech aux dunes du Sahara."
-                : "Discover Morocco's most beautiful destinations, from Marrakech's medina to the Sahara dunes."}
+                ? "Découvrez les destinations clés du Maroc pour circuits, groupes, incentives et programmes B2B."
+                : "Discover Morocco's key destinations for circuits, groups, incentives and B2B programs."}
             </p>
             <p className="mt-3 text-sm text-[#6B7280] max-w-3xl mx-auto">
               {isFr ? (

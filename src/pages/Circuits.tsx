@@ -97,7 +97,7 @@ export default function Circuits() {
                 </>
               ) : (
                 <>
-                  Our <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">Morocco DMC services</Link> cover transport, guides, hotels, desert programs and <Link to="/mice" className="text-[#A91D2D] font-medium hover:underline">Morocco incentive travel</Link> for agency groups.
+                  Our <Link to="/dmc-morocco" className="text-[#A91D2D] font-medium hover:underline">DMC Morocco</Link> services cover transport, guides, hotels, desert programs, <Link to="/morocco-group-tours" className="text-[#A91D2D] font-medium hover:underline">Morocco group tours</Link> and <Link to="/mice-morocco" className="text-[#A91D2D] font-medium hover:underline">Morocco incentive travel</Link> for agency groups.
                 </>
               )}
             </p>

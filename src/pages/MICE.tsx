@@ -44,7 +44,7 @@ export default function MICE() {
                 </>
               ) : (
                 <>
-                  For complete operations, combine our <Link to="/services" className="text-[#E8A0A0] font-medium hover:underline">Morocco DMC services</Link> with <Link to="/circuits" className="text-[#E8A0A0] font-medium hover:underline">Morocco group travel programs</Link> and <Link to="/b2b" className="text-[#E8A0A0] font-medium hover:underline">B2B partner</Link> conditions.
+                  For complete operations, combine our <Link to="/mice-morocco" className="text-[#E8A0A0] font-medium hover:underline">MICE Morocco DMC</Link> support with <Link to="/morocco-group-tours" className="text-[#E8A0A0] font-medium hover:underline">Morocco group travel programs</Link>, <Link to="/dmc-morocco" className="text-[#E8A0A0] font-medium hover:underline">Morocco DMC services</Link> and <Link to="/b2b" className="text-[#E8A0A0] font-medium hover:underline">B2B partner</Link> conditions.
                 </>
               )}
             </p>

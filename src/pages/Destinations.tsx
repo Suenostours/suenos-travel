@@ -45,7 +45,7 @@ export default function Destinations() {
                 </>
               ) : (
                 <>
-                  For group tour planning, combine these destinations with our <Link to="/circuits" className="text-[#A91D2D] font-medium hover:underline">Morocco B2B circuits</Link> and <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">Morocco incoming agency services</Link>.
+                  For group tour planning, combine these destinations with our <Link to="/morocco-tours-for-travel-agencies" className="text-[#A91D2D] font-medium hover:underline">Morocco tours for travel agencies</Link>, <Link to="/morocco-group-tours" className="text-[#A91D2D] font-medium hover:underline">Morocco group tours</Link> and <Link to="/incoming-agency-morocco" className="text-[#A91D2D] font-medium hover:underline">Morocco incoming agency services</Link>.
                 </>
               )}
             </p>

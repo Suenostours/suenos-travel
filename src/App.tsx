@@ -16,6 +16,13 @@ import Contact from "@/pages/Contact";
 import Quote from "@/pages/Quote";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
+import {
+  DmcMoroccoLanding,
+  IncomingAgencyMoroccoLanding,
+  MoroccoGroupToursLanding,
+  MoroccoToursForTravelAgenciesLanding,
+  MiceMoroccoLanding,
+} from "@/pages/SEOLandingPage";
 import AdminLogin from "@/pages/AdminLogin";
 import AdminDashboard from "@/pages/AdminDashboard";
 import NotFound from "@/pages/NotFound";
@@ -52,6 +59,11 @@ export default function App() {
           <Route path="/quote" element={<Quote />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/dmc-morocco" element={<DmcMoroccoLanding />} />
+          <Route path="/incoming-agency-morocco" element={<IncomingAgencyMoroccoLanding />} />
+          <Route path="/morocco-tours-for-travel-agencies" element={<MoroccoToursForTravelAgenciesLanding />} />
+          <Route path="/morocco-group-tours" element={<MoroccoGroupToursLanding />} />
+          <Route path="/mice-morocco" element={<MiceMoroccoLanding />} />
         </Route>
 
         {/* Admin Routes */}

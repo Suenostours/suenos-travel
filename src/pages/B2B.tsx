@@ -93,16 +93,16 @@ export default function B2B() {
                 <div className="mt-5 pt-5 border-t border-gray-100 text-sm text-[#6B7280] space-y-2">
                   <p>
                     {isFr ? "Comparez nos " : "Compare our "}
-                    <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">
-                      {isFr ? "services DMC Maroc" : "Morocco DMC services"}
+                    <Link to="/dmc-morocco" className="text-[#A91D2D] font-medium hover:underline">
+                      {isFr ? "services DMC Maroc" : "DMC Morocco services"}
                     </Link>
                     {isFr ? ", " : ", "}
-                    <Link to="/circuits" className="text-[#A91D2D] font-medium hover:underline">
-                      {isFr ? "circuits pour agences" : "tours for agencies"}
+                    <Link to="/morocco-tours-for-travel-agencies" className="text-[#A91D2D] font-medium hover:underline">
+                      {isFr ? "circuits pour agences" : "Morocco tours for travel agencies"}
                     </Link>
                     {isFr ? " et support " : " and "}
-                    <Link to="/mice" className="text-[#A91D2D] font-medium hover:underline">
-                      {isFr ? "MICE Maroc" : "Morocco MICE support"}
+                    <Link to="/mice-morocco" className="text-[#A91D2D] font-medium hover:underline">
+                      {isFr ? "MICE Maroc" : "MICE Morocco support"}
                     </Link>
                     .
                   </p>

@@ -18,7 +18,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#0F172A] text-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
           {/* Col 1: Brand */}
           <div className="space-y-4">
             <h3 className="text-xl font-serif font-semibold text-white">
@@ -65,7 +65,32 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 3: Company */}
+          {/* Col 3: B2B SEO Links */}
+          <div>
+            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
+              B2B Morocco Services
+            </h4>
+            <ul className="space-y-2.5">
+              {[
+                { label: "DMC Morocco", path: "/dmc-morocco" },
+                { label: "Incoming Agency Morocco", path: "/incoming-agency-morocco" },
+                { label: "Tours for Travel Agencies", path: "/morocco-tours-for-travel-agencies" },
+                { label: "Morocco Group Tours", path: "/morocco-group-tours" },
+                { label: "MICE Morocco", path: "/mice-morocco" },
+              ].map((item) => (
+                <li key={item.path}>
+                  <Link
+                    to={item.path}
+                    className="text-sm text-gray-400 hover:text-white transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Col 4: Company */}
           <div>
             <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
               {t("footer.company")}
@@ -89,7 +114,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 4: Get Started */}
+          {/* Col 5: Get Started */}
           <div>
             <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
               {t("footer.getstarted")}

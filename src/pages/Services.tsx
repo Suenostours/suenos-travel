@@ -48,7 +48,7 @@ export default function Services() {
                 </>
               ) : (
                 <>
-                  For B2B requests, explore our <Link to="/circuits" className="text-[#A91D2D] font-medium hover:underline">Morocco tours for agencies</Link>, <Link to="/mice" className="text-[#A91D2D] font-medium hover:underline">Morocco MICE planning</Link> and <Link to="/b2b" className="text-[#A91D2D] font-medium hover:underline">Morocco B2B partner</Link> conditions.
+                  For B2B requests, explore our <Link to="/dmc-morocco" className="text-[#A91D2D] font-medium hover:underline">DMC Morocco</Link> support, <Link to="/incoming-agency-morocco" className="text-[#A91D2D] font-medium hover:underline">incoming agency Morocco</Link> services, <Link to="/morocco-tours-for-travel-agencies" className="text-[#A91D2D] font-medium hover:underline">Morocco tours for agencies</Link>, <Link to="/mice-morocco" className="text-[#A91D2D] font-medium hover:underline">MICE Morocco</Link> planning and <Link to="/b2b" className="text-[#A91D2D] font-medium hover:underline">Morocco B2B partner</Link> conditions.
                 </>
               )}
             </p>

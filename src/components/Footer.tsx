@@ -22,12 +22,12 @@ export default function Footer() {
           {/* Col 1: Brand */}
           <div className="space-y-4">
             <h3 className="text-xl font-serif font-semibold text-white">
-              Suenos Travel
+              Morocco Incoming by Suenos Travel
             </h3>
             <p className="text-sm text-gray-400 leading-relaxed">
-              Your trusted DMC partner in Morocco. Licensed agency and IATA
-              member. Tailor-made travel experiences for international agencies,
-              tour operators, and corporate groups.
+              Licensed Morocco DMC and incoming agency for international agencies,
+              tour operators, MICE planners, and corporate groups. Based in
+              Agadir &amp; Casablanca.
             </p>
             <div className="flex flex-wrap items-center gap-2 text-sm">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#A91D2D]/20 text-[#E8A0A0] text-xs font-medium">

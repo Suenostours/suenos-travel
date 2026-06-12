@@ -29,6 +29,14 @@ type LandingPageData = {
   useCases: string[];
   localDmcTitle: string;
   localDmcText: string;
+  trustItems?: string[];
+  contentSections?: {
+    title: string;
+    intro?: string;
+    items?: { title: string; description: string; path?: string }[];
+    text?: string;
+  }[];
+  processSteps?: string[];
   faq: { question: string; answer: string }[];
 };
 
@@ -40,7 +48,7 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
     metaDescription: "Local Morocco DMC for travel agencies, tour operators, groups and MICE. Tailor-made programs, net agency rates and on-site support.",
     h1: "DMC Morocco for Travel Agencies and Tour Operators",
     eyebrow: "Local Morocco destination management company",
-    intro: "Suenos Travel supports foreign travel agencies, tour operators and MICE planners with Morocco programs built for B2B needs: realistic routing, reliable suppliers, net agency rates and local operational support.",
+    intro: "Morocco Incoming by Suenos Travel supports foreign travel agencies, tour operators and MICE planners with Morocco programs built for B2B needs: realistic routing, reliable suppliers, net agency rates and local operational support from a local DMC in Morocco.",
     whyTitle: "Why a Morocco DMC matters for agencies",
     whyText: "Morocco is easy to sell, but the operation can become complex: long driving distances, seasonal hotel demand, multilingual guiding, desert logistics, incentive venues and supplier coordination. A local DMC helps your agency protect quality, timing and client expectations from first quote to final departure.",
     providesTitle: "What Morocco Incoming by Suenos Travel provides",
@@ -59,10 +67,52 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
     ],
     localDmcTitle: "Why work with a local Moroccan DMC",
     localDmcText: "A Morocco-based team understands local timing, supplier reliability, regional differences and client expectations on the ground. That helps agencies quote faster, avoid weak routing, and deliver programs with stronger operational control.",
+    trustItems: [
+      "Licensed Moroccan Travel Agency & DMC",
+      "Licence ODV-0564",
+      "IATA 54273844",
+      "Agadir & Casablanca",
+      "Dedicated B2B incoming division",
+      "Net agency rates",
+      "White-label programs",
+      "24-48h quote response",
+      "On-site support",
+    ],
+    contentSections: [
+      {
+        title: "What does a DMC in Morocco handle for agencies?",
+        intro: "A Destination Management Company in Morocco connects the full local operation for foreign travel agencies, tour operators, groups and MICE planners.",
+        items: [
+          { title: "Hotels & riads", description: "Sourcing and coordination for hotels, riads, resorts and desert camps according to the agency brief." },
+          { title: "Licensed guides", description: "Multilingual licensed guides for city visits, cultural tours, group circuits and specialist programs." },
+          { title: "Private transport", description: "Airport transfers, private vehicles, coaches, VIP transfers and multi-city routing across Morocco." },
+          { title: "Group logistics", description: "Timing, luggage flow, meal planning, check-in coordination and supplier follow-up for agency groups." },
+          { title: "Sahara camps", description: "Operational planning for Merzouga or desert-style extensions with realistic routing and camp matching." },
+          { title: "MICE & incentives", description: "Support for meetings, incentives, gala dinners, team building, delegate movement and corporate extensions.", path: "/mice-morocco" },
+          { title: "Restaurants & meals", description: "Group meals, special dinners, dietary coordination and local restaurant planning." },
+          { title: "Excursions & experiences", description: "Guided visits, Atlas excursions, Agafay events, cooking classes, coastal trips and local experiences." },
+          { title: "On-site assistance", description: "Local support during operations so agencies have one Morocco DMC contact responsible for delivery." },
+        ],
+      },
+      {
+        title: "DMC Morocco services by destination",
+        intro: "Our Morocco DMC services adapt by city and region, from cultural circuits to desert programs, coastal stays and MICE operations.",
+        items: [
+          { title: "Marrakech DMC services", description: "Incentives, Agafay dinners, Atlas excursions, riads, events and private city programs.", path: "/destinations/marrakech" },
+          { title: "Fes cultural programs", description: "Medina visits, heritage routing, Meknes, Volubilis and northern Morocco extensions.", path: "/destinations/fes" },
+          { title: "Casablanca business travel", description: "Airport logistics, business groups, Rabat extensions and first or last nights.", path: "/destinations/casablanca" },
+          { title: "Agadir groups & retreats", description: "Beach resorts, golf, corporate retreats, Souss Massa and Anti-Atlas excursions.", path: "/destinations/agadir" },
+          { title: "Tangier northern routes", description: "Spain-linked programs, Chefchaouen, Tetouan, Asilah and Mediterranean extensions.", path: "/destinations/tangier" },
+          { title: "Merzouga Sahara programs", description: "Desert camps, camel trekking, 4x4 dunes and premium Sahara extensions.", path: "/destinations/merzouga" },
+          { title: "Ouarzazate kasbah routes", description: "Ait Ben Haddou, film studios, Skoura, Dades, Todra and desert-route logistics.", path: "/destinations/ouarzazate" },
+        ],
+      },
+    ],
     faq: [
-      { question: "What does a DMC in Morocco do for travel agencies?", answer: "A Morocco DMC coordinates local services such as hotels, guides, transport, excursions, MICE logistics and on-site assistance for agencies and tour operators." },
+      { question: "What does a DMC in Morocco do for travel agencies?", answer: "A Morocco DMC coordinates local services such as hotels, riads, licensed guides, private transport, excursions, restaurants, Sahara camps, MICE logistics and on-site assistance for agencies and tour operators." },
       { question: "Can Suenos Travel work with agency net rates?", answer: "Yes. We prepare B2B proposals with agency-friendly conditions and net rates according to the program, season, hotels and group profile." },
-      { question: "Do you support MICE and incentive groups?", answer: "Yes. We support meetings, incentives, corporate groups, gala dinners, team building, transfers and delegate logistics in Morocco." },
+      { question: "Is Morocco Incoming a local DMC in Morocco?", answer: "Yes. Morocco Incoming by Suenos Travel is the B2B incoming division of a licensed Moroccan travel agency with operations in Agadir and Casablanca." },
+      { question: "Do you support Morocco DMC programs for groups and MICE?", answer: "Yes. We support meetings, incentives, corporate groups, gala dinners, team building, transfers, delegate logistics and group circuits in Morocco." },
     ],
   },
   incomingAgencyMorocco: {
@@ -72,9 +122,9 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
     metaDescription: "Morocco incoming agency for foreign travel agencies, groups and tour operators. Hotels, guides, transport, circuits and tailor-made B2B services.",
     h1: "Incoming Agency in Morocco for B2B Travel Partners",
     eyebrow: "Morocco incoming services for agencies",
-    intro: "Morocco Incoming by Suenos Travel acts as a local incoming partner for agencies that need dependable ground handling, tailor-made circuits, group logistics and fast quotation support in Morocco.",
-    whyTitle: "Why incoming support matters",
-    whyText: "Foreign agencies need more than isolated supplier contacts. A strong incoming agency connects the full operation: arrival logistics, hotel allocations, transport timing, guides, visits, meals, local experiences and emergency support.",
+    intro: "Morocco Incoming by Suenos Travel acts as a local incoming agency Morocco partner for foreign agencies that need dependable ground handling, tailor-made circuits, group logistics and fast quotation support inside Morocco.",
+    whyTitle: "Why Incoming Morocco support matters",
+    whyText: "Foreign agencies need more than isolated supplier contacts. A strong Incoming Morocco partner connects the full operation: arrival logistics, hotel allocations, transport timing, guides, visits, meals, local experiences and emergency support.",
     providesTitle: "Incoming services we coordinate",
     provides: [
       "Ground handling for groups, private clients, series departures and corporate travel.",
@@ -91,10 +141,41 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
     ],
     localDmcTitle: "Why choose a local incoming agency",
     localDmcText: "Local presence helps control supplier communication, quality checks and last-minute adjustments. For agencies, that means fewer operational surprises and a clearer local partner responsible for delivery.",
+    trustItems: [
+      "Licensed Moroccan Travel Agency",
+      "Licence ODV-0564",
+      "IATA 54273844",
+      "Agadir & Casablanca",
+      "B2B incoming division",
+      "Net agency rates",
+      "24-48h quote response",
+      "On-site group support",
+    ],
+    contentSections: [
+      {
+        title: "Incoming agency vs DMC in Morocco",
+        text: "An incoming agency manages local services inside Morocco for foreign agencies and tour operators. A DMC usually also handles destination design, MICE, incentives and full local operations. Morocco Incoming combines both roles for B2B partners: incoming services, destination management, net-rate proposals and on-site support.",
+      },
+      {
+        title: "Incoming services by request type",
+        intro: "Every brief is different, so our incoming agency Morocco support adapts the routing, hotel level, guide language and logistics to the client profile.",
+        items: [
+          { title: "Series groups", description: "Repeat departures with consistent routing, hotel planning, guide coordination and supplier follow-up." },
+          { title: "Private FIT clients", description: "Tailor-made Morocco programs for private clients, families and premium travel designers." },
+          { title: "MICE and incentive groups", description: "Corporate extensions, incentive activities, delegate movement and event logistics.", path: "/mice-morocco" },
+          { title: "Luxury travel", description: "Premium riads, private guides, VIP transport, curated experiences and slower pacing." },
+          { title: "Student and cultural groups", description: "Educational routing, heritage visits, cultural guides and group-friendly logistics." },
+          { title: "Desert programs", description: "Merzouga, Ouarzazate, valleys, Sahara camps and realistic desert-route planning.", path: "/destinations/merzouga" },
+          { title: "Coastal extensions", description: "Essaouira, Agadir, Tangier and Atlantic coast add-ons for groups and private clients.", path: "/destinations/essaouira" },
+        ],
+      },
+    ],
+    processSteps: ["Brief", "Routing", "Net Quote", "Confirmation", "Operation", "Follow-up"],
     faq: [
-      { question: "What is an incoming agency in Morocco?", answer: "An incoming agency manages travel services inside Morocco for foreign agencies, tour operators, companies and groups." },
-      { question: "Can you handle both groups and private clients?", answer: "Yes. We prepare programs for private clients, leisure groups, MICE groups, family groups and agency series." },
-      { question: "How do agencies request a B2B proposal?", answer: "Agencies can send dates, group size, routing, hotel level, budget range and client profile through the quote or B2B form." },
+      { question: "What is an incoming agency in Morocco?", answer: "An incoming agency Morocco partner manages travel services inside Morocco for foreign agencies, tour operators, companies and groups." },
+      { question: "What is the difference between Incoming Morocco and a DMC?", answer: "Incoming Morocco services focus on local ground handling and travel operations. A DMC also designs destination programs, MICE, incentives and full local experiences. Morocco Incoming combines both roles for B2B partners." },
+      { question: "Can you handle both groups and private clients?", answer: "Yes. We prepare programs for private clients, leisure groups, MICE groups, family groups, cultural groups and agency series." },
+      { question: "How do agencies request a B2B incoming proposal?", answer: "Agencies can send dates, group size, routing, hotel level, budget range and client profile through the quote or B2B form." },
     ],
   },
   moroccoToursForTravelAgencies: {
@@ -187,9 +268,47 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
     ],
     localDmcTitle: "Why use a local DMC for MICE Morocco",
     localDmcText: "MICE programs need reliable local timing, supplier control and quick problem solving. A Morocco-based DMC supports agencies and planners with practical routing, trusted local partners and on-site follow-up.",
+    trustItems: [
+      "Licensed Moroccan Travel Agency & DMC",
+      "Licence ODV-0564",
+      "IATA 54273844",
+      "Agadir & Casablanca",
+      "B2B incoming and MICE support",
+      "Supplier coordination",
+      "24-48h quote response",
+      "On-site assistance",
+    ],
+    contentSections: [
+      {
+        title: "MICE Morocco destination examples",
+        intro: "Morocco offers different MICE moods by destination. We help agencies and planners match the location to the group objective, budget and timing.",
+        items: [
+          { title: "Marrakech incentives", description: "Riads, venues, city experiences, Atlas activities, gala dinners and premium incentive moments.", path: "/destinations/marrakech" },
+          { title: "Agafay desert dinners", description: "Sunset setups, desert-style dinners, entertainment and short transfers from Marrakech." },
+          { title: "Agadir corporate retreats", description: "Beach resorts, golf, relaxed excursions and retreat-friendly pacing on the Atlantic coast.", path: "/destinations/agadir" },
+          { title: "Casablanca business groups", description: "Airport logistics, business travel, meeting support and Rabat cultural extensions.", path: "/destinations/casablanca" },
+          { title: "Fes cultural extensions", description: "Medina heritage, artisan visits and imperial city content for pre/post event programs.", path: "/destinations/fes" },
+          { title: "Sahara or Atlas incentive extensions", description: "High-impact reward travel with desert camps, mountain scenery and adapted routing.", path: "/destinations/merzouga" },
+        ],
+      },
+      {
+        title: "MICE logistics handled by a local Morocco DMC",
+        intro: "Behind every smooth MICE program is a careful operations plan. Our local team coordinates the moving parts that agencies and planners need on the ground.",
+        items: [
+          { title: "Airport transfers", description: "Arrival and departure planning, VIP transfers, shuttles and group movement timing." },
+          { title: "Hotels and venues", description: "Hotel sourcing, venue suggestions, rooming coordination and event space matching." },
+          { title: "Delegate movement", description: "Coach planning, timing sheets, guide support and movement between venues, hotels and activities." },
+          { title: "Gala dinners", description: "Dinner venues, cultural touches, entertainment coordination and supplier follow-up." },
+          { title: "Team building", description: "Activities adapted to the group profile, timing, weather, mobility and program objective." },
+          { title: "Local assistance", description: "On-site coordination during the operation so the planner has local support when it matters." },
+          { title: "Supplier coordination", description: "Communication with transport, venues, guides, restaurants, hotels and activity providers." },
+        ],
+      },
+    ],
     faq: [
       { question: "Can you support incentive travel in Morocco?", answer: "Yes. We design and operate incentive programs with hotels, transport, experiences, dinners, team-building activities and local assistance." },
-      { question: "Which Moroccan destinations work well for MICE?", answer: "Marrakech, Agadir, Casablanca, Rabat, Fes, the Atlas Mountains, Agafay and selected Sahara extensions can work well depending on group needs." },
+      { question: "Which Moroccan destinations work well for MICE Morocco programs?", answer: "Marrakech, Agadir, Casablanca, Rabat, Fes, the Atlas Mountains, Agafay and selected Sahara extensions can work well depending on group needs." },
+      { question: "What MICE logistics can a Morocco DMC handle?", answer: "A Morocco DMC can coordinate airport transfers, hotels, venues, delegate movement, gala dinners, team building, local assistance and supplier coordination." },
       { question: "Do you work with foreign MICE agencies?", answer: "Yes. We support foreign MICE agencies, corporate planners and travel companies with local Morocco DMC services." },
     ],
   },
@@ -274,6 +393,23 @@ function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2 space-y-10">
+              {page.trustItems && (
+                <div className="bg-white rounded-2xl p-7 md:p-8 border border-gray-100 shadow-sm">
+                  <p className="text-sm font-semibold text-[#A91D2D]">Morocco Incoming by Suenos Travel</p>
+                  <h2 className="mt-2 font-serif text-2xl md:text-3xl font-bold text-[#1F2937]">
+                    Licensed local partner for B2B Morocco programs
+                  </h2>
+                  <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {page.trustItems.map((item) => (
+                      <div key={item} className="flex items-start gap-2 rounded-xl bg-[#F9F7F4] px-4 py-3 text-sm text-[#374151]">
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#A91D2D]" />
+                        <span>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="bg-white rounded-2xl p-7 md:p-8 border border-gray-100 shadow-sm">
                 <p className="text-sm font-semibold text-[#A91D2D]">{page.targetKeyword}</p>
                 <h2 className="mt-2 font-serif text-2xl md:text-3xl font-bold text-[#1F2937]">{page.whyTitle}</h2>
@@ -303,11 +439,50 @@ function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
                 </div>
               </div>
 
+              {page.contentSections?.map((section) => (
+                <div key={section.title} className="bg-white rounded-2xl p-7 md:p-8 border border-gray-100 shadow-sm">
+                  <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1F2937]">{section.title}</h2>
+                  {section.intro && <p className="mt-4 text-[#4B5563] leading-relaxed">{section.intro}</p>}
+                  {section.text && <p className="mt-4 text-[#4B5563] leading-relaxed">{section.text}</p>}
+                  {section.items && (
+                    <div className="mt-6 grid sm:grid-cols-2 gap-5">
+                      {section.items.map((item) => (
+                        item.path ? (
+                          <Link key={item.title} to={item.path} className="block rounded-2xl border border-gray-100 bg-[#F9F7F4] p-5 transition-all hover:border-[#A91D2D]/40 hover:shadow-sm">
+                            <h3 className="font-semibold text-[#1F2937]">{item.title}</h3>
+                            <p className="mt-2 text-sm text-[#4B5563] leading-relaxed">{item.description}</p>
+                          </Link>
+                        ) : (
+                          <div key={item.title} className="rounded-2xl border border-gray-100 bg-[#F9F7F4] p-5">
+                            <h3 className="font-semibold text-[#1F2937]">{item.title}</h3>
+                            <p className="mt-2 text-sm text-[#4B5563] leading-relaxed">{item.description}</p>
+                          </div>
+                        )
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {page.processSteps && (
+                <div className="bg-white rounded-2xl p-7 md:p-8 border border-gray-100 shadow-sm">
+                  <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1F2937]">How the B2B incoming process works</h2>
+                  <div className="mt-6 grid sm:grid-cols-3 gap-4">
+                    {page.processSteps.map((step, index) => (
+                      <div key={step} className="rounded-2xl border border-gray-100 bg-[#F9F7F4] p-5">
+                        <p className="text-xs font-semibold text-[#A91D2D]">Step {index + 1}</p>
+                        <h3 className="mt-2 font-semibold text-[#1F2937]">{step}</h3>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="bg-white rounded-2xl p-7 md:p-8 border border-gray-100 shadow-sm">
                 <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1F2937]">{page.localDmcTitle}</h2>
                 <p className="mt-4 text-[#4B5563] leading-relaxed">{page.localDmcText}</p>
                 <p className="mt-4 text-sm text-[#6B7280] leading-relaxed">
-                  Explore our <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">Morocco DMC services</Link>, browse <Link to="/circuits" className="text-[#A91D2D] font-medium hover:underline">Morocco circuits for agencies</Link>, review <Link to="/destinations" className="text-[#A91D2D] font-medium hover:underline">key Morocco destinations</Link> or request <Link to="/quote" className="text-[#A91D2D] font-medium hover:underline">B2B net rates</Link>.
+                  Explore our <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">Morocco DMC services</Link>, browse <Link to="/circuits" className="text-[#A91D2D] font-medium hover:underline">Morocco circuits for agencies</Link>, review <Link to="/destinations" className="text-[#A91D2D] font-medium hover:underline">key Morocco destinations</Link>, see our <Link to="/mice" className="text-[#A91D2D] font-medium hover:underline">MICE services</Link> or request <Link to="/quote" className="text-[#A91D2D] font-medium hover:underline">B2B net rates</Link>.
                 </p>
               </div>
 

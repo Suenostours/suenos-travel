@@ -49,9 +49,9 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
     h1: "DMC Morocco for Travel Agencies and Tour Operators",
     eyebrow: "Local Morocco destination management company",
     intro: "Morocco Incoming by Suenos Travel supports foreign travel agencies, tour operators and MICE planners with Morocco programs built for B2B needs: realistic routing, reliable suppliers, net agency rates and local operational support from a local DMC in Morocco.",
-    whyTitle: "Why a Morocco DMC matters for agencies",
+    whyTitle: "Why foreign travel agencies need a local Morocco DMC",
     whyText: "Morocco is easy to sell, but the operation can become complex: long driving distances, seasonal hotel demand, multilingual guiding, desert logistics, incentive venues and supplier coordination. A local DMC helps your agency protect quality, timing and client expectations from first quote to final departure.",
-    providesTitle: "What Morocco Incoming by Suenos Travel provides",
+    providesTitle: "Our DMC services in Morocco",
     provides: [
       "Tailor-made Morocco circuits for groups, private clients and series departures.",
       "Hotel, riad, camp, guide, transport and activity coordination through one local team.",
@@ -80,6 +80,10 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
     ],
     contentSections: [
       {
+        title: "What is a DMC in Morocco?",
+        text: "A DMC in Morocco, or Destination Management Company in Morocco, is a local B2B partner that designs and operates travel programs inside Morocco for foreign travel agencies, tour operators, MICE planners and corporate groups. A Morocco DMC connects the full local operation: hotels, riads, guides, transport, restaurants, excursions, Sahara camps, event logistics and on-site assistance.",
+      },
+      {
         title: "What does a DMC in Morocco handle for agencies?",
         intro: "A Destination Management Company in Morocco connects the full local operation for foreign travel agencies, tour operators, groups and MICE planners.",
         items: [
@@ -99,12 +103,22 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
         intro: "Our Morocco DMC services adapt by city and region, from cultural circuits to desert programs, coastal stays and MICE operations.",
         items: [
           { title: "Marrakech DMC services", description: "Incentives, Agafay dinners, Atlas excursions, riads, events and private city programs.", path: "/destinations/marrakech" },
-          { title: "Fes cultural programs", description: "Medina visits, heritage routing, Meknes, Volubilis and northern Morocco extensions.", path: "/destinations/fes" },
-          { title: "Casablanca business travel", description: "Airport logistics, business groups, Rabat extensions and first or last nights.", path: "/destinations/casablanca" },
-          { title: "Agadir groups & retreats", description: "Beach resorts, golf, corporate retreats, Souss Massa and Anti-Atlas excursions.", path: "/destinations/agadir" },
-          { title: "Tangier northern routes", description: "Spain-linked programs, Chefchaouen, Tetouan, Asilah and Mediterranean extensions.", path: "/destinations/tangier" },
+          { title: "Fes DMC services", description: "Medina visits, heritage routing, Meknes, Volubilis and northern Morocco extensions.", path: "/destinations/fes" },
+          { title: "Casablanca DMC services", description: "Airport logistics, business groups, Rabat extensions and first or last nights.", path: "/destinations/casablanca" },
+          { title: "Agadir DMC services", description: "Beach resorts, golf, corporate retreats, Souss Massa and Anti-Atlas excursions.", path: "/destinations/agadir" },
+          { title: "Tangier DMC services", description: "Spain-linked programs, Chefchaouen, Tetouan, Asilah and Mediterranean extensions.", path: "/destinations/tangier" },
           { title: "Merzouga Sahara programs", description: "Desert camps, camel trekking, 4x4 dunes and premium Sahara extensions.", path: "/destinations/merzouga" },
           { title: "Ouarzazate kasbah routes", description: "Ait Ben Haddou, film studios, Skoura, Dades, Todra and desert-route logistics.", path: "/destinations/ouarzazate" },
+        ],
+      },
+      {
+        title: "DMC services by travel type",
+        intro: "Morocco Incoming adapts each DMC brief according to the client type, operating style, destination mix and level of support required by the agency.",
+        items: [
+          { title: "DMC for groups", description: "Group-friendly routing, coach planning, guide coordination, restaurant timing, hotel allocations and on-site assistance for agency groups.", path: "/morocco-group-tours" },
+          { title: "DMC for MICE", description: "Meetings, incentives, gala dinners, team building, delegate movement, transfers and supplier coordination for corporate groups.", path: "/mice-morocco" },
+          { title: "DMC for luxury travel", description: "Premium riads, private guides, VIP transport, curated experiences and slower-paced tailor-made programs for high-value clients.", path: "/morocco-tours-for-travel-agencies" },
+          { title: "DMC for Sahara and desert circuits", description: "Realistic desert routing, Ouarzazate and Merzouga logistics, Sahara camps, 4x4 support and adapted pacing for groups or private clients.", path: "/destinations/merzouga" },
         ],
       },
     ],

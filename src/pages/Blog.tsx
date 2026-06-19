@@ -6,14 +6,34 @@ import { ArrowRight, Calendar, Tag } from "lucide-react";
 
 const blogPosts = [
   {
-    slug: "what-does-a-morocco-dmc-do-for-travel-agencies",
-    title: "What Does a Morocco DMC Do for Travel Agencies?",
-    titleFr: "What Does a Morocco DMC Do for Travel Agencies?",
+    slug: "what-does-a-dmc-in-morocco-do-for-travel-agencies",
+    title: "What Does a DMC in Morocco Do for Travel Agencies?",
+    titleFr: "What Does a DMC in Morocco Do for Travel Agencies?",
     image: "/images/about-riad.jpg",
-    date: "2026-05-28",
-    category: "B2B Guide",
-    excerpt: "A practical guide for travel agencies, tour operators and MICE planners on how a Morocco DMC manages programs, suppliers, net rates and operations.",
-    excerptFr: "A practical guide for travel agencies, tour operators and MICE planners on how a Morocco DMC manages programs, suppliers, net rates and operations.",
+    date: "2026-06-19",
+    category: "DMC Morocco",
+    excerpt: "Learn what a DMC in Morocco does for agencies, tour operators, groups and MICE planners, from hotels and guides to local logistics.",
+    excerptFr: "Learn what a DMC in Morocco does for agencies, tour operators, groups and MICE planners, from hotels and guides to local logistics.",
+  },
+  {
+    slug: "how-to-choose-a-morocco-incoming-agency",
+    title: "How to Choose a Morocco Incoming Agency",
+    titleFr: "How to Choose a Morocco Incoming Agency",
+    image: "/images/circuit-imperial.jpg",
+    date: "2026-06-19",
+    category: "Incoming Morocco",
+    excerpt: "A practical B2B guide for agencies choosing a Morocco incoming partner for groups, private clients, MICE and local operations.",
+    excerptFr: "A practical B2B guide for agencies choosing a Morocco incoming partner for groups, private clients, MICE and local operations.",
+  },
+  {
+    slug: "mice-morocco-best-destinations-for-incentive-groups",
+    title: "MICE Morocco: Best Destinations for Incentive Groups",
+    titleFr: "MICE Morocco: Best Destinations for Incentive Groups",
+    image: "/images/circuit-luxury.jpg",
+    date: "2026-06-19",
+    category: "MICE Morocco",
+    excerpt: "Discover the best Morocco destinations for MICE and incentive groups, including Marrakech, Agadir, Casablanca, Fes, Agafay and Sahara extensions.",
+    excerptFr: "Discover the best Morocco destinations for MICE and incentive groups, including Marrakech, Agadir, Casablanca, Fes, Agafay and Sahara extensions.",
   },
   {
     slug: "morocco-tours-for-travel-agencies-b2b-programs",
@@ -60,6 +80,8 @@ const blogPosts = [
 export default function Blog() {
   const { locale } = useI18n();
   const isFr = locale === "fr";
+  const getTitle = (post: typeof blogPosts[number]) => isFr && post.titleFr !== post.title ? post.titleFr : post.title;
+  const getExcerpt = (post: typeof blogPosts[number]) => isFr && post.excerptFr !== post.excerpt ? post.excerptFr : post.excerpt;
 
   return (
     <>
@@ -100,8 +122,8 @@ export default function Blog() {
                       <Tag className="h-3.5 w-3.5 ml-2" />
                       {post.category}
                     </div>
-                    <h3 className="font-semibold text-lg text-[#1F2937]">{isFr ? post.titleFr : post.title}</h3>
-                    <p className="text-sm text-[#4B5563] line-clamp-2">{isFr ? post.excerptFr : post.excerpt}</p>
+                    <h3 className="font-semibold text-lg text-[#1F2937]">{getTitle(post)}</h3>
+                    <p className="text-sm text-[#4B5563] line-clamp-2">{getExcerpt(post)}</p>
                     <span className="inline-flex items-center text-sm text-[#A91D2D] font-medium">
                       {isFr ? "Lire la suite" : "Read more"} <ArrowRight className="ml-1 h-4 w-4" />
                     </span>

@@ -60,6 +60,15 @@ export const seoRouter = createRouter({
       { url: `${baseUrl}/contact`, lastmod: today, changefreq: "monthly", priority: 0.7 },
       { url: `${baseUrl}/quote`, lastmod: today, changefreq: "monthly", priority: 0.7 },
     ];
+    const staticBlogSlugs = [
+      "what-does-a-dmc-in-morocco-do-for-travel-agencies",
+      "how-to-choose-a-morocco-incoming-agency",
+      "mice-morocco-best-destinations-for-incentive-groups",
+    ];
+    const legacyBlogSlugs = ["what-does-a-morocco-dmc-do-for-travel-agencies"];
+    for (const slug of staticBlogSlugs) {
+      pages.push({ url: `${baseUrl}/blog/${slug}`, lastmod: today, changefreq: "monthly", priority: 0.6 });
+    }
 
     const tourRows = await db.select({ slug: tours.slug, updatedAt: tours.updatedAt }).from(tours).where(eq(tours.active, 1));
     for (const t of tourRows) {
@@ -76,6 +85,7 @@ export const seoRouter = createRouter({
       .from(blogPosts)
       .where(and(eq(blogPosts.status, "published"), eq(blogPosts.active, 1)));
     for (const b of blogRows) {
+      if (staticBlogSlugs.includes(b.slug) || legacyBlogSlugs.includes(b.slug)) continue;
       pages.push({ url: `${baseUrl}/blog/${b.slug}`, lastmod: formatSitemapDate(b.updatedAt), changefreq: "monthly", priority: 0.6 });
     }
 

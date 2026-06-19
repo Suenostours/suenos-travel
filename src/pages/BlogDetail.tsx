@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router";
+import { Navigate, useParams, Link } from "react-router";
 import { Helmet } from "react-helmet-async";
 import { useI18n } from "@/providers/i18n";
 import SEO from "@/components/SEO";
@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, Tag } from "lucide-react";
 
 const BASE_URL = "https://www.morocco-incoming.com";
+const legacyBlogRedirects: Record<string, string> = {
+  "what-does-a-morocco-dmc-do-for-travel-agencies": "what-does-a-dmc-in-morocco-do-for-travel-agencies",
+};
 
 const blogPosts: Record<string, {
   title: string; titleFr: string;
@@ -13,7 +16,602 @@ const blogPosts: Record<string, {
   image: string; date: string;
   category: string; tags: string[];
   content: string; contentFr: string;
+  faq?: { question: string; answer: string }[];
 }> = {
+  "what-does-a-dmc-in-morocco-do-for-travel-agencies": {
+    title: "What Does a DMC in Morocco Do for Travel Agencies?",
+    titleFr: "What Does a DMC in Morocco Do for Travel Agencies?",
+    metaTitle: "What Does a DMC in Morocco Do? | Guide for Travel Agencies",
+    metaDescription: "Learn what a DMC in Morocco does for travel agencies, tour operators, groups and MICE planners, from hotels and guides to logistics and local support.",
+    image: "/images/about-riad.jpg",
+    date: "2026-06-19",
+    category: "DMC Morocco",
+    tags: ["DMC Morocco", "Morocco DMC", "Travel Agencies"],
+    content: `For a foreign travel agency, Morocco is attractive because it combines imperial cities, Sahara landscapes, Atlantic coast, mountains, riads, resorts and strong cultural experiences. But selling Morocco is different from operating Morocco. A destination can be easy to promote and still complex to deliver well. This is where a professional DMC in Morocco becomes valuable.
+
+A DMC, or Destination Management Company, is the local partner that designs and manages travel services inside the destination. For agencies and tour operators, a Morocco DMC is not just a supplier list. It is the team that checks routing, matches hotels to the client profile, coordinates guides and transport, manages local timing, supports groups on the ground and helps the agency protect its own brand.
+
+At Morocco Incoming by Suenos Travel, our role is to support agencies, tour operators, MICE planners and corporate travel buyers with practical local operations. Agencies keep the client relationship. The DMC makes sure the program can be delivered in Morocco with clarity, realism and local follow-up.
+
+## What a DMC in Morocco actually does
+
+A <a href="/dmc-morocco">DMC Morocco</a> partner turns an agency brief into an operational travel program. The brief may be simple, such as an eight-day imperial cities and Sahara circuit. It may also be complex, such as a corporate incentive in Marrakech with an Agafay dinner, airport transfers, hotel blocks, team building and VIP guests.
+
+The DMC checks whether the route is realistic, which hotels or riads fit the market, what type of vehicle is appropriate, which guide language is needed, how meals should be planned, and where the itinerary needs more time. In Morocco, this judgment matters. Distances can be long, medinas require local knowledge, desert camps vary by comfort level and MICE programs depend heavily on timing.
+
+## Why travel agencies need a local Morocco DMC
+
+Agencies can book individual suppliers directly, but direct booking often creates fragmented responsibility. A hotel may confirm rooms, a driver may confirm transport, and a guide may confirm a city visit, but no single partner is responsible for the full guest experience.
+
+A local Morocco DMC gives the agency one operational contact. If a flight is delayed, a rooming list changes, a restaurant timing needs to move, or a guide needs support, the local DMC coordinates the response. For group tours and MICE programs, this is not a luxury. It is the difference between a program that feels controlled and one that becomes stressful from abroad.
+
+## Main DMC services in Morocco
+
+### Itinerary design and routing
+
+Morocco programs often combine Marrakech, Fes, Casablanca, Rabat, Ouarzazate, Merzouga, Agadir, Tangier or Essaouira. A good DMC explains what is realistic in seven, eight, ten or twelve days and helps avoid routes that look good on paper but feel exhausting for clients.
+
+### Hotels, riads and camps
+
+Accommodation in Morocco can range from international hotels to boutique riads, kasbahs, resorts and Sahara camps. Each property style has advantages. The DMC helps match the choice to the client profile: group, private FIT, luxury, family, student, corporate or incentive.
+
+### Guides and local experiences
+
+Licensed guides are essential for cultural cities like Marrakech and Fes. The DMC also coordinates experiences such as cooking classes, artisan visits, Atlas excursions, Agafay dinners, desert activities, coastal extensions and city tours.
+
+### Transport and group logistics
+
+Private vehicles, coaches, airport transfers, luggage timing, departure waves and long-distance routing require planning. This is especially important for <a href="/morocco-group-tours">Morocco group tours for agencies</a>, where timing and comfort affect the whole group.
+
+### MICE and incentive support
+
+For meetings, incentives, conferences and corporate groups, the DMC may coordinate venues, gala dinners, team building, delegate movement, airport transfers, branding needs and local suppliers. Our dedicated <a href="/mice-morocco">MICE Morocco</a> page explains this in more detail.
+
+## How a DMC supports agency pricing
+
+Most agencies need net rates, not retail prices. A B2B-focused Morocco DMC can prepare net agency proposals so the agency can apply its own margin and present the program under its own commercial model. This is especially useful for repeated series, private tailor-made tours and corporate groups.
+
+The DMC proposal should clearly show inclusions, exclusions, hotel category, guide language, transport type, meal basis and optional experiences. This helps the agency sell without confusion and reduces changes later.
+
+## DMC vs incoming agency in Morocco
+
+The terms overlap. An <a href="/incoming-agency-morocco">incoming agency Morocco</a> partner usually manages local travel services for foreign agencies: hotels, transport, guides, excursions and ground handling. A DMC often goes further by designing destination programs, managing MICE, creating incentive experiences and coordinating full local operations.
+
+Morocco Incoming by Suenos Travel combines both roles: incoming services for agencies and DMC support for groups, MICE, private programs, Sahara circuits and tailor-made B2B travel.
+
+## What agencies should send in a DMC brief
+
+To receive a useful proposal, agencies should share travel dates, number of travelers, client market, hotel level, preferred destinations, budget range, guide language, travel style and any special requirements. For MICE, include event goals, room setup, dinner expectations, transfer details and guest profile.
+
+The more precise the brief, the more accurate the DMC proposal. If the budget is not fixed, it is still useful to share the target positioning: standard, superior, luxury, incentive, student, family or premium private.
+
+## When to contact a Morocco DMC
+
+The best time to involve a DMC is before the route is final. Early input allows better routing, realistic timing and stronger hotel options. This is important in spring and autumn, when demand can be high for Marrakech, Fes, Sahara camps and popular group hotels.
+
+Agencies planning MICE, incentive groups, desert circuits or series departures should start as early as possible. Availability and operational quality are easier to protect when the DMC has time to negotiate and coordinate.
+
+## Request B2B net rates or a Morocco program
+
+If your agency is planning Morocco, the next step is to send a clear brief. You can explore our <a href="/dmc-morocco">DMC Morocco services</a>, compare our incoming support, or use the <a href="/quote">quote request form</a> to request B2B net rates and a tailor-made Morocco program.
+
+## FAQ
+
+### What does a DMC in Morocco do?
+
+A DMC in Morocco coordinates local travel services such as hotels, riads, transport, licensed guides, restaurants, excursions, Sahara camps, MICE logistics and on-site support for agencies and tour operators.
+
+### Is a Morocco DMC only for groups?
+
+No. A Morocco DMC can support private FIT clients, luxury travel, family programs, group tours, MICE, incentives and series departures.
+
+### Can a DMC provide net rates for agencies?
+
+Yes. A B2B-focused Morocco DMC can prepare net agency rates so the travel agency or tour operator can add its own margin.
+
+### How do I request a Morocco DMC proposal?
+
+Send your dates, group size, destinations, hotel level, budget range and client profile through the <a href="/quote">quote request form</a>.`,
+    contentFr: `For a foreign travel agency, Morocco is attractive because it combines imperial cities, Sahara landscapes, Atlantic coast, mountains, riads, resorts and strong cultural experiences. But selling Morocco is different from operating Morocco. A destination can be easy to promote and still complex to deliver well. This is where a professional DMC in Morocco becomes valuable.
+
+A DMC, or Destination Management Company, is the local partner that designs and manages travel services inside the destination. For agencies and tour operators, a Morocco DMC is not just a supplier list. It is the team that checks routing, matches hotels to the client profile, coordinates guides and transport, manages local timing, supports groups on the ground and helps the agency protect its own brand.
+
+At Morocco Incoming by Suenos Travel, our role is to support agencies, tour operators, MICE planners and corporate travel buyers with practical local operations. Agencies keep the client relationship. The DMC makes sure the program can be delivered in Morocco with clarity, realism and local follow-up.
+
+## What a DMC in Morocco actually does
+
+A <a href="/dmc-morocco">DMC Morocco</a> partner turns an agency brief into an operational travel program. The brief may be simple, such as an eight-day imperial cities and Sahara circuit. It may also be complex, such as a corporate incentive in Marrakech with an Agafay dinner, airport transfers, hotel blocks, team building and VIP guests.
+
+The DMC checks whether the route is realistic, which hotels or riads fit the market, what type of vehicle is appropriate, which guide language is needed, how meals should be planned, and where the itinerary needs more time. In Morocco, this judgment matters. Distances can be long, medinas require local knowledge, desert camps vary by comfort level and MICE programs depend heavily on timing.
+
+## Why travel agencies need a local Morocco DMC
+
+Agencies can book individual suppliers directly, but direct booking often creates fragmented responsibility. A hotel may confirm rooms, a driver may confirm transport, and a guide may confirm a city visit, but no single partner is responsible for the full guest experience.
+
+A local Morocco DMC gives the agency one operational contact. If a flight is delayed, a rooming list changes, a restaurant timing needs to move, or a guide needs support, the local DMC coordinates the response. For group tours and MICE programs, this is not a luxury. It is the difference between a program that feels controlled and one that becomes stressful from abroad.
+
+## Main DMC services in Morocco
+
+### Itinerary design and routing
+
+Morocco programs often combine Marrakech, Fes, Casablanca, Rabat, Ouarzazate, Merzouga, Agadir, Tangier or Essaouira. A good DMC explains what is realistic in seven, eight, ten or twelve days and helps avoid routes that look good on paper but feel exhausting for clients.
+
+### Hotels, riads and camps
+
+Accommodation in Morocco can range from international hotels to boutique riads, kasbahs, resorts and Sahara camps. Each property style has advantages. The DMC helps match the choice to the client profile: group, private FIT, luxury, family, student, corporate or incentive.
+
+### Guides and local experiences
+
+Licensed guides are essential for cultural cities like Marrakech and Fes. The DMC also coordinates experiences such as cooking classes, artisan visits, Atlas excursions, Agafay dinners, desert activities, coastal extensions and city tours.
+
+### Transport and group logistics
+
+Private vehicles, coaches, airport transfers, luggage timing, departure waves and long-distance routing require planning. This is especially important for <a href="/morocco-group-tours">Morocco group tours for agencies</a>, where timing and comfort affect the whole group.
+
+### MICE and incentive support
+
+For meetings, incentives, conferences and corporate groups, the DMC may coordinate venues, gala dinners, team building, delegate movement, airport transfers, branding needs and local suppliers. Our dedicated <a href="/mice-morocco">MICE Morocco</a> page explains this in more detail.
+
+## How a DMC supports agency pricing
+
+Most agencies need net rates, not retail prices. A B2B-focused Morocco DMC can prepare net agency proposals so the agency can apply its own margin and present the program under its own commercial model. This is especially useful for repeated series, private tailor-made tours and corporate groups.
+
+The DMC proposal should clearly show inclusions, exclusions, hotel category, guide language, transport type, meal basis and optional experiences. This helps the agency sell without confusion and reduces changes later.
+
+## DMC vs incoming agency in Morocco
+
+The terms overlap. An <a href="/incoming-agency-morocco">incoming agency Morocco</a> partner usually manages local travel services for foreign agencies: hotels, transport, guides, excursions and ground handling. A DMC often goes further by designing destination programs, managing MICE, creating incentive experiences and coordinating full local operations.
+
+Morocco Incoming by Suenos Travel combines both roles: incoming services for agencies and DMC support for groups, MICE, private programs, Sahara circuits and tailor-made B2B travel.
+
+## What agencies should send in a DMC brief
+
+To receive a useful proposal, agencies should share travel dates, number of travelers, client market, hotel level, preferred destinations, budget range, guide language, travel style and any special requirements. For MICE, include event goals, room setup, dinner expectations, transfer details and guest profile.
+
+The more precise the brief, the more accurate the DMC proposal. If the budget is not fixed, it is still useful to share the target positioning: standard, superior, luxury, incentive, student, family or premium private.
+
+## When to contact a Morocco DMC
+
+The best time to involve a DMC is before the route is final. Early input allows better routing, realistic timing and stronger hotel options. This is important in spring and autumn, when demand can be high for Marrakech, Fes, Sahara camps and popular group hotels.
+
+Agencies planning MICE, incentive groups, desert circuits or series departures should start as early as possible. Availability and operational quality are easier to protect when the DMC has time to negotiate and coordinate.
+
+## Request B2B net rates or a Morocco program
+
+If your agency is planning Morocco, the next step is to send a clear brief. You can explore our <a href="/dmc-morocco">DMC Morocco services</a>, compare our incoming support, or use the <a href="/quote">quote request form</a> to request B2B net rates and a tailor-made Morocco program.
+
+## FAQ
+
+### What does a DMC in Morocco do?
+
+A DMC in Morocco coordinates local travel services such as hotels, riads, transport, licensed guides, restaurants, excursions, Sahara camps, MICE logistics and on-site support for agencies and tour operators.
+
+### Is a Morocco DMC only for groups?
+
+No. A Morocco DMC can support private FIT clients, luxury travel, family programs, group tours, MICE, incentives and series departures.
+
+### Can a DMC provide net rates for agencies?
+
+Yes. A B2B-focused Morocco DMC can prepare net agency rates so the travel agency or tour operator can add its own margin.
+
+### How do I request a Morocco DMC proposal?
+
+Send your dates, group size, destinations, hotel level, budget range and client profile through the <a href="/quote">quote request form</a>.`,
+    faq: [
+      { question: "What does a DMC in Morocco do?", answer: "A DMC in Morocco coordinates local travel services such as hotels, riads, transport, licensed guides, restaurants, excursions, Sahara camps, MICE logistics and on-site support for agencies and tour operators." },
+      { question: "Is a Morocco DMC only for groups?", answer: "No. A Morocco DMC can support private FIT clients, luxury travel, family programs, group tours, MICE, incentives and series departures." },
+      { question: "Can a DMC provide net rates for agencies?", answer: "Yes. A B2B-focused Morocco DMC can prepare net agency rates so the travel agency or tour operator can add its own margin." },
+      { question: "How do I request a Morocco DMC proposal?", answer: "Send your dates, group size, destinations, hotel level, budget range and client profile through the quote request form." },
+    ],
+  },
+  "how-to-choose-a-morocco-incoming-agency": {
+    title: "How to Choose a Morocco Incoming Agency",
+    titleFr: "How to Choose a Morocco Incoming Agency",
+    metaTitle: "How to Choose a Morocco Incoming Agency | B2B Guide",
+    metaDescription: "A practical guide for travel agencies choosing a Morocco incoming agency for groups, private clients, MICE, hotels, guides, transport and local operations.",
+    image: "/images/circuit-imperial.jpg",
+    date: "2026-06-19",
+    category: "Incoming Morocco",
+    tags: ["Incoming Morocco", "Incoming Agency Morocco", "B2B Travel"],
+    content: `Choosing a Morocco incoming agency is an important decision for any travel agency, tour operator or MICE planner selling Morocco. The incoming partner is the team that will manage local services, coordinate suppliers, protect timing and help your agency deliver what was promised to the client.
+
+The right partner can make Morocco easier to sell. The wrong partner can create stress through unclear pricing, weak communication, unsuitable hotels, poor routing or fragmented local responsibility. This guide explains how foreign agencies can evaluate an incoming agency Morocco partner before sending serious group, private or corporate business.
+
+## What is a Morocco incoming agency?
+
+An incoming agency manages travel services inside Morocco for agencies based abroad. This can include hotels, riads, transfers, private transport, licensed guides, excursions, restaurants, Sahara camps, local experiences, group logistics and on-site support.
+
+Some incoming agencies focus mainly on reservations. Others operate more like a <a href="/dmc-morocco">Morocco DMC</a>, helping with destination design, MICE, incentives, group operations and tailor-made B2B programs. For a foreign agency, the best partner is usually one that can combine both: strong ground handling and practical destination management.
+
+## Start with your business model
+
+Before comparing suppliers, define what you need. A tour operator with repeated group series has different needs from a luxury travel designer, a student travel agency, a MICE planner or a company organizing an incentive trip.
+
+If you sell fixed departures, you need consistency, net rates, hotel planning and clear operational standards. If you sell private travel, you need flexibility, fast revisions and strong destination knowledge. If you sell corporate or MICE programs, you need reliable timing, venue support, delegate movement and supplier coordination.
+
+This is why a serious <a href="/incoming-agency-morocco">incoming agency Morocco</a> partner should ask questions before quoting. If the partner quotes too quickly without understanding the client profile, the proposal may look efficient but miss important operational details.
+
+## Check local licensing and credibility
+
+Trust matters. Agencies should verify whether the Moroccan partner is a real local travel company, whether it shows a licence, where it is based and whether it has a professional B2B process. Public credibility signals reduce risk, especially when you are sending client deposits, passport details, rooming lists or corporate event briefs.
+
+For Morocco Incoming by Suenos Travel, the key trust signals are a licensed Moroccan travel agency structure, licence ODV-0564, IATA 54273844, and local presence in Agadir and Casablanca. These details help agencies understand that they are dealing with a local travel operation, not only a website.
+
+## Evaluate destination knowledge
+
+Morocco is not one simple destination. Marrakech is different from Fes. Casablanca is different from Agadir. Merzouga requires different planning from Essaouira or Tangier. A good incoming agency should be able to explain these differences clearly.
+
+Ask how the agency would route Marrakech, Fes and the Sahara in eight days. Ask whether a day trip is realistic. Ask which destinations work well for groups, which are better for private clients, and which are suitable for MICE. The answers will quickly show whether the partner understands local operation or only sells generic packages.
+
+## Review the proposal quality
+
+A good B2B proposal should be clear enough for your sales team to use. It should show routing, inclusions, exclusions, accommodation level, guide language, transport type, meal basis, optional experiences and validity. It should also explain if a route is difficult or if a better alternative exists.
+
+For agencies, unclear proposals create commercial risk. If the quote does not specify what is included, the agency may sell something that later becomes expensive or impossible. A strong Morocco incoming agency helps prevent this by communicating early.
+
+## Ask about net rates and agency conditions
+
+Foreign travel agencies usually need net rates. Net rates allow the agency or tour operator to apply its own margin and sell under its own commercial model. A partner that only thinks in retail pricing may not understand B2B travel.
+
+When discussing net rates, ask how revisions are handled, what payment schedule applies, whether rates are valid for a fixed period, and how optional services are priced. For repeated partners, ask whether the agency can prepare sample programs or preferred routing templates.
+
+## Consider communication speed and clarity
+
+Speed matters, but clarity matters more. A good incoming agency should respond within a professional timeframe, especially when the agency is trying to win a client. A 24-48h response is realistic for many standard requests, while complex MICE or multi-city programs may require more time.
+
+Watch how the agency communicates during the first exchange. Do they ask useful questions? Do they explain constraints? Do they send organized information? The way a partner quotes is often the way they operate.
+
+## Look at group and MICE capability
+
+Group travel and MICE expose weak operations quickly. If your agency sells groups, ask about coach planning, guide coordination, rooming lists, meal timing, luggage handling and on-site support. If you sell corporate travel, ask about venues, airport transfers, gala dinners, team building and delegate movement.
+
+Our <a href="/mice-morocco">MICE Morocco</a> and <a href="/morocco-tours-for-travel-agencies">Morocco tours for travel agencies</a> pages explain how B2B programs can be adapted for groups, incentives and private clients.
+
+## Ask how problems are handled
+
+No destination is completely free from changes. Flights are delayed. Weather changes. Hotels may need updated rooming lists. Clients may request last-minute adjustments. A reliable incoming agency does not promise that nothing will ever happen; it explains how it supports the agency when something changes.
+
+Ask whether there is local on-site support, who the agency contacts during operation, and how urgent issues are escalated. This is especially important for groups, MICE and high-value private clients.
+
+## Compare value, not only price
+
+The cheapest quote is not always the safest quote. In Morocco, large price differences can reflect hotel location, vehicle quality, guide level, camp comfort, meal standards or missing services. A professional incoming agency should explain why a proposal costs what it costs.
+
+For B2B buyers, the goal is not to overpay. The goal is to sell a program that can be delivered at the promised standard, with a fair margin and a local partner who protects the agency relationship.
+
+## When to build a long-term partnership
+
+If your agency plans to sell Morocco regularly, it is better to build a relationship than request isolated quotes from many suppliers. Over time, the incoming agency learns your markets, preferred hotel standards, pacing, guide expectations and commercial style.
+
+This is why our <a href="/b2b">B2B partner</a> approach is built around repeat collaboration. The more we understand your agency, the better we can prepare Morocco programs that fit your clients.
+
+## Request a Morocco incoming proposal
+
+If you are comparing incoming partners, send a clear brief with dates, group size, route, hotel level, client market, guide language and budget range. You can request a tailor-made proposal through our <a href="/quote">quote form</a>.
+
+## FAQ
+
+### What should I look for in a Morocco incoming agency?
+
+Look for local licensing, clear B2B communication, destination knowledge, net-rate capability, group logistics, supplier coordination and on-site support.
+
+### Is an incoming agency the same as a DMC?
+
+Not always. An incoming agency usually manages local services inside Morocco, while a DMC may also design destination programs, MICE, incentives and full local operations.
+
+### Can a Morocco incoming agency work with tour operators?
+
+Yes. Incoming agencies often support tour operators with series groups, private programs, tailor-made circuits, MICE extensions and local ground handling.
+
+### How can I request net rates?
+
+Send your travel dates, group size, routing, hotel level, client profile and budget range through the <a href="/quote">quote request form</a>.`,
+    contentFr: `Choosing a Morocco incoming agency is an important decision for any travel agency, tour operator or MICE planner selling Morocco. The incoming partner is the team that will manage local services, coordinate suppliers, protect timing and help your agency deliver what was promised to the client.
+
+The right partner can make Morocco easier to sell. The wrong partner can create stress through unclear pricing, weak communication, unsuitable hotels, poor routing or fragmented local responsibility. This guide explains how foreign agencies can evaluate an incoming agency Morocco partner before sending serious group, private or corporate business.
+
+## What is a Morocco incoming agency?
+
+An incoming agency manages travel services inside Morocco for agencies based abroad. This can include hotels, riads, transfers, private transport, licensed guides, excursions, restaurants, Sahara camps, local experiences, group logistics and on-site support.
+
+Some incoming agencies focus mainly on reservations. Others operate more like a <a href="/dmc-morocco">Morocco DMC</a>, helping with destination design, MICE, incentives, group operations and tailor-made B2B programs. For a foreign agency, the best partner is usually one that can combine both: strong ground handling and practical destination management.
+
+## Start with your business model
+
+Before comparing suppliers, define what you need. A tour operator with repeated group series has different needs from a luxury travel designer, a student travel agency, a MICE planner or a company organizing an incentive trip.
+
+If you sell fixed departures, you need consistency, net rates, hotel planning and clear operational standards. If you sell private travel, you need flexibility, fast revisions and strong destination knowledge. If you sell corporate or MICE programs, you need reliable timing, venue support, delegate movement and supplier coordination.
+
+This is why a serious <a href="/incoming-agency-morocco">incoming agency Morocco</a> partner should ask questions before quoting. If the partner quotes too quickly without understanding the client profile, the proposal may look efficient but miss important operational details.
+
+## Check local licensing and credibility
+
+Trust matters. Agencies should verify whether the Moroccan partner is a real local travel company, whether it shows a licence, where it is based and whether it has a professional B2B process. Public credibility signals reduce risk, especially when you are sending client deposits, passport details, rooming lists or corporate event briefs.
+
+For Morocco Incoming by Suenos Travel, the key trust signals are a licensed Moroccan travel agency structure, licence ODV-0564, IATA 54273844, and local presence in Agadir and Casablanca. These details help agencies understand that they are dealing with a local travel operation, not only a website.
+
+## Evaluate destination knowledge
+
+Morocco is not one simple destination. Marrakech is different from Fes. Casablanca is different from Agadir. Merzouga requires different planning from Essaouira or Tangier. A good incoming agency should be able to explain these differences clearly.
+
+Ask how the agency would route Marrakech, Fes and the Sahara in eight days. Ask whether a day trip is realistic. Ask which destinations work well for groups, which are better for private clients, and which are suitable for MICE. The answers will quickly show whether the partner understands local operation or only sells generic packages.
+
+## Review the proposal quality
+
+A good B2B proposal should be clear enough for your sales team to use. It should show routing, inclusions, exclusions, accommodation level, guide language, transport type, meal basis, optional experiences and validity. It should also explain if a route is difficult or if a better alternative exists.
+
+For agencies, unclear proposals create commercial risk. If the quote does not specify what is included, the agency may sell something that later becomes expensive or impossible. A strong Morocco incoming agency helps prevent this by communicating early.
+
+## Ask about net rates and agency conditions
+
+Foreign travel agencies usually need net rates. Net rates allow the agency or tour operator to apply its own margin and sell under its own commercial model. A partner that only thinks in retail pricing may not understand B2B travel.
+
+When discussing net rates, ask how revisions are handled, what payment schedule applies, whether rates are valid for a fixed period, and how optional services are priced. For repeated partners, ask whether the agency can prepare sample programs or preferred routing templates.
+
+## Consider communication speed and clarity
+
+Speed matters, but clarity matters more. A good incoming agency should respond within a professional timeframe, especially when the agency is trying to win a client. A 24-48h response is realistic for many standard requests, while complex MICE or multi-city programs may require more time.
+
+Watch how the agency communicates during the first exchange. Do they ask useful questions? Do they explain constraints? Do they send organized information? The way a partner quotes is often the way they operate.
+
+## Look at group and MICE capability
+
+Group travel and MICE expose weak operations quickly. If your agency sells groups, ask about coach planning, guide coordination, rooming lists, meal timing, luggage handling and on-site support. If you sell corporate travel, ask about venues, airport transfers, gala dinners, team building and delegate movement.
+
+Our <a href="/mice-morocco">MICE Morocco</a> and <a href="/morocco-tours-for-travel-agencies">Morocco tours for travel agencies</a> pages explain how B2B programs can be adapted for groups, incentives and private clients.
+
+## Ask how problems are handled
+
+No destination is completely free from changes. Flights are delayed. Weather changes. Hotels may need updated rooming lists. Clients may request last-minute adjustments. A reliable incoming agency does not promise that nothing will ever happen; it explains how it supports the agency when something changes.
+
+Ask whether there is local on-site support, who the agency contacts during operation, and how urgent issues are escalated. This is especially important for groups, MICE and high-value private clients.
+
+## Compare value, not only price
+
+The cheapest quote is not always the safest quote. In Morocco, large price differences can reflect hotel location, vehicle quality, guide level, camp comfort, meal standards or missing services. A professional incoming agency should explain why a proposal costs what it costs.
+
+For B2B buyers, the goal is not to overpay. The goal is to sell a program that can be delivered at the promised standard, with a fair margin and a local partner who protects the agency relationship.
+
+## When to build a long-term partnership
+
+If your agency plans to sell Morocco regularly, it is better to build a relationship than request isolated quotes from many suppliers. Over time, the incoming agency learns your markets, preferred hotel standards, pacing, guide expectations and commercial style.
+
+This is why our <a href="/b2b">B2B partner</a> approach is built around repeat collaboration. The more we understand your agency, the better we can prepare Morocco programs that fit your clients.
+
+## Request a Morocco incoming proposal
+
+If you are comparing incoming partners, send a clear brief with dates, group size, route, hotel level, client market, guide language and budget range. You can request a tailor-made proposal through our <a href="/quote">quote form</a>.
+
+## FAQ
+
+### What should I look for in a Morocco incoming agency?
+
+Look for local licensing, clear B2B communication, destination knowledge, net-rate capability, group logistics, supplier coordination and on-site support.
+
+### Is an incoming agency the same as a DMC?
+
+Not always. An incoming agency usually manages local services inside Morocco, while a DMC may also design destination programs, MICE, incentives and full local operations.
+
+### Can a Morocco incoming agency work with tour operators?
+
+Yes. Incoming agencies often support tour operators with series groups, private programs, tailor-made circuits, MICE extensions and local ground handling.
+
+### How can I request net rates?
+
+Send your travel dates, group size, routing, hotel level, client profile and budget range through the <a href="/quote">quote request form</a>.`,
+    faq: [
+      { question: "What should I look for in a Morocco incoming agency?", answer: "Look for local licensing, clear B2B communication, destination knowledge, net-rate capability, group logistics, supplier coordination and on-site support." },
+      { question: "Is an incoming agency the same as a DMC?", answer: "Not always. An incoming agency usually manages local services inside Morocco, while a DMC may also design destination programs, MICE, incentives and full local operations." },
+      { question: "Can a Morocco incoming agency work with tour operators?", answer: "Yes. Incoming agencies often support tour operators with series groups, private programs, tailor-made circuits, MICE extensions and local ground handling." },
+      { question: "How can I request net rates?", answer: "Send your travel dates, group size, routing, hotel level, client profile and budget range through the quote request form." },
+    ],
+  },
+  "mice-morocco-best-destinations-for-incentive-groups": {
+    title: "MICE Morocco: Best Destinations for Incentive Groups",
+    titleFr: "MICE Morocco: Best Destinations for Incentive Groups",
+    metaTitle: "MICE Morocco: Best Destinations for Incentive Groups",
+    metaDescription: "Discover the best Morocco destinations for MICE and incentive groups, including Marrakech, Agadir, Casablanca, Fes, Agafay, Atlas and Sahara extensions.",
+    image: "/images/circuit-luxury.jpg",
+    date: "2026-06-19",
+    category: "MICE Morocco",
+    tags: ["MICE Morocco", "Incentive Travel", "Corporate Groups"],
+    content: `Morocco is one of the most flexible MICE and incentive destinations in North Africa. It offers short-haul access from Europe, strong air connections, distinctive venues, desert and mountain experiences, coastal resorts, cultural cities and a sense of place that feels different from standard corporate destinations.
+
+For MICE planners, travel agencies and corporate travel buyers, the key question is not whether Morocco can work. It is which Moroccan destination fits the group objective. A sales incentive, leadership retreat, product launch, conference extension or reward trip will each need a different rhythm.
+
+This guide explains the best destinations for <a href="/mice-morocco">MICE Morocco</a> programs and how agencies can use them for incentive groups, corporate events and pre/post travel extensions.
+
+## Why Morocco works for incentive travel
+
+Morocco offers strong contrast in a relatively compact destination. A group can arrive in Marrakech, hold a dinner in a riad, experience Agafay desert, add Atlas Mountains activities and still keep transfers manageable. Another group can use Agadir for a coastal retreat, Casablanca for business logistics or Fes for cultural depth.
+
+The destination also works well for storytelling. Incentive groups need moments that feel memorable: a desert dinner, a private garden, a medina discovery, a mountain lunch, a coastal sunset or a Sahara extension. A local Morocco MICE DMC helps choose these moments without overloading the program.
+
+## Marrakech incentives
+
+<a href="/destinations/marrakech">Marrakech</a> is the strongest MICE destination in Morocco for many international groups. It has a large hotel base, riads, restaurants, gardens, venues, nightlife, cultural visits, golf, spa options and easy access to the Atlas Mountains and Agafay desert.
+
+Marrakech works especially well for incentive travel because the city can deliver contrast in a short stay. A three or four-night program may include airport arrivals, a welcome dinner, medina discovery, team activity, gala dinner, Agafay desert evening and optional Atlas excursion.
+
+For agencies, Marrakech is often the easiest Morocco MICE destination to sell because the name is recognizable and the experience feels rich. The operational challenge is not demand; it is design. Programs need controlled timing, good venue selection, transport planning and clear guest flow.
+
+## Agafay desert dinners
+
+Agafay is not the Sahara, but it is extremely useful for MICE. Located outside Marrakech, it offers a desert-style setting without the long drive to Merzouga. For corporate groups with limited time, this can be the right solution.
+
+Agafay works for sunset cocktails, seated dinners, entertainment, team moments and incentive-style evenings. The key is supplier selection. Setups can vary, and the right choice depends on group size, comfort level, weather, technical needs and transfer timing.
+
+Agencies should present Agafay honestly: it is a rocky desert landscape near Marrakech, not Sahara dunes. When positioned correctly, it can be one of the most effective MICE experiences in Morocco.
+
+## Agadir corporate retreats
+
+<a href="/destinations/agadir">Agadir</a> is a strong choice for corporate retreats, relaxed incentives, beach programs, golf groups and teams that need milder pacing. The city offers resort hotels, Atlantic views, a more modern layout and access to Paradise Valley, Taroudant, Souss Massa and Anti-Atlas landscapes.
+
+Agadir works well when the objective is rest, reconnection and soft activities rather than dense cultural touring. It can be used for company retreats, wellness-style programs, leadership meetings, golf incentives or coastal extensions after Marrakech.
+
+For international planners, Agadir may need more explanation than Marrakech, but it can deliver excellent value for groups that want space, comfort and a calmer atmosphere.
+
+## Casablanca business groups
+
+<a href="/destinations/casablanca">Casablanca</a> is Morocco's business gateway. It is useful for corporate travel, airport logistics, meetings, executive groups and short cultural extensions. It may not have the same incentive image as Marrakech, but it has practical advantages.
+
+Casablanca can work for arrival or departure nights, business meetings, industry visits, executive transfers and programs linked to Rabat. The Hassan II Mosque, Corniche and Habous quarter can provide cultural content without turning the trip into a full leisure circuit.
+
+For MICE planners, Casablanca is often about efficiency. It is a strong base when flight access, business hotels, transfers and corporate timing are the priority.
+
+## Fes cultural extensions
+
+Fes is one of Morocco's strongest cultural destinations. It is ideal for groups that want heritage, education, craftsmanship and a slower, more meaningful extension. For MICE, <a href="/destinations/fes">Fes</a> is usually better as a pre/post extension or special cultural program than as the main corporate event base.
+
+The medina, artisan quarters, historical monuments and nearby Volubilis or Meknes can add depth to an incentive trip. Fes is especially useful for smaller premium groups, educational groups or corporate guests who want a more authentic cultural layer.
+
+The operational key is pacing. Fes medina visits need good guides, clear meeting points and realistic walking expectations.
+
+## Atlas Mountains extensions
+
+The Atlas Mountains are a natural fit for team building, nature breaks and incentive add-ons from Marrakech. Depending on timing, a group may include a mountain lunch, light hiking, Berber village context, scenic viewpoints or soft adventure activities.
+
+For MICE groups, the Atlas works best when the activity level is adapted carefully. Not every corporate group wants a physical challenge. Some need a scenic lunch and storytelling. Others may want a more active team moment. The DMC should match the experience to the group profile.
+
+## Sahara incentive extensions
+
+The Sahara is powerful but should be planned with honesty. Merzouga and the Erg Chebbi dunes create a high-impact reward experience, but they require time. A Sahara extension is best for groups with enough nights and a real appetite for travel.
+
+For agencies, the Sahara can be sold as a premium extension after Marrakech, Fes or Ouarzazate. It may include desert camps, sunset and sunrise moments, camel trekking, 4x4 excursions or cultural stops. The DMC must control routing, camp comfort, luggage needs and seasonal temperatures.
+
+If the group does not have enough time, Agafay may be a better desert-style option. If the goal is true dunes, then Merzouga deserves proper planning.
+
+## How to choose the right MICE destination
+
+Start with the objective. If the group wants impact and recognition, Marrakech is usually the first option. If the group needs beach, retreat energy or golf, consider Agadir. If the program is business-heavy, Casablanca may be the practical base. If the goal is cultural depth, add Fes. If the group wants a wow moment, consider Agafay, Atlas or Sahara extensions.
+
+Budget, season, flights, group size, mobility and hotel category all matter. A local <a href="/mice">MICE Morocco service</a> partner can compare options and build the right balance between work, reward and logistics.
+
+## Request a Morocco MICE proposal
+
+When sending a MICE brief, include dates, group size, arrival airport, hotel level, meeting needs, dinner expectations, activity style, budget range and any VIP requirements. This helps the local DMC prepare a realistic proposal.
+
+You can request a tailor-made MICE or incentive program through our <a href="/quote">quote request form</a>. Morocco Incoming by Suenos Travel supports agencies, companies and planners with local Morocco DMC operations for corporate groups.
+
+## FAQ
+
+### What is the best destination for MICE in Morocco?
+
+Marrakech is often the strongest all-round MICE destination because it combines hotels, venues, culture, dining, Atlas access and Agafay desert experiences.
+
+### Is Agadir good for incentive groups?
+
+Yes. Agadir works well for beach retreats, golf incentives, relaxed corporate programs and coastal extensions.
+
+### Can Casablanca work for corporate groups?
+
+Yes. Casablanca is useful for business groups, airport logistics, meetings, executive travel and Rabat extensions.
+
+### Can incentive groups include the Sahara?
+
+Yes, but only with realistic timing. True Sahara dune programs require more travel time than Agafay desert experiences near Marrakech.`,
+    contentFr: `Morocco is one of the most flexible MICE and incentive destinations in North Africa. It offers short-haul access from Europe, strong air connections, distinctive venues, desert and mountain experiences, coastal resorts, cultural cities and a sense of place that feels different from standard corporate destinations.
+
+For MICE planners, travel agencies and corporate travel buyers, the key question is not whether Morocco can work. It is which Moroccan destination fits the group objective. A sales incentive, leadership retreat, product launch, conference extension or reward trip will each need a different rhythm.
+
+This guide explains the best destinations for <a href="/mice-morocco">MICE Morocco</a> programs and how agencies can use them for incentive groups, corporate events and pre/post travel extensions.
+
+## Why Morocco works for incentive travel
+
+Morocco offers strong contrast in a relatively compact destination. A group can arrive in Marrakech, hold a dinner in a riad, experience Agafay desert, add Atlas Mountains activities and still keep transfers manageable. Another group can use Agadir for a coastal retreat, Casablanca for business logistics or Fes for cultural depth.
+
+The destination also works well for storytelling. Incentive groups need moments that feel memorable: a desert dinner, a private garden, a medina discovery, a mountain lunch, a coastal sunset or a Sahara extension. A local Morocco MICE DMC helps choose these moments without overloading the program.
+
+## Marrakech incentives
+
+<a href="/destinations/marrakech">Marrakech</a> is the strongest MICE destination in Morocco for many international groups. It has a large hotel base, riads, restaurants, gardens, venues, nightlife, cultural visits, golf, spa options and easy access to the Atlas Mountains and Agafay desert.
+
+Marrakech works especially well for incentive travel because the city can deliver contrast in a short stay. A three or four-night program may include airport arrivals, a welcome dinner, medina discovery, team activity, gala dinner, Agafay desert evening and optional Atlas excursion.
+
+For agencies, Marrakech is often the easiest Morocco MICE destination to sell because the name is recognizable and the experience feels rich. The operational challenge is not demand; it is design. Programs need controlled timing, good venue selection, transport planning and clear guest flow.
+
+## Agafay desert dinners
+
+Agafay is not the Sahara, but it is extremely useful for MICE. Located outside Marrakech, it offers a desert-style setting without the long drive to Merzouga. For corporate groups with limited time, this can be the right solution.
+
+Agafay works for sunset cocktails, seated dinners, entertainment, team moments and incentive-style evenings. The key is supplier selection. Setups can vary, and the right choice depends on group size, comfort level, weather, technical needs and transfer timing.
+
+Agencies should present Agafay honestly: it is a rocky desert landscape near Marrakech, not Sahara dunes. When positioned correctly, it can be one of the most effective MICE experiences in Morocco.
+
+## Agadir corporate retreats
+
+<a href="/destinations/agadir">Agadir</a> is a strong choice for corporate retreats, relaxed incentives, beach programs, golf groups and teams that need milder pacing. The city offers resort hotels, Atlantic views, a more modern layout and access to Paradise Valley, Taroudant, Souss Massa and Anti-Atlas landscapes.
+
+Agadir works well when the objective is rest, reconnection and soft activities rather than dense cultural touring. It can be used for company retreats, wellness-style programs, leadership meetings, golf incentives or coastal extensions after Marrakech.
+
+For international planners, Agadir may need more explanation than Marrakech, but it can deliver excellent value for groups that want space, comfort and a calmer atmosphere.
+
+## Casablanca business groups
+
+<a href="/destinations/casablanca">Casablanca</a> is Morocco's business gateway. It is useful for corporate travel, airport logistics, meetings, executive groups and short cultural extensions. It may not have the same incentive image as Marrakech, but it has practical advantages.
+
+Casablanca can work for arrival or departure nights, business meetings, industry visits, executive transfers and programs linked to Rabat. The Hassan II Mosque, Corniche and Habous quarter can provide cultural content without turning the trip into a full leisure circuit.
+
+For MICE planners, Casablanca is often about efficiency. It is a strong base when flight access, business hotels, transfers and corporate timing are the priority.
+
+## Fes cultural extensions
+
+Fes is one of Morocco's strongest cultural destinations. It is ideal for groups that want heritage, education, craftsmanship and a slower, more meaningful extension. For MICE, <a href="/destinations/fes">Fes</a> is usually better as a pre/post extension or special cultural program than as the main corporate event base.
+
+The medina, artisan quarters, historical monuments and nearby Volubilis or Meknes can add depth to an incentive trip. Fes is especially useful for smaller premium groups, educational groups or corporate guests who want a more authentic cultural layer.
+
+The operational key is pacing. Fes medina visits need good guides, clear meeting points and realistic walking expectations.
+
+## Atlas Mountains extensions
+
+The Atlas Mountains are a natural fit for team building, nature breaks and incentive add-ons from Marrakech. Depending on timing, a group may include a mountain lunch, light hiking, Berber village context, scenic viewpoints or soft adventure activities.
+
+For MICE groups, the Atlas works best when the activity level is adapted carefully. Not every corporate group wants a physical challenge. Some need a scenic lunch and storytelling. Others may want a more active team moment. The DMC should match the experience to the group profile.
+
+## Sahara incentive extensions
+
+The Sahara is powerful but should be planned with honesty. Merzouga and the Erg Chebbi dunes create a high-impact reward experience, but they require time. A Sahara extension is best for groups with enough nights and a real appetite for travel.
+
+For agencies, the Sahara can be sold as a premium extension after Marrakech, Fes or Ouarzazate. It may include desert camps, sunset and sunrise moments, camel trekking, 4x4 excursions or cultural stops. The DMC must control routing, camp comfort, luggage needs and seasonal temperatures.
+
+If the group does not have enough time, Agafay may be a better desert-style option. If the goal is true dunes, then Merzouga deserves proper planning.
+
+## How to choose the right MICE destination
+
+Start with the objective. If the group wants impact and recognition, Marrakech is usually the first option. If the group needs beach, retreat energy or golf, consider Agadir. If the program is business-heavy, Casablanca may be the practical base. If the goal is cultural depth, add Fes. If the group wants a wow moment, consider Agafay, Atlas or Sahara extensions.
+
+Budget, season, flights, group size, mobility and hotel category all matter. A local <a href="/mice">MICE Morocco service</a> partner can compare options and build the right balance between work, reward and logistics.
+
+## Request a Morocco MICE proposal
+
+When sending a MICE brief, include dates, group size, arrival airport, hotel level, meeting needs, dinner expectations, activity style, budget range and any VIP requirements. This helps the local DMC prepare a realistic proposal.
+
+You can request a tailor-made MICE or incentive program through our <a href="/quote">quote request form</a>. Morocco Incoming by Suenos Travel supports agencies, companies and planners with local Morocco DMC operations for corporate groups.
+
+## FAQ
+
+### What is the best destination for MICE in Morocco?
+
+Marrakech is often the strongest all-round MICE destination because it combines hotels, venues, culture, dining, Atlas access and Agafay desert experiences.
+
+### Is Agadir good for incentive groups?
+
+Yes. Agadir works well for beach retreats, golf incentives, relaxed corporate programs and coastal extensions.
+
+### Can Casablanca work for corporate groups?
+
+Yes. Casablanca is useful for business groups, airport logistics, meetings, executive travel and Rabat extensions.
+
+### Can incentive groups include the Sahara?
+
+Yes, but only with realistic timing. True Sahara dune programs require more travel time than Agafay desert experiences near Marrakech.`,
+    faq: [
+      { question: "What is the best destination for MICE in Morocco?", answer: "Marrakech is often the strongest all-round MICE destination because it combines hotels, venues, culture, dining, Atlas access and Agafay desert experiences." },
+      { question: "Is Agadir good for incentive groups?", answer: "Yes. Agadir works well for beach retreats, golf incentives, relaxed corporate programs and coastal extensions." },
+      { question: "Can Casablanca work for corporate groups?", answer: "Yes. Casablanca is useful for business groups, airport logistics, meetings, executive travel and Rabat extensions." },
+      { question: "Can incentive groups include the Sahara?", answer: "Yes, but only with realistic timing. True Sahara dune programs require more travel time than Agafay desert experiences near Marrakech." },
+    ],
+  },
   "what-does-a-morocco-dmc-do-for-travel-agencies": {
     title: "What Does a Morocco DMC Do for Travel Agencies?",
     titleFr: "What Does a Morocco DMC Do for Travel Agencies?",
@@ -702,15 +1300,20 @@ export default function BlogDetail() {
   const { locale } = useI18n();
   const isFr = locale === "fr";
 
+  if (slug && legacyBlogRedirects[slug]) {
+    return <Navigate to={`/blog/${legacyBlogRedirects[slug]}`} replace />;
+  }
+
   const post = slug ? blogPosts[slug] : null;
   if (!post) return <div className="py-24 text-center">Article not found</div>;
 
-  const title = isFr ? post.titleFr : post.title;
-  const content = isFr ? post.contentFr : post.content;
+  const hasFrenchContent = post.titleFr !== post.title || post.contentFr !== post.content;
+  const title = isFr && hasFrenchContent ? post.titleFr : post.title;
+  const content = isFr && hasFrenchContent ? post.contentFr : post.content;
   const canonicalPath = `/blog/${slug}`;
   const description = post.metaDescription ?? toMetaDescription(content);
   const relatedPosts = Object.entries(blogPosts)
-    .filter(([relatedSlug, relatedPost]) => relatedSlug !== slug && relatedPost.category.includes("B2B"))
+    .filter(([relatedSlug, relatedPost]) => !legacyBlogRedirects[relatedSlug] && relatedSlug !== slug && relatedPost.category.includes("B2B"))
     .slice(0, 2);
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -756,6 +1359,21 @@ export default function BlogDetail() {
       },
     ],
   };
+  const faqJsonLd = post.faq
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "@id": `${toAbsoluteUrl(canonicalPath)}#faq`,
+        mainEntity: post.faq.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.answer,
+          },
+        })),
+      }
+    : null;
 
   return (
     <>
@@ -769,6 +1387,7 @@ export default function BlogDetail() {
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(articleJsonLd)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
+        {faqJsonLd && <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>}
       </Helmet>
 
       <section className="bg-[#F9F7F4]">
@@ -850,7 +1469,9 @@ export default function BlogDetail() {
                     className="block rounded-xl border border-gray-100 p-4 hover:border-[#A91D2D]/40 hover:shadow-sm transition-all"
                   >
                     <p className="text-xs font-medium text-[#A91D2D] mb-2">{relatedPost.category}</p>
-                    <h3 className="font-semibold text-[#1F2937]">{isFr ? relatedPost.titleFr : relatedPost.title}</h3>
+                    <h3 className="font-semibold text-[#1F2937]">
+                      {isFr && relatedPost.titleFr !== relatedPost.title ? relatedPost.titleFr : relatedPost.title}
+                    </h3>
                     <p className="mt-2 text-sm text-[#6B7280]">
                       {relatedSlug.includes("dmc")
                         ? "Morocco DMC services, incoming agency support and local operations."

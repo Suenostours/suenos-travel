@@ -185,6 +185,15 @@ app.get("/sitemap.xml", async (c) => {
     sitemapEntry(`${baseUrl}/contact`, today, "monthly", "0.7"),
     sitemapEntry(`${baseUrl}/quote`, today, "monthly", "0.7"),
   ];
+  const staticBlogSlugs = [
+    "what-does-a-dmc-in-morocco-do-for-travel-agencies",
+    "how-to-choose-a-morocco-incoming-agency",
+    "mice-morocco-best-destinations-for-incentive-groups",
+  ];
+  const legacyBlogSlugs = ["what-does-a-morocco-dmc-do-for-travel-agencies"];
+  for (const slug of staticBlogSlugs) {
+    urls.push(sitemapEntry(`${baseUrl}/blog/${slug}`, today, "monthly", "0.6"));
+  }
 
   const tourRows = await db.select({ slug: tours.slug, updatedAt: tours.updatedAt }).from(tours).where(eq(tours.active, 1));
   for (const t of tourRows) {
@@ -196,6 +205,7 @@ app.get("/sitemap.xml", async (c) => {
   }
   const blogRows = await db.select({ slug: blogPosts.slug, updatedAt: blogPosts.updatedAt }).from(blogPosts).where(and(eq(blogPosts.status, "published"), eq(blogPosts.active, 1)));
   for (const b of blogRows) {
+    if (staticBlogSlugs.includes(b.slug) || legacyBlogSlugs.includes(b.slug)) continue;
     urls.push(sitemapEntry(`${baseUrl}/blog/${b.slug}`, formatSitemapDate(b.updatedAt), "monthly", "0.6"));
   }
 

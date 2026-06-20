@@ -989,29 +989,36 @@ function ContactsManager() {
       <h1 className="text-2xl font-bold text-[#1F2937]">Contact Requests</h1>
       <div className="space-y-4">
         {contacts?.map((c) => (
-          <div key={c.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
-            <div className="flex flex-wrap items-start justify-between gap-3">
+          <details key={c.id} className="group bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <summary className="cursor-pointer list-none flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h2 className="font-semibold text-[#1F2937]">{c.name}</h2>
                 <p className="text-sm text-[#6B7280]">{c.email}</p>
+                {c.subject && <p className="mt-1 text-xs text-[#6B7280]">{c.subject}</p>}
               </div>
-              <StatusBadge status={c.status} />
+              <div className="flex items-center gap-3">
+                <StatusBadge status={c.status} />
+                <span className="text-xs font-medium text-[#A91D2D] group-open:hidden">View details</span>
+                <span className="hidden text-xs font-medium text-[#A91D2D] group-open:inline">Hide details</span>
+              </div>
+            </summary>
+            <div className="mt-5 space-y-4 border-t border-gray-100 pt-5">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <DetailField label="Name" value={c.name} />
+                <DetailField label="Email" value={c.email} />
+                <DetailField label="Phone" value={c.phone} />
+                <DetailField label="Subject" value={c.subject} />
+                <DetailField label="Created At" value={formatRequestDate(c.createdAt)} />
+                <DetailField label="Status" value={c.status} />
+                <DetailField label="Message" value={c.message} className="sm:col-span-2 lg:col-span-3" />
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {["new", "treated", "archived"].map((s) => (
+                  <Button key={s} variant="ghost" size="sm" className={`h-7 text-xs ${c.status === s ? "bg-gray-100" : ""}`} onClick={() => updateStatus.mutate({ id: c.id, status: s as any })}>{s}</Button>
+                ))}
+              </div>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <DetailField label="Name" value={c.name} />
-              <DetailField label="Email" value={c.email} />
-              <DetailField label="Phone" value={c.phone} />
-              <DetailField label="Subject" value={c.subject} />
-              <DetailField label="Created At" value={formatRequestDate(c.createdAt)} />
-              <DetailField label="Status" value={c.status} />
-              <DetailField label="Message" value={c.message} className="sm:col-span-2 lg:col-span-3" />
-            </div>
-            <div className="flex flex-wrap gap-1">
-              {["new", "treated", "archived"].map((s) => (
-                <Button key={s} variant="ghost" size="sm" className={`h-7 text-xs ${c.status === s ? "bg-gray-100" : ""}`} onClick={() => updateStatus.mutate({ id: c.id, status: s as any })}>{s}</Button>
-              ))}
-            </div>
-          </div>
+          </details>
         ))}
         {(contacts?.length ?? 0) === 0 && <p className="text-sm text-[#6B7280]">No contact requests yet.</p>}
       </div>
@@ -1029,41 +1036,48 @@ function QuotesManager() {
       <h1 className="text-2xl font-bold text-[#1F2937]">Quote Requests</h1>
       <div className="space-y-4">
         {quotes?.map((q) => (
-          <div key={q.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
-            <div className="flex flex-wrap items-start justify-between gap-3">
+          <details key={q.id} className="group bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <summary className="cursor-pointer list-none flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h2 className="font-semibold text-[#1F2937]">{q.agencyName || q.contactPerson || "Quote Request"}</h2>
                 <p className="text-sm text-[#6B7280]">{q.email}</p>
+                <p className="mt-1 text-xs text-[#6B7280]">{[q.travelType, q.dates].filter(Boolean).join(" | ") || formatRequestDate(q.createdAt)}</p>
               </div>
-              <StatusBadge status={q.status} />
+              <div className="flex items-center gap-3">
+                <StatusBadge status={q.status} />
+                <span className="text-xs font-medium text-[#A91D2D] group-open:hidden">View details</span>
+                <span className="hidden text-xs font-medium text-[#A91D2D] group-open:inline">Hide details</span>
+              </div>
+            </summary>
+            <div className="mt-5 space-y-4 border-t border-gray-100 pt-5">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <DetailField label="Agency Name" value={q.agencyName} />
+                <DetailField label="Contact Person" value={q.contactPerson} />
+                <DetailField label="Email" value={q.email} />
+                <DetailField label="WhatsApp" value={q.whatsapp} />
+                <DetailField label="Country" value={q.country} />
+                <DetailField label="Travel Type" value={q.travelType} />
+                <DetailField label="Dates" value={q.dates} />
+                <DetailField label="Duration" value={q.duration} />
+                <DetailField label="Adults" value={q.adults} />
+                <DetailField label="Children" value={q.children} />
+                <DetailField label="Preferred Destinations" value={q.preferredDestinations} />
+                <DetailField label="Preferred Circuit" value={q.preferredCircuit} />
+                <DetailField label="Hotel Category" value={q.hotelCategory} />
+                <DetailField label="Transport Type" value={q.transportType} />
+                <DetailField label="Guide Language" value={q.guideLanguage} />
+                <DetailField label="Budget Range" value={q.budgetRange} />
+                <DetailField label="Created At" value={formatRequestDate(q.createdAt)} />
+                <DetailField label="Status" value={q.status} />
+                <DetailField label="Special Requests" value={q.specialRequests} className="sm:col-span-2 lg:col-span-3" />
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {["new", "treated", "archived"].map((s) => (
+                  <Button key={s} variant="ghost" size="sm" className={`h-7 text-xs ${q.status === s ? "bg-gray-100" : ""}`} onClick={() => updateStatus.mutate({ id: q.id, status: s as any })}>{s}</Button>
+                ))}
+              </div>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <DetailField label="Agency Name" value={q.agencyName} />
-              <DetailField label="Contact Person" value={q.contactPerson} />
-              <DetailField label="Email" value={q.email} />
-              <DetailField label="WhatsApp" value={q.whatsapp} />
-              <DetailField label="Country" value={q.country} />
-              <DetailField label="Travel Type" value={q.travelType} />
-              <DetailField label="Dates" value={q.dates} />
-              <DetailField label="Duration" value={q.duration} />
-              <DetailField label="Adults" value={q.adults} />
-              <DetailField label="Children" value={q.children} />
-              <DetailField label="Preferred Destinations" value={q.preferredDestinations} />
-              <DetailField label="Preferred Circuit" value={q.preferredCircuit} />
-              <DetailField label="Hotel Category" value={q.hotelCategory} />
-              <DetailField label="Transport Type" value={q.transportType} />
-              <DetailField label="Guide Language" value={q.guideLanguage} />
-              <DetailField label="Budget Range" value={q.budgetRange} />
-              <DetailField label="Created At" value={formatRequestDate(q.createdAt)} />
-              <DetailField label="Status" value={q.status} />
-              <DetailField label="Special Requests" value={q.specialRequests} className="sm:col-span-2 lg:col-span-3" />
-            </div>
-            <div className="flex flex-wrap gap-1">
-              {["new", "treated", "archived"].map((s) => (
-                <Button key={s} variant="ghost" size="sm" className={`h-7 text-xs ${q.status === s ? "bg-gray-100" : ""}`} onClick={() => updateStatus.mutate({ id: q.id, status: s as any })}>{s}</Button>
-              ))}
-            </div>
-          </div>
+          </details>
         ))}
         {(quotes?.length ?? 0) === 0 && <p className="text-sm text-[#6B7280]">No quote requests yet.</p>}
       </div>
@@ -1080,32 +1094,39 @@ function PartnersManager() {
       <h1 className="text-2xl font-bold text-[#1F2937]">B2B Partner Requests</h1>
       <div className="space-y-4">
         {partners?.map((p) => (
-          <div key={p.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
-            <div className="flex flex-wrap items-start justify-between gap-3">
+          <details key={p.id} className="group bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <summary className="cursor-pointer list-none flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h2 className="font-semibold text-[#1F2937]">{p.agencyName}</h2>
                 <p className="text-sm text-[#6B7280]">{p.email}</p>
+                <p className="mt-1 text-xs text-[#6B7280]">{[p.contactPerson, p.country].filter(Boolean).join(" | ")}</p>
               </div>
-              <StatusBadge status={p.status} />
+              <div className="flex items-center gap-3">
+                <StatusBadge status={p.status} />
+                <span className="text-xs font-medium text-[#A91D2D] group-open:hidden">View details</span>
+                <span className="hidden text-xs font-medium text-[#A91D2D] group-open:inline">Hide details</span>
+              </div>
+            </summary>
+            <div className="mt-5 space-y-4 border-t border-gray-100 pt-5">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <DetailField label="Agency Name" value={p.agencyName} />
+                <DetailField label="Country" value={p.country} />
+                <DetailField label="Website" value={p.website} />
+                <DetailField label="Contact Person" value={p.contactPerson} />
+                <DetailField label="Email" value={p.email} />
+                <DetailField label="WhatsApp" value={p.whatsapp} />
+                <DetailField label="Business Type" value={p.businessType} />
+                <DetailField label="Expected Volume" value={p.expectedVolume} />
+                <DetailField label="Created At" value={formatRequestDate(p.createdAt)} />
+                <DetailField label="Status" value={p.status} />
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {["new", "treated", "archived"].map((s) => (
+                  <Button key={s} variant="ghost" size="sm" className={`h-7 text-xs ${p.status === s ? "bg-gray-100" : ""}`} onClick={() => updateStatus.mutate({ id: p.id, status: s as any })}>{s}</Button>
+                ))}
+              </div>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <DetailField label="Agency Name" value={p.agencyName} />
-              <DetailField label="Country" value={p.country} />
-              <DetailField label="Website" value={p.website} />
-              <DetailField label="Contact Person" value={p.contactPerson} />
-              <DetailField label="Email" value={p.email} />
-              <DetailField label="WhatsApp" value={p.whatsapp} />
-              <DetailField label="Business Type" value={p.businessType} />
-              <DetailField label="Expected Volume" value={p.expectedVolume} />
-              <DetailField label="Created At" value={formatRequestDate(p.createdAt)} />
-              <DetailField label="Status" value={p.status} />
-            </div>
-            <div className="flex flex-wrap gap-1">
-              {["new", "treated", "archived"].map((s) => (
-                <Button key={s} variant="ghost" size="sm" className={`h-7 text-xs ${p.status === s ? "bg-gray-100" : ""}`} onClick={() => updateStatus.mutate({ id: p.id, status: s as any })}>{s}</Button>
-              ))}
-            </div>
-          </div>
+          </details>
         ))}
         {(partners?.length ?? 0) === 0 && <p className="text-sm text-[#6B7280]">No B2B partner requests yet.</p>}
       </div>

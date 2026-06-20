@@ -15,6 +15,7 @@ export default function B2B() {
   const [error, setError] = useState("");
   const [agencyName, setAgencyName] = useState("");
   const [country, setCountry] = useState("");
+  const [website, setWebsite] = useState("");
   const [contactPerson, setContactPerson] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
@@ -121,7 +122,7 @@ export default function B2B() {
                   if (!email.trim()) { setError(isFr ? "L'email est requis" : "Email is required"); return; }
                   if (!agencyName.trim()) { setError(isFr ? "Le nom de l'agence est requis" : "Agency name is required"); return; }
                   if (!contactPerson.trim()) { setError(isFr ? "La personne à contacter est requise" : "Contact person is required"); return; }
-                  createPartner.mutate({ agencyName, country, contactPerson, email, whatsapp, businessType, expectedVolume });
+                  createPartner.mutate({ agencyName, country, website, contactPerson, email, whatsapp, businessType, expectedVolume });
                 }} className="space-y-5">
                   <h2 className="font-serif text-xl font-bold text-[#1F2937] mb-4">
                     {isFr ? "Formulaire de partenariat" : "Partnership Form"}
@@ -135,6 +136,11 @@ export default function B2B() {
                   <div>
                     <Label>{isFr ? "Pays" : "Country"}</Label>
                     <Input className="mt-1" value={country} onChange={(e) => setCountry(e.target.value)} />
+                  </div>
+
+                  <div>
+                    <Label>{isFr ? "Site web" : "Website"}</Label>
+                    <Input type="url" className="mt-1" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://" />
                   </div>
 
                   <div>

@@ -3,6 +3,7 @@ import { createRouter, publicQuery, editorQuery } from "./middleware";
 import { getDb } from "./queries/connection";
 import { blogPosts, blogTranslations, contactRequests, quoteRequests, partnerRequests, media } from "@db/schema";
 import { eq, sql } from "drizzle-orm";
+import { sendSubmissionNotification } from "./lib/notification-email";
 
 export const blogRouter = createRouter({
   list: editorQuery.query(async () => {
@@ -126,6 +127,18 @@ export const formsRouter = createRouter({
     .mutation(async ({ input }) => {
       const db = getDb();
       await db.insert(contactRequests).values(input);
+      await sendSubmissionNotification({
+        type: "Contact Request",
+        replyTo: input.email,
+        fields: [
+          { label: "Name", value: input.name },
+          { label: "Email", value: input.email },
+          { label: "Phone", value: input.phone },
+          { label: "Subject / Request Type", value: input.subject },
+          { label: "Message / Notes", value: input.message },
+          { label: "Created At", value: new Date().toISOString() },
+        ],
+      });
       return { success: true };
     }),
 
@@ -168,6 +181,32 @@ export const formsRouter = createRouter({
     .mutation(async ({ input }) => {
       const db = getDb();
       await db.insert(quoteRequests).values(input);
+      const totalPax = (input.adults ?? 0) + (input.children ?? 0);
+      await sendSubmissionNotification({
+        type: "Quote Request",
+        replyTo: input.email,
+        fields: [
+          { label: "Agency Name", value: input.agencyName },
+          { label: "Contact Person", value: input.contactPerson },
+          { label: "Email", value: input.email },
+          { label: "Phone / WhatsApp", value: input.whatsapp },
+          { label: "Country", value: input.country },
+          { label: "Request Type", value: input.travelType },
+          { label: "Travel Dates", value: input.dates },
+          { label: "Duration", value: input.duration },
+          { label: "Number of Pax", value: totalPax || undefined },
+          { label: "Adults", value: input.adults },
+          { label: "Children", value: input.children },
+          { label: "Destinations", value: input.preferredDestinations },
+          { label: "Preferred Circuit", value: input.preferredCircuit },
+          { label: "Hotel Category", value: input.hotelCategory },
+          { label: "Transport Type", value: input.transportType },
+          { label: "Guide Language", value: input.guideLanguage },
+          { label: "Budget", value: input.budgetRange },
+          { label: "Services Requested / Notes", value: input.specialRequests },
+          { label: "Created At", value: new Date().toISOString() },
+        ],
+      });
       return { success: true };
     }),
 
@@ -201,6 +240,21 @@ export const formsRouter = createRouter({
     .mutation(async ({ input }) => {
       const db = getDb();
       await db.insert(partnerRequests).values(input);
+      await sendSubmissionNotification({
+        type: "B2B Partner Request",
+        replyTo: input.email,
+        fields: [
+          { label: "Agency Name", value: input.agencyName },
+          { label: "Contact Person", value: input.contactPerson },
+          { label: "Email", value: input.email },
+          { label: "Phone / WhatsApp", value: input.whatsapp },
+          { label: "Country", value: input.country },
+          { label: "Website", value: input.website },
+          { label: "Request Type / Business Type", value: input.businessType },
+          { label: "Expected Volume", value: input.expectedVolume },
+          { label: "Created At", value: new Date().toISOString() },
+        ],
+      });
       return { success: true };
     }),
 

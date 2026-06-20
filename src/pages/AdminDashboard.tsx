@@ -1069,7 +1069,7 @@ function QuotesManager() {
                 <DetailField label="Budget Range" value={q.budgetRange} />
                 <DetailField label="Created At" value={formatRequestDate(q.createdAt)} />
                 <DetailField label="Status" value={q.status} />
-                <DetailField label="Special Requests" value={q.specialRequests} className="sm:col-span-2 lg:col-span-3" />
+                <DetailField label="Request / Brief" value={q.specialRequests} className="sm:col-span-2 lg:col-span-3" />
               </div>
               <div className="flex flex-wrap gap-1">
                 {["new", "treated", "archived"].map((s) => (

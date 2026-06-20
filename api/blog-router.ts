@@ -166,6 +166,7 @@ export const formsRouter = createRouter({
         country: z.string().optional(),
         travelType: z.string().optional(),
         dates: z.string().optional(),
+        numberOfPax: z.number().int().positive().optional(),
         duration: z.string().optional(),
         adults: z.number().optional(),
         children: z.number().optional(),
@@ -180,8 +181,17 @@ export const formsRouter = createRouter({
     )
     .mutation(async ({ input }) => {
       const db = getDb();
-      await db.insert(quoteRequests).values(input);
-      const totalPax = (input.adults ?? 0) + (input.children ?? 0);
+      const { numberOfPax, ...storedInput } = input;
+      const storedBrief = [
+        input.specialRequests?.trim(),
+        numberOfPax ? `Number of Pax: ${numberOfPax}` : "",
+      ].filter(Boolean).join("\n");
+      await db.insert(quoteRequests).values({
+        ...storedInput,
+        specialRequests: storedBrief || undefined,
+      });
+      const legacyPax = (input.adults ?? 0) + (input.children ?? 0);
+      const totalPax = numberOfPax ?? (legacyPax || undefined);
       await sendSubmissionNotification({
         type: "Quote Request",
         replyTo: input.email,
@@ -203,7 +213,7 @@ export const formsRouter = createRouter({
           { label: "Transport Type", value: input.transportType },
           { label: "Guide Language", value: input.guideLanguage },
           { label: "Budget", value: input.budgetRange },
-          { label: "Services Requested / Notes", value: input.specialRequests },
+          { label: "Request / Brief", value: input.specialRequests },
           { label: "Created At", value: new Date().toISOString() },
         ],
       });

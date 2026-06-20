@@ -36,11 +36,16 @@ function escapeHtml(value: string) {
 export async function sendSubmissionNotification(notification: SubmissionNotification): Promise<NotificationResult> {
   const apiKey = process.env.RESEND_API_KEY;
   const recipient = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.CONTACT_NOTIFICATION_EMAIL;
-  const from = process.env.NOTIFICATION_FROM_EMAIL || process.env.EMAIL_FROM;
+  const from = process.env.NOTIFICATION_FROM_EMAIL;
 
   if (!apiKey || !recipient || !from) {
-    const reason = "RESEND_API_KEY, ADMIN_NOTIFICATION_EMAIL (or CONTACT_NOTIFICATION_EMAIL), and NOTIFICATION_FROM_EMAIL are required";
-    console.warn(`[email] ${notification.type} saved, but notification was skipped: ${reason}.`);
+    const missing = [
+      !apiKey && "RESEND_API_KEY",
+      !recipient && "ADMIN_NOTIFICATION_EMAIL (or CONTACT_NOTIFICATION_EMAIL)",
+      !from && "NOTIFICATION_FROM_EMAIL",
+    ].filter(Boolean).join(", ");
+    const reason = `Missing email configuration: ${missing}`;
+    console.warn(`[email] notification skipped: type="${notification.type}" recipient="${recipient || "not configured"}" reason="${reason}"`);
     return { sent: false, reason };
   }
 
@@ -84,13 +89,14 @@ export async function sendSubmissionNotification(notification: SubmissionNotific
 
     if (!response.ok) {
       const providerMessage = await response.text();
-      console.warn(`[email] ${notification.type} saved, but Resend returned ${response.status}: ${providerMessage}`);
+      console.warn(`[email] notification failed: type="${notification.type}" recipient="${recipient}" provider="Resend" status=${response.status} response=${providerMessage}`);
       return { sent: false, reason: `Resend returned ${response.status}` };
     }
 
+    console.info(`[email] notification sent: type="${notification.type}" recipient="${recipient}" provider="Resend"`);
     return { sent: true };
   } catch (error) {
-    console.warn(`[email] ${notification.type} saved, but notification failed:`, error);
+    console.warn(`[email] notification failed: type="${notification.type}" recipient="${recipient}" provider="Resend"`, error);
     return { sent: false, reason: error instanceof Error ? error.message : "Unknown email error" };
   }
 }

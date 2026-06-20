@@ -21,16 +21,11 @@ export default function Quote() {
   const [country, setCountry] = useState("");
   const [travelType, setTravelType] = useState("");
   const [dates, setDates] = useState("");
-  const [duration, setDuration] = useState("");
-  const [adults, setAdults] = useState("");
-  const [children, setChildren] = useState("");
+  const [pax, setPax] = useState("");
   const [destinations, setDestinations] = useState("");
-  const [circuit, setCircuit] = useState("");
   const [hotel, setHotel] = useState("");
-  const [transport, setTransport] = useState("");
-  const [guide, setGuide] = useState("");
   const [budget, setBudget] = useState("");
-  const [requests, setRequests] = useState("");
+  const [brief, setBrief] = useState("");
 
   const createQuote = trpc.forms.createQuote.useMutation({
     onSuccess: () => {
@@ -113,7 +108,9 @@ export default function Quote() {
                 <form onSubmit={(e) => {
                   e.preventDefault();
                   setError("");
+                  if (!name.trim()) { setError(isFr ? "La personne à contacter est requise" : "Contact person is required"); return; }
                   if (!email.trim()) { setError(isFr ? "L'email est requis" : "Email is required"); return; }
+                  if (!brief.trim()) { setError(isFr ? "La description de la demande est requise" : "Request / brief is required"); return; }
                   createQuote.mutate({
                     email,
                     agencyName: agency,
@@ -122,16 +119,11 @@ export default function Quote() {
                     country,
                     travelType,
                     dates,
-                    duration,
-                    adults: adults ? parseInt(adults) : undefined,
-                    children: children ? parseInt(children) : undefined,
+                    numberOfPax: pax ? parseInt(pax) : undefined,
                     preferredDestinations: destinations,
-                    preferredCircuit: circuit,
                     hotelCategory: hotel,
-                    transportType: transport,
-                    guideLanguage: guide,
                     budgetRange: budget,
-                    specialRequests: requests,
+                    specialRequests: brief,
                   });
                 }} className="space-y-5">
                   <h2 className="font-serif text-xl font-bold text-[#1F2937] mb-4">
@@ -141,7 +133,7 @@ export default function Quote() {
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <Label>{isFr ? "Nom de l'agence" : "Agency Name"}</Label>
-                      <Input required className="mt-1" value={agency} onChange={(e) => setAgency(e.target.value)} />
+                      <Input className="mt-1" value={agency} onChange={(e) => setAgency(e.target.value)} />
                     </div>
                     <div>
                       <Label>{isFr ? "Personne à contacter" : "Contact Person"} *</Label>
@@ -177,19 +169,8 @@ export default function Quote() {
                       <Input className="mt-1" value={dates} onChange={(e) => setDates(e.target.value)} />
                     </div>
                     <div>
-                      <Label>{isFr ? "Durée" : "Duration"}</Label>
-                      <Input className="mt-1" value={duration} onChange={(e) => setDuration(e.target.value)} />
-                    </div>
-                  </div>
-
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
-                      <Label>{isFr ? "Nombre d'adultes" : "Number of Adults"}</Label>
-                      <Input type="number" min={1} className="mt-1" value={adults} onChange={(e) => setAdults(e.target.value)} />
-                    </div>
-                    <div>
-                      <Label>{isFr ? "Nombre d'enfants" : "Number of Children"}</Label>
-                      <Input type="number" min={0} className="mt-1" value={children} onChange={(e) => setChildren(e.target.value)} />
+                      <Label>{isFr ? "Nombre de voyageurs" : "Number of Pax"}</Label>
+                      <Input type="number" min={1} className="mt-1" value={pax} onChange={(e) => setPax(e.target.value)} />
                     </div>
                   </div>
 
@@ -198,26 +179,10 @@ export default function Quote() {
                     <Input className="mt-1" value={destinations} onChange={(e) => setDestinations(e.target.value)} />
                   </div>
 
-                  <div>
-                    <Label>{isFr ? "Circuit préféré" : "Preferred Circuit"}</Label>
-                    <Input className="mt-1" value={circuit} onChange={(e) => setCircuit(e.target.value)} />
-                  </div>
-
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <Label>{isFr ? "Catégorie d'hôtel" : "Hotel Category"}</Label>
                       <Input className="mt-1" value={hotel} onChange={(e) => setHotel(e.target.value)} />
-                    </div>
-                    <div>
-                      <Label>{isFr ? "Type de transport" : "Transport Type"}</Label>
-                      <Input className="mt-1" value={transport} onChange={(e) => setTransport(e.target.value)} />
-                    </div>
-                  </div>
-
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
-                      <Label>{isFr ? "Langue du guide" : "Guide Language"}</Label>
-                      <Input className="mt-1" value={guide} onChange={(e) => setGuide(e.target.value)} />
                     </div>
                     <div>
                       <Label>{isFr ? "Budget approximatif" : "Approximate Budget"}</Label>
@@ -226,8 +191,17 @@ export default function Quote() {
                   </div>
 
                   <div>
-                    <Label>{isFr ? "Demandes spéciales" : "Special Requests"}</Label>
-                    <Textarea className="mt-1" rows={5} value={requests} onChange={(e) => setRequests(e.target.value)} />
+                    <Label>{isFr ? "Parlez-nous de votre demande" : "Tell us about your request"} *</Label>
+                    <Textarea
+                      required
+                      className="mt-1"
+                      rows={6}
+                      value={brief}
+                      onChange={(e) => setBrief(e.target.value)}
+                      placeholder={isFr
+                        ? "Dates, destinations, nombre de voyageurs, niveau d'hôtel, budget, services souhaités ou tout détail utile..."
+                        : "Dates, destinations, number of travelers, hotel level, budget, services needed, or any useful details..."}
+                    />
                   </div>
 
                   <Button type="submit" disabled={createQuote.isPending} className="w-full bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full disabled:opacity-50">

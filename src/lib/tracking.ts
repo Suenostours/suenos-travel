@@ -1,4 +1,4 @@
-const GOOGLE_ADS_ID = "AW-18188447838";
+const GOOGLE_ADS_LEAD_DESTINATION = "AW-18188447838/MmohCIvmoe4cEN7g9uBD";
 
 type EventParams = Record<string, string | number | boolean | undefined>;
 
@@ -22,7 +22,7 @@ function sendGtag(command: string, eventName: string, params?: EventParams) {
 }
 
 function sendGoogleAdsConversion() {
-  sendGtag("event", "conversion", { send_to: GOOGLE_ADS_ID });
+  sendGtag("event", "conversion", { send_to: GOOGLE_ADS_LEAD_DESTINATION });
 }
 
 export function trackPageView(params: EventParams) {

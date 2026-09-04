@@ -7,6 +7,7 @@ import { Check, Globe, Handshake, DollarSign, Clock, Headphones, Send } from "lu
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { trackPartnerFormSubmit } from "@/lib/tracking";
 
 export default function B2B() {
   const { locale } = useI18n();
@@ -21,7 +22,10 @@ export default function B2B() {
   const [businessType, setBusinessType] = useState("");
 
   const createPartner = trpc.forms.createPartner.useMutation({
-    onSuccess: () => setSubmitted(true),
+    onSuccess: () => {
+      trackPartnerFormSubmit();
+      setSubmitted(true);
+    },
     onError: (err) => setError(err.message),
   });
 

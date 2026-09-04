@@ -34,10 +34,20 @@ export function trackLeadEvent(eventName: string, params?: EventParams) {
   sendGoogleAdsConversion();
 }
 
+function trackFormSubmission(eventName: string, formType: string) {
+  const params = { form_type: formType };
+  trackLeadEvent(eventName, params);
+  sendGtag("event", "generate_lead", params);
+}
+
 export function trackContactFormSubmit() {
-  trackLeadEvent("contact_form_submit");
+  trackFormSubmission("contact_form_submit", "contact");
 }
 
 export function trackQuoteFormSubmit() {
-  trackLeadEvent("quote_form_submit");
+  trackFormSubmission("quote_form_submit", "quote");
+}
+
+export function trackPartnerFormSubmit() {
+  trackFormSubmission("partner_form_submit", "partner");
 }

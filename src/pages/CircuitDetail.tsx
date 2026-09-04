@@ -5,6 +5,9 @@ import { Helmet } from "react-helmet-async";
 import SEO from "@/components/SEO";
 import { ArrowLeft, Clock, MapPin, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { TouristTrip, WithContext } from "schema-dts";
+import { optimizedImageUrl } from "@/lib/images";
+import { safeJsonLd } from "@/lib/structured-data";
 
 const BASE_URL = "https://www.morocco-incoming.com";
 const DEFAULT_TOUR_IMAGE = "/images/hero-desert.jpg";
@@ -83,11 +86,11 @@ export default function CircuitDetail() {
               ? "Ce circuit n'est pas disponible pour le moment."
               : "This tour is not available right now."}
           </p>
-          <Link to="/circuits">
-            <Button variant="outline" className="rounded-full">
+          <Button asChild variant="outline" className="rounded-full">
+            <Link to="/circuits">
               <ArrowLeft className="h-4 w-4 mr-2" /> {isFr ? "Retour aux circuits" : "Back to circuits"}
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </section>
     );
@@ -111,42 +114,18 @@ export default function CircuitDetail() {
   const seoImage = tour.mainImage || DEFAULT_TOUR_IMAGE;
   const absoluteUrl = toAbsoluteUrl(canonicalPath);
   const absoluteImage = toAbsoluteUrl(seoImage);
-  const breadcrumbJsonLd = {
+  const tripJsonLd: WithContext<TouristTrip> = {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: BASE_URL,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Circuits",
-        item: `${BASE_URL}/circuits`,
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: title,
-        item: absoluteUrl,
-      },
-    ],
-  };
-  const productJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
+    "@type": "TouristTrip",
     name: title,
     description: seoDescription,
     image: absoluteImage,
-    brand: {
+    provider: {
       "@type": "Organization",
       name: "Suenos Travel",
       url: BASE_URL,
     },
-    category: "Morocco Tour / DMC Program",
+    touristType: "Travel agencies, tour operators, private groups and corporate travelers",
     url: absoluteUrl,
   };
 
@@ -159,14 +138,13 @@ export default function CircuitDetail() {
         image={seoImage}
       />
       <Helmet>
-        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
-        <script type="application/ld+json">{JSON.stringify(productJsonLd)}</script>
+        <script type="application/ld+json">{safeJsonLd(tripJsonLd)}</script>
       </Helmet>
 
       <section className="bg-[#F9F7F4]">
         <div className="relative h-[400px] md:h-[500px]">
           {tour.mainImage ? (
-            <img src={tour.mainImage} alt={title} fetchPriority="high" decoding="async" className="w-full h-full object-cover" />
+            <img src={optimizedImageUrl(tour.mainImage, 1600)} alt={title} width={1600} height={1067} fetchPriority="high" decoding="async" className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full bg-[#D8CEC4]" />
           )}
@@ -283,19 +261,19 @@ export default function CircuitDetail() {
                   <div className="flex justify-between gap-4"><span className="text-[#6B7280]">{isFr ? "Type" : "Type"}</span><span className="font-medium capitalize">{formatType(tour.type)}</span></div>
                   {cityText && <div className="flex justify-between gap-4"><span className="text-[#6B7280]">{isFr ? "Villes" : "Cities"}</span><span className="font-medium text-right">{cityText}</span></div>}
                 </div>
-                <Link to={quotePath} className="mt-6 block">
-                  <Button className="w-full bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full">
+                <Button asChild className="mt-6 w-full bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full">
+                  <Link to={quotePath}>
                     {isFr ? "Demander les tarifs nets" : "Request Net Rates"}
-                  </Button>
-                </Link>
-                <a href="https://wa.me/212661925611" target="_blank" rel="noopener noreferrer" className="mt-3 block">
-                  <Button variant="outline" className="w-full rounded-full">WhatsApp</Button>
-                </a>
-                <Link to="/b2b" className="mt-3 block">
-                  <Button variant="outline" className="w-full rounded-full">
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="mt-3 w-full rounded-full">
+                  <a href="https://wa.me/212661925611" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                </Button>
+                <Button asChild variant="outline" className="mt-3 w-full rounded-full">
+                  <Link to="/b2b">
                     {isFr ? "Devenir partenaire B2B" : "Become a B2B Partner"}
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </div>
             </div>
           </div>

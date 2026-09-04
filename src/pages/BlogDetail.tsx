@@ -4,6 +4,7 @@ import { useI18n } from "@/providers/i18n";
 import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, Tag } from "lucide-react";
+import { safeJsonLd } from "@/lib/structured-data";
 
 const BASE_URL = "https://www.morocco-incoming.com";
 const legacyBlogRedirects: Record<string, string> = {
@@ -1315,50 +1316,6 @@ export default function BlogDetail() {
   const relatedPosts = Object.entries(blogPosts)
     .filter(([relatedSlug, relatedPost]) => !legacyBlogRedirects[relatedSlug] && relatedSlug !== slug && relatedPost.category.includes("B2B"))
     .slice(0, 2);
-  const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: title,
-    description,
-    image: toAbsoluteUrl(post.image),
-    datePublished: post.date,
-    dateModified: post.date,
-    author: {
-      "@type": "Organization",
-      name: "Suenos Travel",
-      url: BASE_URL,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "Suenos Travel",
-      url: BASE_URL,
-    },
-    mainEntityOfPage: toAbsoluteUrl(canonicalPath),
-  };
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: BASE_URL,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Blog",
-        item: `${BASE_URL}/blog`,
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: title,
-        item: toAbsoluteUrl(canonicalPath),
-      },
-    ],
-  };
   const faqJsonLd = post.faq
     ? {
         "@context": "https://schema.org",
@@ -1383,11 +1340,11 @@ export default function BlogDetail() {
         canonical={canonicalPath}
         image={post.image}
         type="article"
+        datePublished={post.date}
+        dateModified={post.date}
       />
       <Helmet>
-        <script type="application/ld+json">{JSON.stringify(articleJsonLd)}</script>
-        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
-        {faqJsonLd && <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>}
+        {faqJsonLd && <script type="application/ld+json">{safeJsonLd(faqJsonLd)}</script>}
       </Helmet>
 
       <section className="bg-[#F9F7F4]">
@@ -1493,16 +1450,16 @@ export default function BlogDetail() {
                 : "Request a tailor-made proposal or become a Suenos Travel B2B partner."}
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-4">
-              <Link to="/quote">
-                <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+              <Button asChild className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+                <Link to="/quote">
                   {isFr ? "Request Net Rates" : "Request Net Rates"}
-                </Button>
-              </Link>
-              <Link to="/b2b">
-                <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                <Link to="/b2b">
                   {isFr ? "Become a B2B Partner" : "Become a B2B Partner"}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>

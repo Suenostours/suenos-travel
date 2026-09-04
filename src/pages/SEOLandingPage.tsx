@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { safeJsonLd } from "@/lib/structured-data";
 
 const BASE_URL = "https://www.morocco-incoming.com";
 
@@ -404,25 +405,6 @@ function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
       },
     })),
   };
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: BASE_URL,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: page.h1,
-        item: absoluteUrl,
-      },
-    ],
-  };
-
   return (
     <>
       <SEO
@@ -432,8 +414,7 @@ function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
         image="/images/hero-desert.jpg"
       />
       <Helmet>
-        <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
-        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
+        <script type="application/ld+json">{safeJsonLd(faqJsonLd)}</script>
       </Helmet>
 
       <section className="bg-[#0F172A] text-white">
@@ -443,21 +424,21 @@ function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
             <h1 className="mt-4 font-serif text-4xl md:text-5xl font-bold leading-tight">{page.h1}</h1>
             <p className="mt-6 text-lg text-gray-300 max-w-3xl leading-relaxed">{page.intro}</p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link to="/quote">
-                <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+              <Button asChild className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+                <Link to="/quote">
                   Request B2B Net Rates
-                </Button>
-              </Link>
-              <Link to="/quote">
-                <Button variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-6">
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-6">
+                <Link to="/quote">
                   Request a Morocco Program
-                </Button>
-              </Link>
-              <Link to="/b2b">
-                <Button variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-6">
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-6">
+                <Link to="/b2b">
                   Become a B2B Partner
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
@@ -586,21 +567,21 @@ function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
                   Send your dates, group size, hotel level, target budget and client profile. Our local team will prepare a B2B proposal without adding public prices.
                 </p>
                 <div className="mt-5 space-y-3">
-                  <Link to="/quote" className="block">
-                    <Button className="w-full bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full">
+                  <Button asChild className="w-full bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full">
+                    <Link to="/quote">
                       Request B2B Net Rates
-                    </Button>
-                  </Link>
-                  <Link to="/quote" className="block">
-                    <Button variant="outline" className="w-full rounded-full">
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline" className="w-full rounded-full">
+                    <Link to="/quote">
                       Request a Morocco Program
-                    </Button>
-                  </Link>
-                  <Link to="/b2b" className="block">
-                    <Button variant="outline" className="w-full rounded-full">
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline" className="w-full rounded-full">
+                    <Link to="/b2b">
                       Become a B2B Partner
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                 </div>
               </div>
 
@@ -625,16 +606,16 @@ function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
               Share your brief and our local Morocco team will help you shape a tailor-made program for your agency, group or corporate client.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-4">
-              <Link to="/quote">
-                <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+              <Button asChild className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+                <Link to="/quote">
                   Request B2B Net Rates
-                </Button>
-              </Link>
-              <Link to="/b2b">
-                <Button variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-6">
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-6">
+                <Link to="/b2b">
                   Become a B2B Partner
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>

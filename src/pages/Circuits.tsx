@@ -6,6 +6,7 @@ import { trpc } from "@/providers/trpc";
 import SEO from "@/components/SEO";
 import { Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { optimizedImageUrl } from "@/lib/images";
 
 const BASE_URL = "https://www.morocco-incoming.com";
 
@@ -173,7 +174,7 @@ export default function Circuits() {
                 <div key={tour.slug} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all">
                   <div className="relative h-56 overflow-hidden">
                     {tour.mainImage ? (
-                      <img src={tour.mainImage} alt={tour.title ?? tour.slug} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={optimizedImageUrl(tour.mainImage, 800)} alt={tour.title ?? tour.slug} width={800} height={533} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
                       <div className="w-full h-full bg-[#F3EDE8] flex items-center justify-center px-6 text-center text-sm text-[#6B7280]">
                         {tour.title ?? tour.slug}
@@ -193,11 +194,11 @@ export default function Circuits() {
                       </div>
                     )}
                     {tour.description && <p className="text-sm text-[#4B5563] line-clamp-2">{tour.description}</p>}
-                    <Link to={`/circuits/${tour.slug}`}>
-                      <Button variant="ghost" className="text-[#A91D2D] hover:text-[#8a1824] p-0 h-auto text-sm font-medium">
+                    <Button asChild variant="ghost" className="text-[#A91D2D] hover:text-[#8a1824] p-0 h-auto text-sm font-medium">
+                      <Link to={`/circuits/${tour.slug}`}>
                         View Details <ArrowRight className="ml-1 h-4 w-4" />
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -223,21 +224,21 @@ export default function Circuits() {
                 : "Share your dates, group size and target budget. We will prepare a tailor-made itinerary for your agency or company."}
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-4">
-              <Link to="/quote">
-                <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+              <Button asChild className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+                <Link to="/quote">
                   {locale === "fr" ? "Demander un devis sur mesure" : "Request a Custom Quote"}
-                </Button>
-              </Link>
-              <Link to="/b2b">
-                <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                <Link to="/b2b">
                   {locale === "fr" ? "Devenir partenaire B2B" : "Become a B2B Partner"}
-                </Button>
-              </Link>
-              <Link to="/morocco-tours-for-travel-agencies">
-                <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                <Link to="/morocco-tours-for-travel-agencies">
                   {locale === "fr" ? "Voir les programmes agences" : "View Agency Tour Services"}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>

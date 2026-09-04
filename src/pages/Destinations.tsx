@@ -77,16 +77,16 @@ export default function Destinations() {
                 : "Combine Marrakech, Fes, the Sahara, the Atlantic coast or the mountains in an itinerary adapted for your agency or group."}
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-4">
-              <Link to="/circuits">
-                <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+              <Button asChild variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                <Link to="/circuits">
                   {isFr ? "Voir les circuits" : "View Circuits"}
-                </Button>
-              </Link>
-              <Link to="/quote">
-                <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+                </Link>
+              </Button>
+              <Button asChild className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+                <Link to="/quote">
                   {isFr ? "Demander un devis" : "Request a Quote"}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>

@@ -72,21 +72,21 @@ export default function MICE() {
                 : "From initial consultation to on-site execution, we handle every aspect of your corporate event."}
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link to="/quote">
-                <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-8">
+              <Button asChild className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-8">
+                <Link to="/quote">
                   {isFr ? "Demander un Devis" : "Request a Quote"}
-                </Button>
-              </Link>
-              <a href="https://wa.me/212661925611" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-8">
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-8">
+                <a href="https://wa.me/212661925611" target="_blank" rel="noopener noreferrer">
                   WhatsApp
-                </Button>
-              </a>
-              <Link to="/b2b">
-                <Button variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-8">
+                </a>
+              </Button>
+              <Button asChild variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-8">
+                <Link to="/b2b">
                   {isFr ? "Partenariat B2B" : "B2B Partnership"}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>

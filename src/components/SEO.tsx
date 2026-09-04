@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router";
 import { trpc } from "@/providers/trpc";
+import { buildSeoGraph, safeJsonLd } from "@/lib/structured-data";
 
 const BASE_URL = "https://www.morocco-incoming.com";
 
@@ -11,6 +12,8 @@ interface SEOProps {
   image?: string;
   noindex?: boolean;
   type?: string;
+  datePublished?: string;
+  dateModified?: string;
 }
 
 function toAbsoluteUrl(value: string) {
@@ -35,6 +38,8 @@ export default function SEO({
   image,
   noindex = false,
   type = "website",
+  datePublished,
+  dateModified,
 }: SEOProps) {
   const location = useLocation();
   const { data: savedMeta } = trpc.seo.getByPath.useQuery(
@@ -47,6 +52,18 @@ export default function SEO({
   const resolvedImage = savedMeta?.ogImage?.trim() || image;
   const canonicalUrl = toAbsoluteUrl(resolvedCanonical);
   const imageUrl = resolvedImage ? toAbsoluteUrl(resolvedImage) : undefined;
+  const structuredData = !noindex
+    ? buildSeoGraph({
+        pathname: location.pathname,
+        title: resolvedTitle,
+        description: resolvedDescription,
+        canonical: canonicalUrl,
+        image: imageUrl,
+        type,
+        datePublished,
+        dateModified,
+      })
+    : null;
 
   return (
     <Helmet>
@@ -67,6 +84,9 @@ export default function SEO({
       <meta name="twitter:title" content={resolvedTitle} />
       <meta name="twitter:description" content={resolvedDescription} />
       {imageUrl && <meta name="twitter:image" content={imageUrl} />}
+      {structuredData && (
+        <script type="application/ld+json">{safeJsonLd(structuredData)}</script>
+      )}
     </Helmet>
   );
 }

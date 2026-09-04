@@ -143,16 +143,16 @@ export default function Blog() {
                 : "Our local DMC team supports agencies, tour operators and groups with tailor-made proposals."}
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-4">
-              <Link to="/quote">
-                <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+              <Button asChild className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+                <Link to="/quote">
                   {isFr ? "Demander un devis" : "Request a Quote"}
-                </Button>
-              </Link>
-              <Link to="/b2b">
-                <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                <Link to="/b2b">
                   {isFr ? "Devenir partenaire B2B" : "Become a B2B Partner"}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>

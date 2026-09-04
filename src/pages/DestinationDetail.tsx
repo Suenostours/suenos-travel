@@ -4,6 +4,8 @@ import SEO from "@/components/SEO";
 import { Helmet } from "react-helmet-async";
 import { ArrowLeft, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { safeJsonLd } from "@/lib/structured-data";
+import type { TouristDestination, WithContext } from "schema-dts";
 
 const BASE_URL = "https://www.morocco-incoming.com";
 
@@ -340,6 +342,21 @@ export default function DestinationDetail() {
       },
     })),
   };
+  const destinationJsonLd: WithContext<TouristDestination> = {
+    "@context": "https://schema.org",
+    "@type": "TouristDestination",
+    "@id": `${BASE_URL}/destinations/${slug}#destination`,
+    name: `${title}, Morocco`,
+    description,
+    image: `${BASE_URL}${dest.image}`,
+    url: `${BASE_URL}/destinations/${slug}`,
+    touristType: "Travel agencies, tour operators, groups, MICE and private travelers",
+    includesAttraction: dest.excursions.slice(0, 8).map((excursion) => ({
+      "@type": "TouristAttraction",
+      name: excursion.title,
+      description: excursion.description,
+    })),
+  };
 
   return (
     <>
@@ -350,7 +367,8 @@ export default function DestinationDetail() {
         image={dest.image}
       />
       <Helmet>
-        <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
+        <script type="application/ld+json">{safeJsonLd(destinationJsonLd)}</script>
+        <script type="application/ld+json">{safeJsonLd(faqJsonLd)}</script>
       </Helmet>
 
       <section className="bg-[#F9F7F4]">
@@ -476,34 +494,34 @@ export default function DestinationDetail() {
                     ? `Créez un programme ${title} pour agences, groupes, MICE ou clients privés avec conditions B2B.`
                     : `Create a ${title} program for agencies, groups, MICE or private clients with B2B conditions.`}
                 </p>
-                <Link to={quotePath} className="block">
-                  <Button className="w-full bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full">
+                <Button asChild className="w-full bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full">
+                  <Link to={quotePath}>
                     {isFr ? "Demander les tarifs nets B2B" : "Request B2B Net Rates"}
-                  </Button>
-                </Link>
-                <Link to="/quote" className="mt-3 block">
-                  <Button variant="outline" className="w-full rounded-full">
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="mt-3 w-full rounded-full">
+                  <Link to="/quote">
                     {isFr ? "Programme sur mesure" : "Request a Tailor-Made Program"}
-                  </Button>
-                </Link>
-                <Link to="/circuits" className="mt-3 block">
-                  <Button variant="outline" className="w-full rounded-full">
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="mt-3 w-full rounded-full">
+                  <Link to="/circuits">
                     {isFr ? "Voir les circuits Maroc" : "View Morocco Circuits"}
-                  </Button>
-                </Link>
-                <Link to="/mice" className="mt-3 block">
-                  <Button variant="outline" className="w-full rounded-full">
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="mt-3 w-full rounded-full">
+                  <Link to="/mice">
                     {isFr ? "Support MICE" : "MICE Support"}
-                  </Button>
-                </Link>
-                <Link to="/b2b" className="mt-3 block">
-                  <Button variant="outline" className="w-full rounded-full">
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="mt-3 w-full rounded-full">
+                  <Link to="/b2b">
                     {isFr ? "Partenariat B2B" : "B2B Partnership"}
-                  </Button>
-                </Link>
-                <a href="https://wa.me/212661925611" target="_blank" rel="noopener noreferrer" className="mt-3 block">
-                  <Button variant="outline" className="w-full rounded-full">WhatsApp</Button>
-                </a>
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="mt-3 w-full rounded-full">
+                  <a href="https://wa.me/212661925611" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                </Button>
               </div>
             </div>
           </div>

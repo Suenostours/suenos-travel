@@ -1,3 +1,5 @@
+import { buildSeoGraph, safeJsonLd } from "../../src/lib/structured-data";
+
 export const PUBLIC_ORIGIN = "https://www.morocco-incoming.com";
 
 export type SeoMeta = {
@@ -7,6 +9,8 @@ export type SeoMeta = {
   image?: string;
   noindex?: boolean;
   type?: "website" | "article";
+  datePublished?: string;
+  dateModified?: string;
 };
 
 const DEFAULT_IMAGE = "/images/hero-desert.jpg";
@@ -106,24 +110,87 @@ const BLOG_META: Record<string, Omit<SeoMeta, "canonical">> = {
     description:
       "Learn how a Morocco DMC supports agencies with itinerary design, hotels, transport, guides, MICE logistics, net rates and local operations.",
     type: "article",
+    image: "/images/about-riad.jpg",
+    datePublished: "2026-06-19",
+    dateModified: "2026-06-19",
   },
   "/blog/how-to-choose-a-morocco-incoming-agency": {
     title: "How to Choose a Morocco Incoming Agency | B2B Guide",
     description:
       "A practical guide for agencies choosing a Morocco incoming partner: licensing, net rates, communication, group logistics and local support.",
     type: "article",
+    image: "/images/circuit-imperial.jpg",
+    datePublished: "2026-06-19",
+    dateModified: "2026-06-19",
   },
   "/blog/mice-morocco-best-destinations-for-incentive-groups": {
     title: "MICE Morocco: Best Destinations for Incentive Groups",
     description:
       "Compare Marrakech, Agadir, Casablanca, Fes, Essaouira and the Sahara for meetings, incentives and corporate groups in Morocco.",
     type: "article",
+    image: "/images/circuit-luxury.jpg",
+    datePublished: "2026-06-19",
+    dateModified: "2026-06-19",
+  },
+  "/blog/morocco-tours-for-travel-agencies-b2b-programs": {
+    title: "Morocco Tours for Travel Agencies: How B2B Programs Work",
+    description:
+      "Learn how B2B Morocco programs are built for travel agencies, including itinerary design, net rates, white-label support and group logistics.",
+    type: "article",
+    image: "/images/circuit-imperial.jpg",
+    datePublished: "2026-05-28",
+    dateModified: "2026-05-28",
+  },
+  "/blog/morocco-travel-guide-2026": {
+    title: "Morocco Travel Guide 2026 | Best Time, Places & Tips",
+    description:
+      "Plan Morocco travel in 2026 with practical advice on the best time to visit, key destinations, transport, culture and itinerary ideas.",
+    type: "article",
+    image: "/images/hero-desert.jpg",
+    datePublished: "2026-01-15",
+    dateModified: "2026-01-15",
+  },
+  "/blog/sahara-desert-camps": {
+    title: "Best Sahara Desert Camps in Morocco | Practical Guide",
+    description:
+      "Compare Morocco Sahara desert camp experiences, comfort levels, locations and planning tips for private clients, groups and agencies.",
+    type: "article",
+    image: "/images/circuit-sahara.jpg",
+    datePublished: "2026-02-01",
+    dateModified: "2026-02-01",
+  },
+  "/blog/marrakech-hidden-gems": {
+    title: "Hidden Gems of Marrakech | Local Morocco Guide",
+    description:
+      "Discover lesser-known places and authentic experiences beyond Marrakech's famous landmarks for tailor-made Morocco itineraries.",
+    type: "article",
+    image: "/images/circuit-imperial.jpg",
+    datePublished: "2026-02-20",
+    dateModified: "2026-02-20",
   },
 };
+
+const STATIC_DESTINATION_PATHS = new Set([
+  "/destinations/marrakech",
+  "/destinations/fes",
+  "/destinations/casablanca",
+  "/destinations/agadir",
+  "/destinations/essaouira",
+  "/destinations/chefchaouen",
+  "/destinations/merzouga",
+  "/destinations/ouarzazate",
+  "/destinations/rabat",
+  "/destinations/tangier",
+]);
 
 function normalizePath(pathname: string) {
   if (pathname === "/") return pathname;
   return pathname.replace(/\/+$/, "") || "/";
+}
+
+export function isKnownStaticContentPath(pathname: string) {
+  const path = normalizePath(pathname);
+  return Boolean(STATIC_META[path] || BLOG_META[path] || STATIC_DESTINATION_PATHS.has(path));
 }
 
 function titleFromSlug(slug: string) {
@@ -200,6 +267,10 @@ type SeoOverrides = {
   description?: string | null;
   canonical?: string | null;
   image?: string | null;
+  type?: "website" | "article";
+  datePublished?: string | null;
+  dateModified?: string | null;
+  noindex?: boolean;
 };
 
 export function renderSeoHtml(template: string, pathname: string, overrides?: SeoOverrides) {
@@ -210,6 +281,10 @@ export function renderSeoHtml(template: string, pathname: string, overrides?: Se
     description: overrides?.description?.trim() || fallback.description,
     canonical: overrides?.canonical?.trim() || fallback.canonical,
     image: overrides?.image?.trim() || fallback.image,
+    type: overrides?.type ?? fallback.type,
+    datePublished: overrides?.datePublished?.trim() || fallback.datePublished,
+    dateModified: overrides?.dateModified?.trim() || fallback.dateModified,
+    noindex: overrides?.noindex ?? fallback.noindex,
   };
   const title = escapeHtml(meta.title);
   const description = escapeHtml(meta.description);
@@ -220,6 +295,18 @@ export function renderSeoHtml(template: string, pathname: string, overrides?: Se
       : `${PUBLIC_ORIGIN}${meta.image ?? DEFAULT_IMAGE}`,
   );
   const robots = meta.noindex ? "noindex, nofollow" : "index, follow";
+  const structuredData = !meta.noindex
+    ? safeJsonLd(buildSeoGraph({
+        pathname,
+        title: meta.title,
+        description: meta.description,
+        canonical: meta.canonical,
+        image,
+        type: meta.type,
+        datePublished: meta.datePublished,
+        dateModified: meta.dateModified,
+      }))
+    : null;
   const preload = normalizePath(pathname) === "/"
     ? '<link rel="preload" as="image" href="/images/hero-desert.jpg" fetchpriority="high" />'
     : "";
@@ -241,6 +328,7 @@ export function renderSeoHtml(template: string, pathname: string, overrides?: Se
     <meta data-rh="true" name="twitter:title" content="${title}" />
     <meta data-rh="true" name="twitter:description" content="${description}" />
     <meta data-rh="true" name="twitter:image" content="${image}" />
+    ${structuredData ? `<script data-rh="true" type="application/ld+json">${structuredData}</script>` : ""}
     ${preload}
     <!-- SEO_META_END -->`;
 

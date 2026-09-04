@@ -2,7 +2,6 @@ import { Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
 import { trpc } from "@/providers/trpc";
 import SEO from "@/components/SEO";
-import GlobalStructuredData from "@/components/GlobalStructuredData";
 import {
   ArrowRight,
   Shield,
@@ -30,6 +29,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { optimizedImageUrl } from "@/lib/images";
 
 const servicesData = [
   { icon: Compass, title: "Tailor-Made Morocco Tours", desc: "Custom-designed itineraries crafted to match your clients' preferences, pace, and interests." },
@@ -100,7 +100,6 @@ export default function Home() {
         canonical="/"
         image="/images/hero-desert.jpg"
       />
-      <GlobalStructuredData />
 
       {/* ─── HERO ─── */}
       <section className="relative bg-[#F9F7F4] overflow-hidden">
@@ -120,17 +119,17 @@ export default function Home() {
                   : "Tailor-made Morocco programs for travel agencies, tour operators, groups, MICE planners, and companies."}
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link to="/quote">
-                  <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white px-6 py-3 rounded-full text-sm font-medium h-auto">
+                <Button asChild className="bg-[#A91D2D] hover:bg-[#8a1824] text-white px-6 py-3 rounded-full text-sm font-medium h-auto">
+                  <Link to="/quote">
                     {t("hero.cta.quote")}
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link to="/circuits">
-                  <Button variant="outline" className="border-[#1F2937] text-[#1F2937] hover:bg-[#1F2937] hover:text-white px-6 py-3 rounded-full text-sm font-medium h-auto">
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="border-[#1F2937] text-[#1F2937] hover:bg-[#1F2937] hover:text-white px-6 py-3 rounded-full text-sm font-medium h-auto">
+                  <Link to="/circuits">
                     {t("hero.cta.explore")}
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </div>
               <a
                 href="https://wa.me/212661925611"
@@ -253,11 +252,11 @@ export default function Home() {
                   </span>
                 ))}
               </div>
-              <Link to="/about">
-                <Button variant="outline" className="mt-4 border-[#A91D2D] text-[#A91D2D] hover:bg-[#A91D2D] hover:text-white rounded-full px-6">
+              <Button asChild variant="outline" className="mt-4 border-[#A91D2D] text-[#A91D2D] hover:bg-[#A91D2D] hover:text-white rounded-full px-6">
+                <Link to="/about">
                   {t("about.cta")}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
@@ -317,7 +316,7 @@ export default function Home() {
                 <div key={tour.slug} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all">
                   <div className="relative h-56 overflow-hidden">
                     {tour.mainImage ? (
-                      <img src={tour.mainImage} alt={tour.title ?? tour.slug} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={optimizedImageUrl(tour.mainImage, 800)} alt={tour.title ?? tour.slug} width={800} height={533} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
                       <div className="w-full h-full bg-[#F3EDE8] flex items-center justify-center px-6 text-center text-sm text-[#6B7280]">
                         {tour.title ?? tour.slug}
@@ -337,11 +336,11 @@ export default function Home() {
                       </div>
                     )}
                     {tour.description && <p className="text-sm text-[#4B5563] line-clamp-2">{tour.description}</p>}
-                    <Link to={`/circuits/${tour.slug}`}>
-                      <Button variant="ghost" className="text-[#A91D2D] hover:text-[#8a1824] p-0 h-auto text-sm font-medium">
+                    <Button asChild variant="ghost" className="text-[#A91D2D] hover:text-[#8a1824] p-0 h-auto text-sm font-medium">
+                      <Link to={`/circuits/${tour.slug}`}>
                         {t("circuits.cta")} <ArrowRight className="ml-1 h-4 w-4" />
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -367,11 +366,11 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-              <Link to="/mice-morocco">
-                <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6 mt-4">
+              <Button asChild className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6 mt-4">
+                <Link to="/mice-morocco">
                   Explore MICE Morocco Services
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
             <div className="rounded-2xl overflow-hidden shadow-2xl">
               <img src="/images/circuit-luxury.jpg" alt="MICE Morocco" width={1184} height={864} loading="lazy" decoding="async" className="w-full h-[400px] object-cover" />
@@ -401,16 +400,16 @@ export default function Home() {
                 ))}
               </ul>
               <div className="flex flex-wrap gap-4 pt-2">
-                <Link to="/b2b">
-                  <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+                <Button asChild className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
+                  <Link to="/b2b">
                     {t("b2b.cta")}
-                  </Button>
-                </Link>
-                <Link to="/quote">
-                  <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
+                  <Link to="/quote">
                     Request a Quote
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </div>
             </div>
           </div>
@@ -473,18 +472,18 @@ export default function Home() {
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#1F2937]">{t("cta.title")}</h2>
           <p className="text-[#4B5563]">{t("cta.subtitle")}</p>
           <div className="flex flex-wrap justify-center gap-4 pt-4">
-            <Link to="/quote">
-              <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-8 py-3 h-auto">
+            <Button asChild className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-8 py-3 h-auto">
+              <Link to="/quote">
                 <Send className="mr-2 h-4 w-4" />
                 {t("nav.quote")}
-              </Button>
-            </Link>
-            <Link to="/contact">
-              <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-8 py-3 h-auto">
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-8 py-3 h-auto">
+              <Link to="/contact">
                 <MessageCircle className="mr-2 h-4 w-4" />
                 {t("nav.contact")}
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </section>

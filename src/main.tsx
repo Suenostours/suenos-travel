@@ -14,3 +14,7 @@ createRoot(document.getElementById('root')!).render(
     </BrowserRouter>
   </StrictMode>,
 )
+
+if (import.meta.env.PROD) {
+  void import("@/lib/report-web-vitals").then(({ reportWebVitals }) => reportWebVitals());
+}

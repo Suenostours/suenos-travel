@@ -8,13 +8,32 @@ import { createContext } from "./context";
 import { env } from "./lib/env";
 import { registerUploadRoutes } from "./upload-handler";
 import { getDb } from "./queries/connection";
-import { tours, cities, blogPosts, seoSettings } from "@db/schema";
+import {
+  tours,
+  tourTranslations,
+  cities,
+  cityTranslations,
+  blogPosts,
+  blogTranslations,
+  seoSettings,
+} from "@db/schema";
 import { eq, and } from "drizzle-orm";
 import path from "path";
 import fs from "fs";
 import { getCanonicalRedirect } from "./lib/canonical-url";
-import { STATIC_SITEMAP_PAGES } from "./lib/sitemap-pages";
-import { renderSeoHtml } from "./lib/seo-html";
+import { STATIC_BLOG_PAGES, STATIC_SITEMAP_PAGES, SITE_CONTENT_LAST_MODIFIED } from "./lib/sitemap-pages";
+import { isKnownStaticContentPath, renderSeoHtml } from "./lib/seo-html";
+
+type SeoOverride = {
+  title?: string | null;
+  description?: string | null;
+  canonical?: string | null;
+  image?: string | null;
+  type?: "website" | "article";
+  datePublished?: string | null;
+  dateModified?: string | null;
+  noindex?: boolean;
+};
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
@@ -72,13 +91,134 @@ function formatSitemapDate(value?: Date | string | null) {
   return date.toISOString().slice(0, 10);
 }
 
-function sitemapEntry(loc: string, lastmod: string, changefreq: string, priority: string) {
+function sitemapEntry(loc: string, lastmod: string | undefined, changefreq: string, priority: string) {
   return `<url>
   <loc>${loc}</loc>
-  <lastmod>${lastmod}</lastmod>
+  ${lastmod ? `<lastmod>${lastmod}</lastmod>` : ""}
   <changefreq>${changefreq}</changefreq>
   <priority>${priority}</priority>
 </url>`;
+}
+
+function cleanMetaDescription(value?: string | null) {
+  if (!value) return undefined;
+  const plain = value
+    .replace(/<[^>]*>/g, " ")
+    .replace(/[#*_>`~()]/g, " ")
+    .replaceAll("[", " ")
+    .replaceAll("]", " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (plain.length <= 160) return plain;
+  return `${plain.slice(0, 157).replace(/\s+\S*$/, "")}…`;
+}
+
+function detailSlug(pathname: string, section: string) {
+  const prefix = `/${section}/`;
+  if (!pathname.startsWith(prefix)) return null;
+  const slug = pathname.slice(prefix.length);
+  return /^[a-z0-9-]+$/i.test(slug) ? slug : null;
+}
+
+async function loadDynamicSeo(pathname: string): Promise<SeoOverride | undefined> {
+  const db = getDb();
+  const tourSlug = detailSlug(pathname, "circuits");
+  if (tourSlug) {
+    const rows = await db
+      .select({
+        title: tourTranslations.title,
+        description: tourTranslations.description,
+        metaTitle: tourTranslations.metaTitle,
+        metaDescription: tourTranslations.metaDescription,
+        image: tours.mainImage,
+        updatedAt: tours.updatedAt,
+      })
+      .from(tours)
+      .leftJoin(
+        tourTranslations,
+        and(eq(tourTranslations.tourId, tours.id), eq(tourTranslations.locale, "en")),
+      )
+      .where(and(eq(tours.slug, tourSlug), eq(tours.active, 1)))
+      .limit(1);
+    const tour = rows[0];
+    if (tour) {
+      return {
+        title: tour.metaTitle || (tour.title ? `${tour.title} | Morocco Circuit` : undefined),
+        description: tour.metaDescription || cleanMetaDescription(tour.description),
+        image: tour.image,
+        dateModified: tour.updatedAt?.toISOString(),
+      };
+    }
+  }
+
+  const citySlug = detailSlug(pathname, "destinations");
+  if (citySlug) {
+    const rows = await db
+      .select({
+        name: cityTranslations.name,
+        description: cityTranslations.description,
+        metaTitle: cityTranslations.metaTitle,
+        metaDescription: cityTranslations.metaDescription,
+        image: cities.mainImage,
+        updatedAt: cities.updatedAt,
+      })
+      .from(cities)
+      .leftJoin(
+        cityTranslations,
+        and(eq(cityTranslations.cityId, cities.id), eq(cityTranslations.locale, "en")),
+      )
+      .where(and(eq(cities.slug, citySlug), eq(cities.active, 1)))
+      .limit(1);
+    const city = rows[0];
+    if (city) {
+      return {
+        title: city.metaTitle || (city.name ? `${city.name} Morocco Programs | Local DMC` : undefined),
+        description: city.metaDescription || cleanMetaDescription(city.description),
+        image: city.image,
+        dateModified: city.updatedAt?.toISOString(),
+      };
+    }
+  }
+
+  const blogSlug = detailSlug(pathname, "blog");
+  if (blogSlug) {
+    const rows = await db
+      .select({
+        title: blogTranslations.title,
+        content: blogTranslations.content,
+        metaTitle: blogTranslations.metaTitle,
+        metaDescription: blogTranslations.metaDescription,
+        image: blogPosts.mainImage,
+        publishedAt: blogPosts.publishedAt,
+        updatedAt: blogPosts.updatedAt,
+      })
+      .from(blogPosts)
+      .leftJoin(
+        blogTranslations,
+        and(eq(blogTranslations.postId, blogPosts.id), eq(blogTranslations.locale, "en")),
+      )
+      .where(
+        and(
+          eq(blogPosts.slug, blogSlug),
+          eq(blogPosts.status, "published"),
+          eq(blogPosts.active, 1),
+        ),
+      )
+      .limit(1);
+    const post = rows[0];
+    if (post) {
+      return {
+        title: post.metaTitle || (post.title ? `${post.title} | Suenos Travel Blog` : undefined),
+        description: post.metaDescription || cleanMetaDescription(post.content),
+        image: post.image,
+        type: "article",
+        datePublished: post.publishedAt?.toISOString(),
+        dateModified: post.updatedAt?.toISOString(),
+      };
+    }
+  }
+
+  return undefined;
 }
 
 // Upload routes
@@ -87,23 +227,17 @@ registerUploadRoutes(app);
 // Sitemap.xml
 app.get("/sitemap.xml", async (c) => {
   const baseUrl = "https://www.morocco-incoming.com";
-  const today = formatSitemapDate();
   const urls = STATIC_SITEMAP_PAGES.map((page) =>
     sitemapEntry(
       `${baseUrl}${page.path}`,
-      today,
+      page.lastmod,
       page.changefreq,
       page.priority.toFixed(1),
     ),
   );
-  const staticBlogSlugs = [
-    "what-does-a-dmc-in-morocco-do-for-travel-agencies",
-    "how-to-choose-a-morocco-incoming-agency",
-    "mice-morocco-best-destinations-for-incentive-groups",
-  ];
   const legacyBlogSlugs = ["what-does-a-morocco-dmc-do-for-travel-agencies"];
-  for (const slug of staticBlogSlugs) {
-    urls.push(sitemapEntry(`${baseUrl}/blog/${slug}`, today, "monthly", "0.6"));
+  for (const slug of STATIC_BLOG_PAGES) {
+    urls.push(sitemapEntry(`${baseUrl}/blog/${slug}`, SITE_CONTENT_LAST_MODIFIED, "monthly", "0.6"));
   }
 
   try {
@@ -118,7 +252,7 @@ app.get("/sitemap.xml", async (c) => {
     }
     const blogRows = await db.select({ slug: blogPosts.slug, updatedAt: blogPosts.updatedAt }).from(blogPosts).where(and(eq(blogPosts.status, "published"), eq(blogPosts.active, 1)));
     for (const b of blogRows) {
-      if (staticBlogSlugs.includes(b.slug) || legacyBlogSlugs.includes(b.slug)) continue;
+      if (STATIC_BLOG_PAGES.includes(b.slug as (typeof STATIC_BLOG_PAGES)[number]) || legacyBlogSlugs.includes(b.slug)) continue;
       urls.push(sitemapEntry(`${baseUrl}/blog/${b.slug}`, formatSitemapDate(b.updatedAt), "monthly", "0.6"));
     }
   } catch {
@@ -148,14 +282,13 @@ async function serveIndexHtml(c: Context<{ Bindings: HttpBindings }>) {
     const filePath = path.resolve(import.meta.dirname, "../dist/public/index.html");
     const template = fs.readFileSync(filePath, "utf-8");
     const pathname = new URL(c.req.url).pathname;
-    let override: {
-      title?: string | null;
-      description?: string | null;
-      canonical?: string | null;
-      image?: string | null;
-    } | undefined;
+    let override: SeoOverride | undefined;
+    let databaseAvailable = true;
+    let dynamicContentFound = false;
 
     try {
+      override = await loadDynamicSeo(pathname);
+      dynamicContentFound = Boolean(override);
       const rows = await getDb()
         .select()
         .from(seoSettings)
@@ -164,18 +297,38 @@ async function serveIndexHtml(c: Context<{ Bindings: HttpBindings }>) {
       const saved = rows[0];
       if (saved) {
         override = {
-          title: saved.metaTitle,
-          description: saved.metaDescription,
-          canonical: saved.canonical,
-          image: saved.ogImage,
+          ...override,
+          ...(saved.metaTitle?.trim() ? { title: saved.metaTitle } : {}),
+          ...(saved.metaDescription?.trim() ? { description: saved.metaDescription } : {}),
+          ...(saved.canonical?.trim() ? { canonical: saved.canonical } : {}),
+          ...(saved.ogImage?.trim() ? { image: saved.ogImage } : {}),
         };
       }
     } catch {
+      databaseAvailable = false;
       console.warn("[seo] Database unavailable; using page defaults.");
     }
 
+    const isDetailPath = Boolean(
+      detailSlug(pathname, "circuits") ||
+      detailSlug(pathname, "destinations") ||
+      detailSlug(pathname, "blog"),
+    );
+    const isMissingDynamicContent =
+      databaseAvailable &&
+      isDetailPath &&
+      !dynamicContentFound &&
+      !isKnownStaticContentPath(pathname);
+    if (isMissingDynamicContent) {
+      override = {
+        title: "Page Not Found | Suenos Travel DMC Morocco",
+        description: "The requested page could not be found.",
+        noindex: true,
+      };
+    }
+
     const content = renderSeoHtml(template, pathname, override);
-    return c.html(content, 200);
+    return c.html(content, isMissingDynamicContent ? 404 : 200);
   } catch {
     return c.json({ error: "index.html not found" }, 500);
   }

@@ -21,6 +21,9 @@ describe("form conversion tracking", () => {
     track();
 
     expect(gtag).toHaveBeenCalledWith("event", eventName, { form_type: formType });
+    expect(gtag).toHaveBeenCalledWith("event", "conversion", {
+      send_to: "AW-18188447838/MmohCIvmoe4cEN7g9uBD",
+    });
     expect(gtag).toHaveBeenCalledWith("event", "generate_lead", { form_type: formType });
   });
 });

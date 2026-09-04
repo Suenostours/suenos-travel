@@ -209,7 +209,33 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
           { title: "Coastal extensions", description: "Essaouira, Agadir, Tangier and Atlantic coast add-ons for groups and private clients.", path: "/destinations/essaouira" },
         ],
       },
+      {
+        title: "Incoming ground handling across Morocco",
+        intro: "A single Morocco incoming partner can connect airport arrivals, regional transport, accommodation, guides and experiences across a multi-city itinerary.",
+        items: [
+          { title: "Marrakech and the Atlas", description: "Airport welcome, riads, hotels, licensed guides, Agafay events and Atlas day trips for groups or private clients.", path: "/destinations/marrakech" },
+          { title: "Casablanca and Rabat", description: "Arrival logistics, business travel, Hassan II Mosque visits, capital-city extensions and northbound routing.", path: "/destinations/casablanca" },
+          { title: "Fes and northern Morocco", description: "Medina guiding, Meknes and Volubilis visits, Chefchaouen, Tangier and cultural group operations.", path: "/destinations/fes" },
+          { title: "Agadir and the Atlantic coast", description: "Resort stays, leisure groups, golf, Essaouira extensions and Souss Massa experiences.", path: "/destinations/agadir" },
+          { title: "Ouarzazate and the Sahara", description: "Kasbah routes, valleys, desert camps, 4x4 services and realistic overland timing for Merzouga programs.", path: "/destinations/ouarzazate" },
+        ],
+      },
+      {
+        title: "What agencies receive before their clients arrive",
+        intro: "Clear pre-arrival information helps the selling agency and the local operations team work from the same plan.",
+        items: [
+          { title: "Costed itinerary", description: "A day-by-day proposal with inclusions, accommodation level and services adapted to the brief." },
+          { title: "Confirmed service plan", description: "Supplier coordination for hotels, transport, guides, visits, meals and requested experiences." },
+          { title: "Operational contact", description: "One local point of contact for the file and on-site follow-up during the program." },
+          { title: "Practical coordination", description: "Arrival details, rooming information, guide language, dietary needs and mobility requirements shared before operation." },
+        ],
+      },
+      {
+        title: "What to include in an incoming Morocco brief",
+        text: "To prepare an accurate proposal, share the travel dates, arrival and departure cities, estimated group size, rooming needs, preferred hotel category, guide language, must-see destinations, meal plan, mobility requirements and target budget. If some details are not confirmed, an estimated range is enough for an initial routing and quotation.",
+      },
     ],
+    processTitle: "How we handle an incoming Morocco file",
     processSteps: ["Brief", "Routing", "Net Quote", "Confirmation", "Operation", "Follow-up"],
     relatedLinks: [
       { label: "DMC Morocco services", path: "/dmc-morocco" },
@@ -226,6 +252,8 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
       { question: "What is the difference between Incoming Morocco and a DMC?", answer: "Incoming Morocco services focus on local ground handling and travel operations. A DMC also designs destination programs, MICE, incentives and full local experiences. Morocco Incoming combines both roles for B2B partners." },
       { question: "Can you handle both groups and private clients?", answer: "Yes. We prepare programs for private clients, leisure groups, MICE groups, family groups, cultural groups and agency series." },
       { question: "How do agencies request a B2B incoming proposal?", answer: "Agencies can send dates, group size, routing, hotel level, budget range and client profile through the quote or B2B form." },
+      { question: "Can your incoming agency operate multi-city Morocco tours?", answer: "Yes. We can coordinate multi-city programs with hotels, transport, licensed guides, visits, meals, desert services and one local operations contact." },
+      { question: "Can the program be supplied under the agency's brand?", answer: "Yes. We support white-label B2B itineraries and local operations so the selling agency can maintain its client relationship." },
     ],
   },
   moroccoToursForTravelAgencies: {
@@ -459,7 +487,33 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
           { title: "Supplier coordination", description: "Communication with transport, venues, guides, restaurants, hotels and activity providers." },
         ],
       },
+      {
+        title: "MICE formats we support in Morocco",
+        intro: "The operating plan changes according to the purpose of the event, participant profile and balance between business sessions and destination experiences.",
+        items: [
+          { title: "Meetings and seminars", description: "Hotel and venue sourcing, meeting rooms, transfers, meals, activities and local coordination." },
+          { title: "Incentive travel", description: "Reward programs combining memorable experiences, destination discovery, special dinners and team moments." },
+          { title: "Conferences and conventions", description: "Delegate movement, accommodation blocks, venue logistics, registration support and supplier coordination." },
+          { title: "Product launches", description: "Venue selection, guest movement, staging coordination, hospitality and destination experiences around the launch." },
+          { title: "Executive retreats", description: "Smaller premium programs with private meeting space, curated activities, discreet transport and flexible pacing." },
+          { title: "Gala and corporate celebrations", description: "Venue options, themed dining, entertainment, transfers and on-site timing for company milestones." },
+        ],
+      },
+      {
+        title: "What to include in a MICE Morocco brief",
+        intro: "A useful first brief does not need every detail, but it should give enough context to select the right destination, venue and operating format.",
+        items: [
+          { title: "Group profile", description: "Estimated participant count, countries of origin, languages, seniority and the purpose of the program." },
+          { title: "Dates and flights", description: "Preferred dates, arrival patterns, departure airports and any flexibility around the event window." },
+          { title: "Hotels and venues", description: "Room requirements, hotel category, meeting setup, venue style and proximity preferences." },
+          { title: "Program objectives", description: "Business sessions, incentive experiences, team building, gala dinner, leisure time and desired level of exclusivity." },
+          { title: "Operational requirements", description: "Transport waves, AV needs, branding, security, dietary requirements, accessibility and VIP handling." },
+          { title: "Budget framework", description: "A total or per-person range helps us recommend realistic destinations, venues and inclusions." },
+        ],
+      },
     ],
+    processTitle: "From MICE brief to on-site delivery",
+    processSteps: ["Objectives & brief", "Concept & destination", "Costed proposal", "Supplier confirmation", "Detailed operations", "On-site delivery"],
     relatedLinks: [
       { label: "Corporate event service overview", path: "/mice" },
       { label: "DMC Morocco services", path: "/dmc-morocco" },
@@ -474,6 +528,8 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
       { question: "Which Moroccan destinations work well for MICE Morocco programs?", answer: "Marrakech, Agadir, Casablanca, Rabat, Fes, the Atlas Mountains, Agafay and selected Sahara extensions can work well depending on group needs." },
       { question: "What MICE logistics can a Morocco DMC handle?", answer: "A Morocco DMC can coordinate airport transfers, hotels, venues, delegate movement, gala dinners, team building, local assistance and supplier coordination." },
       { question: "Do you work with foreign MICE agencies?", answer: "Yes. We support foreign MICE agencies, corporate planners and travel companies with local Morocco DMC services." },
+      { question: "Can you combine meetings with an incentive program?", answer: "Yes. A Morocco MICE program can combine meeting sessions with team building, destination experiences, special dinners and pre- or post-event extensions." },
+      { question: "How early should a MICE Morocco program be planned?", answer: "Planning should begin as early as possible, especially for larger groups, peak dates, premium venues or complex transport. Early briefs provide more choice and time to coordinate suppliers." },
     ],
   },
 };
@@ -494,6 +550,29 @@ function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
       },
     })),
   };
+  const serviceJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": `${absoluteUrl}#service`,
+    name: page.h1,
+    serviceType: page.targetKeyword,
+    description: page.metaDescription,
+    url: absoluteUrl,
+    areaServed: {
+      "@type": "Country",
+      name: "Morocco",
+    },
+    provider: {
+      "@type": "TravelAgency",
+      "@id": `${BASE_URL}/#travel-agency`,
+      name: "Morocco Incoming by Suenos Travel",
+      url: BASE_URL,
+    },
+    audience: {
+      "@type": "BusinessAudience",
+      audienceType: "Travel agencies, tour operators, MICE planners and corporate travel buyers",
+    },
+  };
   return (
     <>
       <SEO
@@ -504,6 +583,7 @@ function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
       />
       <Helmet>
         <script type="application/ld+json">{safeJsonLd(faqJsonLd)}</script>
+        <script type="application/ld+json">{safeJsonLd(serviceJsonLd)}</script>
       </Helmet>
 
       <section className="bg-[#0F172A] text-white">

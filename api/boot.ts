@@ -120,6 +120,11 @@ function detailSlug(pathname: string, section: string) {
   return /^[a-z0-9-]+$/i.test(slug) ? slug : null;
 }
 
+function capitalizeLabel(value: string | null | undefined) {
+  if (!value) return undefined;
+  return value.charAt(0).toLocaleUpperCase("en") + value.slice(1);
+}
+
 async function loadDynamicSeo(pathname: string): Promise<SeoOverride | undefined> {
   const db = getDb();
   const tourSlug = detailSlug(pathname, "circuits");
@@ -171,8 +176,9 @@ async function loadDynamicSeo(pathname: string): Promise<SeoOverride | undefined
       .limit(1);
     const city = rows[0];
     if (city) {
+      const cityName = capitalizeLabel(city.name);
       return {
-        title: city.metaTitle || (city.name ? `${city.name} Morocco Programs | Local DMC` : undefined),
+        title: city.metaTitle || (cityName ? `${cityName} Morocco Programs | Local DMC` : undefined),
         description: city.metaDescription || cleanMetaDescription(city.description),
         image: city.image,
         dateModified: city.updatedAt?.toISOString(),

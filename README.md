@@ -58,9 +58,9 @@ npm run db:push
 npx tsx db/seed.ts
 ```
 
-This creates the default admin account:
-- **Email**: `admin@morocco-incoming.com`
-- **Password**: `Admin@12345`
+Set `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` before running this one-time
+command. Use a unique password of at least 12 characters, then remove the seed
+variables from the deployment environment.
 
 ### 5. Start Development Server
 

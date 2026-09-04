@@ -1,14 +1,24 @@
-import type { Hono } from "hono";
+import type { Context, Hono, Next } from "hono";
+import type { HttpBindings } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
 import { existsSync, mkdirSync } from "fs";
 import { writeFile, unlink } from "fs/promises";
+import { randomUUID } from "node:crypto";
 import path from "path";
 import { eq, sql } from "drizzle-orm";
 import { getDb } from "./queries/connection";
 import { media } from "@db/schema";
+import { getAdminFromToken, getAdminTokenFromCookie } from "./admin-auth";
 
 const UPLOAD_DIR = path.resolve(process.cwd(), "public", "uploads");
+const MAX_IMAGE_SIZE = 15 * 1024 * 1024;
+const IMAGE_EXTENSIONS: Record<string, string> = {
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/gif": ".gif",
+  "image/webp": ".webp",
+};
 
 if (!existsSync(UPLOAD_DIR)) {
   mkdirSync(UPLOAD_DIR, { recursive: true });
@@ -22,7 +32,7 @@ function hasCloudinaryConfig() {
   );
 }
 
-function uploadToCloudinary(buffer: Buffer, file: File) {
+function uploadToCloudinary(buffer: Buffer) {
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -50,15 +60,21 @@ function uploadToCloudinary(buffer: Buffer, file: File) {
   });
 }
 
-export function registerUploadRoutes(app: Hono<any>) {
+async function requireAdmin(c: Context, next: Next) {
+  const token = getAdminTokenFromCookie(c.req.raw);
+  if (!token || !(await getAdminFromToken(token))) {
+    return c.json({ error: "Unauthorized" }, 401);
+  }
+  await next();
+}
+
+export function registerUploadRoutes(app: Hono<{ Bindings: HttpBindings }>) {
   app.use("/uploads/*", serveStatic({ root: "./public" }));
+  app.use("/api/upload", requireAdmin);
+  app.use("/api/upload/*", requireAdmin);
+  app.use("/api/media", requireAdmin);
 
   app.post("/api/upload", async (c) => {
-    const auth = c.req.header("cookie");
-    if (!auth || !auth.includes("admin_token=")) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
-
     const contentType = c.req.header("content-type") || "";
     if (!contentType.includes("multipart/form-data")) {
       return c.json({ error: "Expected multipart/form-data" }, 400);
@@ -75,16 +91,22 @@ export function registerUploadRoutes(app: Hono<any>) {
 
     for (const file of fileArray) {
       if (!(file instanceof File)) continue;
+      const extension = IMAGE_EXTENSIONS[file.type];
+      if (!extension) {
+        return c.json({ error: "Only JPEG, PNG, GIF and WebP images are allowed" }, 415);
+      }
+      if (file.size > MAX_IMAGE_SIZE) {
+        return c.json({ error: "Each image must be 15 MB or smaller" }, 413);
+      }
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
       const timestamp = Date.now();
-      const ext = path.extname(file.name) || ".jpg";
-      const filename = `${timestamp}-${Math.random().toString(36).slice(2)}${ext}`;
+      const filename = `${timestamp}-${randomUUID()}${extension}`;
       let storedFilename = filename;
       let fileUrl = `/uploads/${filename}`;
 
       if (hasCloudinaryConfig()) {
-        const uploaded = await uploadToCloudinary(buffer, file);
+        const uploaded = await uploadToCloudinary(buffer);
         storedFilename = uploaded.public_id;
         fileUrl = uploaded.secure_url;
       } else {
@@ -108,10 +130,6 @@ export function registerUploadRoutes(app: Hono<any>) {
   });
 
   app.delete("/api/upload/:id", async (c) => {
-    const auth = c.req.header("cookie");
-    if (!auth || !auth.includes("admin_token=")) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
     const id = Number(c.req.param("id"));
     const db = getDb();
     const rows = await db.select().from(media).where(eq(media.id, id)).limit(1);
@@ -126,10 +144,6 @@ export function registerUploadRoutes(app: Hono<any>) {
   });
 
   app.get("/api/media", async (c) => {
-    const auth = c.req.header("cookie");
-    if (!auth || !auth.includes("admin_token=")) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
     const db = getDb();
     const rows = await db.select().from(media).orderBy(sql`${media.createdAt} DESC`);
     return c.json({ media: rows });

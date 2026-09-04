@@ -108,7 +108,7 @@ export default function Blog() {
               <Link key={post.slug} to={`/blog/${post.slug}`} className="group">
                 <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all h-full">
                   <div className="relative h-56 overflow-hidden">
-                    <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={post.image} alt={post.title} width={1184} height={864} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     <div className="absolute top-3 left-3">
                       <span className="inline-block px-3 py-1 rounded-full bg-white/90 text-xs font-medium text-[#1F2937]">
                         {post.category}

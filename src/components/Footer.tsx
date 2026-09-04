@@ -120,15 +120,17 @@ export default function Footer() {
               {t("footer.getstarted")}
             </h4>
             <div className="space-y-3">
-              <Link to="/quote">
-                <button className="w-full bg-[#A91D2D] hover:bg-[#8a1824] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors">
-                  {t("nav.quote")}
-                </button>
+              <Link
+                to="/quote"
+                className="block w-full bg-[#A91D2D] hover:bg-[#8a1824] text-center text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
+              >
+                {t("nav.quote")}
               </Link>
-              <Link to="/b2b">
-                <button className="w-full border border-white/20 hover:bg-white/10 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors">
-                  Become a B2B Partner
-                </button>
+              <Link
+                to="/b2b"
+                className="block w-full border border-white/20 hover:bg-white/10 text-center text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
+              >
+                Become a B2B Partner
               </Link>
               <div className="space-y-2 pt-2">
                 <a

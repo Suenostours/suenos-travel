@@ -56,7 +56,7 @@ export default function Destinations() {
               <Link key={d.slug} to={`/destinations/${d.slug}`} className="group">
                 <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-all h-full">
                   <div className="relative h-48 overflow-hidden">
-                    <img src={d.image} alt={d.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={d.image} alt={`${d.name} Morocco destination`} width={1184} height={864} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   </div>
                   <div className="p-5">
                     <h3 className="font-semibold text-lg text-[#1F2937]">{isFr ? d.nameFr : d.name}</h3>

@@ -3,6 +3,10 @@ import { createRouter, publicQuery, adminQuery } from "./middleware";
 import { getDb } from "./queries/connection";
 import { seoSettings, tours, cities, blogPosts } from "@db/schema";
 import { eq, and } from "drizzle-orm";
+import { STATIC_SITEMAP_PAGES } from "./lib/sitemap-pages";
+
+const seoPath = z.string().trim().min(1).max(255).regex(/^\/[a-z0-9\-_/]*$/i);
+const optionalUrl = z.union([z.literal(""), z.string().url(), z.string().regex(/^\/[a-z0-9\-_/?.=&%]*$/i)]).optional();
 
 function formatSitemapDate(value?: Date | string | null) {
   const fallback = new Date();
@@ -16,7 +20,7 @@ function formatSitemapDate(value?: Date | string | null) {
 }
 
 export const seoRouter = createRouter({
-  getByPath: publicQuery.input(z.object({ path: z.string() })).query(async ({ input }) => {
+  getByPath: publicQuery.input(z.object({ path: seoPath })).query(async ({ input }) => {
     const db = getDb();
     const rows = await db.select().from(seoSettings).where(eq(seoSettings.path, input.path)).limit(1);
     return rows[0] ?? null;
@@ -25,11 +29,11 @@ export const seoRouter = createRouter({
   set: adminQuery
     .input(
       z.object({
-        path: z.string(),
-        metaTitle: z.string().optional(),
-        metaDescription: z.string().optional(),
-        ogImage: z.string().optional(),
-        canonical: z.string().optional(),
+        path: seoPath,
+        metaTitle: z.string().trim().max(100).optional(),
+        metaDescription: z.string().trim().max(320).optional(),
+        ogImage: optionalUrl,
+        canonical: optionalUrl,
       }),
     )
     .mutation(async ({ input }) => {
@@ -48,18 +52,12 @@ export const seoRouter = createRouter({
     const baseUrl = "https://www.morocco-incoming.com";
     const today = formatSitemapDate();
 
-    const pages = [
-      { url: `${baseUrl}/`, lastmod: today, changefreq: "weekly", priority: 1.0 },
-      { url: `${baseUrl}/circuits`, lastmod: today, changefreq: "weekly", priority: 0.9 },
-      { url: `${baseUrl}/destinations`, lastmod: today, changefreq: "weekly", priority: 0.9 },
-      { url: `${baseUrl}/services`, lastmod: today, changefreq: "monthly", priority: 0.8 },
-      { url: `${baseUrl}/about`, lastmod: today, changefreq: "monthly", priority: 0.8 },
-      { url: `${baseUrl}/mice`, lastmod: today, changefreq: "monthly", priority: 0.8 },
-      { url: `${baseUrl}/b2b`, lastmod: today, changefreq: "monthly", priority: 0.8 },
-      { url: `${baseUrl}/blog`, lastmod: today, changefreq: "weekly", priority: 0.8 },
-      { url: `${baseUrl}/contact`, lastmod: today, changefreq: "monthly", priority: 0.7 },
-      { url: `${baseUrl}/quote`, lastmod: today, changefreq: "monthly", priority: 0.7 },
-    ];
+    const pages = STATIC_SITEMAP_PAGES.map((page) => ({
+      url: `${baseUrl}${page.path}`,
+      lastmod: today,
+      changefreq: page.changefreq,
+      priority: page.priority,
+    }));
     const staticBlogSlugs = [
       "what-does-a-dmc-in-morocco-do-for-travel-agencies",
       "how-to-choose-a-morocco-incoming-agency",

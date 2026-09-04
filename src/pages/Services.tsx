@@ -26,8 +26,8 @@ export default function Services() {
   return (
     <>
       <SEO
-        title="Morocco DMC Services for Agencies, Groups & MICE"
-        description="Full-service Morocco DMC support for agencies and tour operators: ground handling, tailor-made tours, hotels, guides, transport, MICE and incentives."
+        title="Morocco Ground Services for Agencies & Groups"
+        description="Explore local Morocco ground services for agencies and groups, including hotels, guides, transport, tailor-made tours, activities, MICE and incentives."
         canonical="/services"
         image="/images/about-riad.jpg"
       />
@@ -44,7 +44,7 @@ export default function Services() {
             <p className="mt-3 text-sm text-[#6B7280] max-w-3xl mx-auto">
               {isFr ? (
                 <>
-                  Pour vos demandes B2B, consultez nos <Link to="/circuits" className="text-[#A91D2D] font-medium hover:underline">circuits Maroc pour agences</Link>, notre support <Link to="/mice" className="text-[#A91D2D] font-medium hover:underline">MICE au Maroc</Link> ou nos conditions <Link to="/b2b" className="text-[#A91D2D] font-medium hover:underline">partenaire B2B Maroc</Link>.
+                  Pour vos demandes B2B, consultez nos <Link to="/circuits" className="text-[#A91D2D] font-medium hover:underline">circuits Maroc pour agences</Link>, notre support <Link to="/mice-morocco" className="text-[#A91D2D] font-medium hover:underline">MICE au Maroc</Link> ou nos conditions <Link to="/b2b" className="text-[#A91D2D] font-medium hover:underline">partenaire B2B Maroc</Link>.
                 </>
               ) : (
                 <>

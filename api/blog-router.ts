@@ -4,6 +4,24 @@ import { getDb } from "./queries/connection";
 import { blogPosts, blogTranslations, contactRequests, quoteRequests, partnerRequests, media } from "@db/schema";
 import { eq, sql } from "drizzle-orm";
 import { sendSubmissionNotification } from "./lib/notification-email";
+import { TRPCError } from "@trpc/server";
+
+const SUBMISSION_WINDOW_MS = 15 * 60 * 1000;
+const SUBMISSION_MAX_ATTEMPTS = 8;
+const submissionAttempts = new Map<string, number[]>();
+
+function enforceSubmissionRateLimit(req: Request) {
+  const client = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const cutoff = Date.now() - SUBMISSION_WINDOW_MS;
+  const recent = (submissionAttempts.get(client) ?? []).filter((timestamp) => timestamp > cutoff);
+  if (recent.length >= SUBMISSION_MAX_ATTEMPTS) {
+    throw new TRPCError({
+      code: "TOO_MANY_REQUESTS",
+      message: "Too many requests. Please try again in 15 minutes.",
+    });
+  }
+  submissionAttempts.set(client, [...recent, Date.now()]);
+}
 
 export const blogRouter = createRouter({
   list: editorQuery.query(async () => {
@@ -117,14 +135,15 @@ export const formsRouter = createRouter({
   createContact: publicQuery
     .input(
       z.object({
-        name: z.string().min(1),
+        name: z.string().trim().min(1).max(255),
         email: z.string().email(),
-        phone: z.string().optional(),
-        subject: z.string().optional(),
-        message: z.string().min(1),
+        phone: z.string().max(50).optional(),
+        subject: z.string().max(255).optional(),
+        message: z.string().trim().min(1).max(5000),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
+      enforceSubmissionRateLimit(ctx.req);
       const db = getDb();
       await db.insert(contactRequests).values(input);
       await sendSubmissionNotification({
@@ -159,27 +178,28 @@ export const formsRouter = createRouter({
   createQuote: publicQuery
     .input(
       z.object({
-        agencyName: z.string().optional(),
-        contactPerson: z.string().optional(),
+        agencyName: z.string().max(255).optional(),
+        contactPerson: z.string().max(255).optional(),
         email: z.string().email(),
-        whatsapp: z.string().optional(),
-        country: z.string().optional(),
-        travelType: z.string().optional(),
-        dates: z.string().optional(),
-        numberOfPax: z.number().int().positive().optional(),
-        duration: z.string().optional(),
-        adults: z.number().optional(),
-        children: z.number().optional(),
-        preferredDestinations: z.string().optional(),
-        preferredCircuit: z.string().optional(),
-        hotelCategory: z.string().optional(),
-        transportType: z.string().optional(),
-        guideLanguage: z.string().optional(),
-        budgetRange: z.string().optional(),
-        specialRequests: z.string().optional(),
+        whatsapp: z.string().max(50).optional(),
+        country: z.string().max(100).optional(),
+        travelType: z.string().max(50).optional(),
+        dates: z.string().max(100).optional(),
+        numberOfPax: z.number().int().positive().max(10000).optional(),
+        duration: z.string().max(50).optional(),
+        adults: z.number().int().nonnegative().max(10000).optional(),
+        children: z.number().int().nonnegative().max(10000).optional(),
+        preferredDestinations: z.string().max(2000).optional(),
+        preferredCircuit: z.string().max(255).optional(),
+        hotelCategory: z.string().max(50).optional(),
+        transportType: z.string().max(50).optional(),
+        guideLanguage: z.string().max(50).optional(),
+        budgetRange: z.string().max(100).optional(),
+        specialRequests: z.string().trim().max(5000).optional(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
+      enforceSubmissionRateLimit(ctx.req);
       const db = getDb();
       const { numberOfPax, ...storedInput } = input;
       const storedBrief = [
@@ -237,17 +257,18 @@ export const formsRouter = createRouter({
   createPartner: publicQuery
     .input(
       z.object({
-        agencyName: z.string().min(1),
-        country: z.string().optional(),
-        website: z.string().optional(),
-        contactPerson: z.string().min(1),
+        agencyName: z.string().trim().min(1).max(255),
+        country: z.string().max(100).optional(),
+        website: z.string().max(255).optional(),
+        contactPerson: z.string().trim().min(1).max(255),
         email: z.string().email(),
-        whatsapp: z.string().optional(),
-        businessType: z.string().optional(),
-        expectedVolume: z.string().optional(),
+        whatsapp: z.string().max(50).optional(),
+        businessType: z.string().max(100).optional(),
+        expectedVolume: z.string().max(100).optional(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
+      enforceSubmissionRateLimit(ctx.req);
       const db = getDb();
       await db.insert(partnerRequests).values(input);
       await sendSubmissionNotification({

@@ -97,7 +97,7 @@ export default function AdminLogin() {
             </form>
 
             <p className="text-xs text-center text-[#6B7280] mt-6">
-              Default: admin@morocco-incoming.com / Admin@12345
+              Authorized staff only
             </p>
           </div>
         </div>

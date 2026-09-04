@@ -1,4 +1,6 @@
 import { Helmet } from "react-helmet-async";
+import { useLocation } from "react-router";
+import { trpc } from "@/providers/trpc";
 
 const BASE_URL = "https://www.morocco-incoming.com";
 
@@ -12,7 +14,16 @@ interface SEOProps {
 }
 
 function toAbsoluteUrl(value: string) {
-  if (/^https?:\/\//i.test(value)) return value;
+  if (/^https?:\/\//i.test(value)) {
+    const url = new URL(value);
+    if (
+      url.hostname === "morocco-incoming.com" ||
+      url.hostname === "www.morocco-incoming.com"
+    ) {
+      return `${BASE_URL}${url.pathname}${url.search}${url.hash}`;
+    }
+    return value;
+  }
   const path = value.startsWith("/") ? value : `/${value}`;
   return `${BASE_URL}${path}`;
 }
@@ -25,24 +36,37 @@ export default function SEO({
   noindex = false,
   type = "website",
 }: SEOProps) {
-  const canonicalUrl = toAbsoluteUrl(canonical);
-  const imageUrl = image ? toAbsoluteUrl(image) : undefined;
+  const location = useLocation();
+  const { data: savedMeta } = trpc.seo.getByPath.useQuery(
+    { path: location.pathname },
+    { staleTime: 5 * 60 * 1000, retry: 1 },
+  );
+  const resolvedTitle = savedMeta?.metaTitle?.trim() || title;
+  const resolvedDescription = savedMeta?.metaDescription?.trim() || description;
+  const resolvedCanonical = savedMeta?.canonical?.trim() || canonical;
+  const resolvedImage = savedMeta?.ogImage?.trim() || image;
+  const canonicalUrl = toAbsoluteUrl(resolvedCanonical);
+  const imageUrl = resolvedImage ? toAbsoluteUrl(resolvedImage) : undefined;
 
   return (
     <Helmet>
-      <title>{title}</title>
-      <meta name="description" content={description} />
+      <title>{resolvedTitle}</title>
+      <meta name="description" content={resolvedDescription} />
+      <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
       <link rel="canonical" href={canonicalUrl} />
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
+      <meta property="og:site_name" content="Morocco Incoming by Suenos Travel" />
+      <meta property="og:title" content={resolvedTitle} />
+      <meta property="og:description" content={resolvedDescription} />
       <meta property="og:type" content={type} />
       <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:locale" content="en_US" />
       {imageUrl && <meta property="og:image" content={imageUrl} />}
+      {imageUrl && <meta property="og:image:width" content="1344" />}
+      {imageUrl && <meta property="og:image:height" content="768" />}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
+      <meta name="twitter:title" content={resolvedTitle} />
+      <meta name="twitter:description" content={resolvedDescription} />
       {imageUrl && <meta name="twitter:image" content={imageUrl} />}
-      {noindex && <meta name="robots" content="noindex, nofollow" />}
     </Helmet>
   );
 }

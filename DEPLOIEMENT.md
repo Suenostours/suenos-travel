@@ -171,7 +171,7 @@ curl https://www.morocco-incoming.com/api/trpc/public.listTours
 
 ### Dashboard admin
 - [ ] Login /admin/login
-- [ ] Identifiants admin@morocco-incoming.com / Admin@12345
+- [ ] Connexion avec les identifiants admin conservés dans le gestionnaire de mots de passe
 - [ ] Dashboard overview stats
 - [ ] CRUD circuits
 - [ ] CRUD villes

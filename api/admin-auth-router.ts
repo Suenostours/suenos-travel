@@ -12,20 +12,52 @@ import { admins } from "@db/schema";
 import { eq } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const LOGIN_MAX_ATTEMPTS = 5;
+const loginAttempts = new Map<string, number[]>();
+
+function loginKey(req: Request, email: string) {
+  const forwarded = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return `${forwarded || "unknown"}:${email.trim().toLowerCase()}`;
+}
+
+function recentAttempts(key: string) {
+  const cutoff = Date.now() - LOGIN_WINDOW_MS;
+  const recent = (loginAttempts.get(key) ?? []).filter((timestamp) => timestamp > cutoff);
+  if (recent.length > 0) loginAttempts.set(key, recent);
+  else loginAttempts.delete(key);
+  return recent;
+}
+
+function recordFailedLogin(key: string) {
+  loginAttempts.set(key, [...recentAttempts(key), Date.now()]);
+}
+
 export const adminAuthRouter = createRouter({
   login: publicQuery
     .input(z.object({ email: z.string().email(), password: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
+      const key = loginKey(ctx.req, input.email);
+      if (recentAttempts(key).length >= LOGIN_MAX_ATTEMPTS) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Too many login attempts. Please try again in 15 minutes.",
+        });
+      }
+
       const db = getDb();
       const rows = await db.select().from(admins).where(eq(admins.email, input.email)).limit(1);
       if (rows.length === 0) {
+        recordFailedLogin(key);
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid credentials" });
       }
       const admin = rows[0];
       const valid = await verifyPassword(input.password, admin.passwordHash);
       if (!valid) {
+        recordFailedLogin(key);
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid credentials" });
       }
+      loginAttempts.delete(key);
       const token = await createAdminToken(admin);
       ctx.resHeaders.append("Set-Cookie", serializeAdminCookie(token));
       return { id: admin.id, email: admin.email, name: admin.name, role: admin.role };
@@ -42,7 +74,7 @@ export const adminAuthRouter = createRouter({
   }),
 
   changePassword: authedQuery
-    .input(z.object({ currentPassword: z.string().min(1), newPassword: z.string().min(6) }))
+    .input(z.object({ currentPassword: z.string().min(1), newPassword: z.string().min(12) }))
     .mutation(async ({ ctx, input }) => {
       const db = getDb();
       const rows = await db.select().from(admins).where(eq(admins.id, ctx.admin.id)).limit(1);
@@ -63,7 +95,7 @@ export const adminAuthRouter = createRouter({
     .input(
       z.object({
         email: z.string().email(),
-        password: z.string().min(6),
+        password: z.string().min(12),
         name: z.string().min(1).max(255),
         role: z.enum(["super_admin", "admin", "editor"]),
       }),
@@ -79,11 +111,11 @@ export const adminAuthRouter = createRouter({
           role: input.role,
         });
         return { success: true };
-      } catch (e: any) {
-        if (e.message?.includes("Duplicate")) {
+      } catch (error: unknown) {
+        if (error instanceof Error && error.message.includes("Duplicate")) {
           throw new TRPCError({ code: "CONFLICT", message: "Email already exists" });
         }
-        throw e;
+        throw error;
       }
     }),
 
@@ -94,7 +126,7 @@ export const adminAuthRouter = createRouter({
         email: z.string().email().optional(),
         name: z.string().min(1).max(255).optional(),
         role: z.enum(["super_admin", "admin", "editor"]).optional(),
-        password: z.string().min(6).optional(),
+        password: z.string().min(12).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

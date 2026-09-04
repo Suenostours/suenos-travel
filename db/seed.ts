@@ -1,13 +1,21 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/mysql2";
-import { sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { admins, siteSettings } from "./schema";
 
-const dbUrl = process.env.DATABASE_URL;
-if (!dbUrl) {
-  console.error("DATABASE_URL not set");
-  process.exit(1);
+function required(name: string) {
+  const value = process.env[name];
+  if (!value) throw new Error(`${name} is required`);
+  return value;
+}
+
+const dbUrl = required("DATABASE_URL");
+const adminEmail = required("SEED_ADMIN_EMAIL");
+const adminPassword = required("SEED_ADMIN_PASSWORD");
+
+if (adminPassword.length < 12) {
+  throw new Error("SEED_ADMIN_PASSWORD must contain at least 12 characters");
 }
 
 const db = drizzle(dbUrl, { mode: "planetscale" });
@@ -15,17 +23,17 @@ const db = drizzle(dbUrl, { mode: "planetscale" });
 async function seed() {
   console.log("Seeding database...");
 
-  // ─── Admin de test ───
-  const existing = await db.select().from(admins).where(sql`${admins.email} = "admin@morocco-incoming.com"`);
+  // Create the first administrator only from explicitly supplied credentials.
+  const existing = await db.select().from(admins).where(eq(admins.email, adminEmail));
   if (existing.length === 0) {
-    const hash = await bcrypt.hash("Admin@12345", 12);
+    const hash = await bcrypt.hash(adminPassword, 12);
     await db.insert(admins).values({
-      email: "admin@morocco-incoming.com",
+      email: adminEmail,
       passwordHash: hash,
       name: "Super Admin",
       role: "super_admin",
     });
-    console.log("Admin de test créé : admin@morocco-incoming.com / Admin@12345");
+    console.log(`Administrator created for ${adminEmail}`);
   }
 
   // ─── Site Settings ───

@@ -224,10 +224,9 @@
 
 ---
 
-## IDENTIFIANTS DE TEST ACTUELS
-- Email : admin@morocco-incoming.com
-- Password : Admin@12345
-- Role : super_admin
+## IDENTIFIANTS DE TEST
+Ils sont fournis uniquement via les variables `SEED_ADMIN_EMAIL` et
+`SEED_ADMIN_PASSWORD` et ne doivent pas être enregistrés dans le dépôt.
 
 ## ARCHITECTURE MULTILINGUE CHOISIE
 Tables separees avec translations (tour_translations, city_translations, etc.)

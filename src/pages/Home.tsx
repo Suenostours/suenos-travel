@@ -95,8 +95,8 @@ export default function Home() {
   return (
     <>
       <SEO
-        title="DMC Morocco | Morocco Incoming Agency for Travel Professionals"
-        description="Suenos Travel is a Morocco DMC and incoming agency for tour operators, travel agencies and companies. Tailor-made tours, groups, MICE and incentives."
+        title="Morocco Incoming Agency & DMC | Suenos Travel"
+        description="Licensed Morocco incoming agency and DMC for travel agencies and tour operators: tailor-made circuits, groups, MICE, net rates and local support."
         canonical="/"
         image="/images/hero-desert.jpg"
       />
@@ -111,8 +111,8 @@ export default function Home() {
                 SUENOS TRAVEL INCOMING MOROCCO
               </p>
               <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-[#1F2937] leading-[1.15]">
-                Your Trusted{" "}
-                <span className="text-[#A91D2D]">DMC</span> Partner in Morocco
+                Your Local{" "}
+                <span className="text-[#A91D2D]">B2B Travel Partner</span> in Morocco
               </h1>
               <p className="text-lg text-[#4B5563] max-w-lg leading-relaxed">
                 {locale === "fr"
@@ -147,6 +147,10 @@ export default function Home() {
                 <img
                   src="/images/hero-desert.jpg"
                   alt="Morocco Desert Camel Caravan"
+                  width={1344}
+                  height={768}
+                  fetchPriority="high"
+                  decoding="async"
                   className="w-full h-[400px] md:h-[500px] object-cover"
                 />
               </div>
@@ -184,6 +188,39 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ─── B2B SERVICE PATHS ─── */}
+      <section className="bg-[#F9F7F4] py-12" aria-labelledby="b2b-service-paths">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 id="b2b-service-paths" className="font-serif text-2xl md:text-3xl font-bold text-[#1F2937]">
+              Start with the service that matches your Morocco brief
+            </h2>
+            <p className="mt-3 text-sm text-[#6B7280]">
+              Separate pages cover destination management, incoming operations, program discovery, group delivery and corporate travel.
+            </p>
+          </div>
+          <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { title: "DMC Morocco", description: "Full local destination management for agencies.", path: "/dmc-morocco" },
+              { title: "Incoming Agency Morocco", description: "Ground handling and local operations.", path: "/incoming-agency-morocco" },
+              { title: "Morocco Circuits", description: "Discover B2B routes and program ideas.", path: "/circuits" },
+              { title: "MICE Morocco", description: "Incentive and corporate group operations.", path: "/mice-morocco" },
+              { title: "B2B Partnership", description: "Review agency conditions and partner support.", path: "/b2b" },
+              { title: "Request a Quote", description: "Send dates, group size and your agency brief.", path: "/quote" },
+            ].map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className="rounded-2xl border border-gray-100 bg-white p-5 transition-all hover:border-[#A91D2D]/40 hover:shadow-sm"
+              >
+                <h3 className="font-semibold text-[#1F2937]">{item.title}</h3>
+                <p className="mt-2 text-sm text-[#6B7280]">{item.description}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ─── ABOUT ─── */}
       <section className="bg-white py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -192,6 +229,10 @@ export default function Home() {
               <img
                 src="/images/about-riad.jpg"
                 alt="Traditional Moroccan Riad"
+                width={1184}
+                height={864}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-[400px] object-cover"
               />
             </div>
@@ -200,7 +241,7 @@ export default function Home() {
                 {t("about.title")}
               </h2>
               <p className="text-[#4B5563] leading-relaxed">
-                Based in Agadir and Casablanca, Suenos Travel is a fully licensed Moroccan DMC specializing in incoming tourism. Our <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">Morocco DMC services</Link> combine deep local expertise with international service standards for B2B partners worldwide.
+                Based in Agadir and Casablanca, Suenos Travel is a fully licensed Moroccan travel agency with a dedicated incoming division. Our <Link to="/dmc-morocco" className="text-[#A91D2D] font-medium hover:underline">Morocco DMC services</Link> combine local operational knowledge with B2B support for travel partners worldwide.
               </p>
               <p className="text-[#4B5563] leading-relaxed">
                 From tailor-made circuits to corporate events, desert expeditions to luxury escapes — we handle every detail on the ground so your clients enjoy Morocco to the fullest.
@@ -276,7 +317,7 @@ export default function Home() {
                 <div key={tour.slug} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all">
                   <div className="relative h-56 overflow-hidden">
                     {tour.mainImage ? (
-                      <img src={tour.mainImage} alt={tour.title ?? tour.slug} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={tour.mainImage} alt={tour.title ?? tour.slug} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
                       <div className="w-full h-full bg-[#F3EDE8] flex items-center justify-center px-6 text-center text-sm text-[#6B7280]">
                         {tour.title ?? tour.slug}
@@ -316,7 +357,7 @@ export default function Home() {
             <div className="space-y-6">
               <h2 className="font-serif text-3xl md:text-4xl font-bold">{t("mice.title")}</h2>
               <p className="text-gray-400 leading-relaxed">
-                From board meetings in Marrakech palaces to team-building in the Sahara, we deliver world-class corporate events tailored to your objectives.
+                From board meetings in Marrakech to team-building in the Sahara, we coordinate corporate programs tailored to your objectives.
               </p>
               <ul className="space-y-3">
                 {["Venue sourcing & negotiation", "AV equipment & staging", "Team-building activities", "Gala dinners & entertainment", "Delegate management", "Transport logistics"].map((item) => (
@@ -326,14 +367,14 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-              <Link to="/mice">
+              <Link to="/mice-morocco">
                 <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6 mt-4">
-                  Explore MICE Services
+                  Explore MICE Morocco Services
                 </Button>
               </Link>
             </div>
             <div className="rounded-2xl overflow-hidden shadow-2xl">
-              <img src="/images/circuit-luxury.jpg" alt="MICE Morocco" className="w-full h-[400px] object-cover" />
+              <img src="/images/circuit-luxury.jpg" alt="MICE Morocco" width={1184} height={864} loading="lazy" decoding="async" className="w-full h-[400px] object-cover" />
             </div>
           </div>
         </div>
@@ -344,15 +385,15 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div className="rounded-2xl overflow-hidden shadow-xl order-2 lg:order-1">
-              <img src="/images/hero-desert.jpg" alt="B2B Partnership" className="w-full h-[400px] object-cover" />
+              <img src="/images/hero-desert.jpg" alt="B2B Partnership" width={1344} height={768} loading="lazy" decoding="async" className="w-full h-[400px] object-cover" />
             </div>
             <div className="space-y-6 order-1 lg:order-2">
               <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#1F2937]">{t("b2b.title")}</h2>
               <p className="text-[#4B5563] leading-relaxed">
-                We partner with travel agencies, tour operators, and DMCs worldwide to deliver exceptional Morocco experiences for their clients. Net rates, instant quotes, and dedicated account management.
+                We partner with travel agencies, tour operators, and DMCs worldwide to deliver Morocco programs for their clients. Net rates, standard quotations and dedicated B2B support.
               </p>
               <ul className="space-y-3">
-                {["Competitive net rates", "Dedicated B2B support", "Instant quotations", "Flexible payment terms", "White-label options"].map((item) => (
+                {["Competitive net rates", "Dedicated B2B support", "24–48h standard quote response", "Flexible payment terms", "White-label options"].map((item) => (
                   <li key={item} className="flex items-center gap-3 text-sm text-[#4B5563]">
                     <Check className="h-4 w-4 text-[#A91D2D] shrink-0" />
                     {item}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Routes, Route, Navigate } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
 import { trpc } from "@/providers/trpc";
@@ -919,10 +919,23 @@ function SeoManager() {
   const [path, setPath] = useState("/");
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
-  const setSeo = trpc.seo.set.useMutation();
+  const [ogImage, setOgImage] = useState("");
+  const [canonical, setCanonical] = useState("");
+  const [saved, setSaved] = useState(false);
+  const { data: currentSeo } = trpc.seo.getByPath.useQuery({ path });
+  const setSeo = trpc.seo.set.useMutation({ onSuccess: () => setSaved(true) });
+
+  useEffect(() => {
+    setMetaTitle(currentSeo?.metaTitle ?? "");
+    setMetaDescription(currentSeo?.metaDescription ?? "");
+    setOgImage(currentSeo?.ogImage ?? "");
+    setCanonical(currentSeo?.canonical ?? "");
+    setSaved(false);
+  }, [currentSeo]);
 
   const handleSaveSeo = () => {
-    setSeo.mutate({ path, metaTitle, metaDescription });
+    setSaved(false);
+    setSeo.mutate({ path, metaTitle, metaDescription, ogImage, canonical });
   };
 
   return (
@@ -935,10 +948,15 @@ function SeoManager() {
           <div><Label>Path</Label><Input value={path} onChange={(e) => setPath(e.target.value)} placeholder="e.g. /circuits" /></div>
           <div><Label>Meta Title</Label><Input value={metaTitle} onChange={(e) => setMetaTitle(e.target.value)} /></div>
           <div className="sm:col-span-2"><Label>Meta Description</Label><Textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} rows={3} /></div>
+          <div><Label>Canonical URL</Label><Input value={canonical} onChange={(e) => setCanonical(e.target.value)} placeholder="https://www.morocco-incoming.com/page" /></div>
+          <div><Label>Open Graph Image</Label><Input value={ogImage} onChange={(e) => setOgImage(e.target.value)} placeholder="/images/hero-desert.jpg" /></div>
         </div>
-        <Button className="mt-4 bg-[#A91D2D] hover:bg-[#8a1824] text-white" onClick={handleSaveSeo}>
-          <Save className="h-4 w-4 mr-2" /> Save SEO Settings
-        </Button>
+        <div className="mt-4 flex items-center gap-3">
+          <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white" onClick={handleSaveSeo} disabled={setSeo.isPending}>
+            <Save className="h-4 w-4 mr-2" /> {setSeo.isPending ? "Saving…" : "Save SEO Settings"}
+          </Button>
+          {saved && <span className="text-sm text-green-700" role="status">SEO settings saved.</span>}
+        </div>
       </div>
 
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">

@@ -20,8 +20,8 @@ export default function MICE() {
   return (
     <>
       <SEO
-        title="MICE Morocco | Incentive Travel & Corporate Events DMC"
-        description="Plan meetings, incentives, conferences, team building and corporate events in Morocco with a local DMC for agencies and companies."
+        title="Corporate Events & Incentive Travel Services | Morocco"
+        description="Explore venue sourcing, delegate management, event planning, staging, transport and gala support for corporate events and incentive travel in Morocco."
         canonical="/mice"
         image="/images/circuit-luxury.jpg"
       />
@@ -30,7 +30,7 @@ export default function MICE() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
           <div className="text-center mb-16">
             <h1 className="font-serif text-4xl md:text-5xl font-bold">
-              {isFr ? "MICE & Voyage Corporate" : "MICE & Corporate Travel"}
+              {isFr ? "MICE & Voyage Corporate" : "Corporate Events & Incentive Travel Services"}
             </h1>
             <p className="mt-4 text-gray-400 max-w-2xl mx-auto">
               {isFr
@@ -40,7 +40,7 @@ export default function MICE() {
             <p className="mt-3 text-sm text-gray-400 max-w-3xl mx-auto">
               {isFr ? (
                 <>
-                  Pour une operation complete, combinez notre support <Link to="/services" className="text-[#E8A0A0] font-medium hover:underline">DMC Maroc</Link> avec des <Link to="/circuits" className="text-[#E8A0A0] font-medium hover:underline">programmes groupes Maroc</Link> et conditions <Link to="/b2b" className="text-[#E8A0A0] font-medium hover:underline">partenaire B2B</Link>.
+                  Pour une operation complete, consultez notre page <Link to="/mice-morocco" className="text-[#E8A0A0] font-medium hover:underline">MICE Maroc pour agences</Link>, nos <Link to="/circuits" className="text-[#E8A0A0] font-medium hover:underline">programmes groupes Maroc</Link> et conditions <Link to="/b2b" className="text-[#E8A0A0] font-medium hover:underline">partenaire B2B</Link>.
                 </>
               ) : (
                 <>
@@ -78,12 +78,12 @@ export default function MICE() {
                 </Button>
               </Link>
               <a href="https://wa.me/212661925611" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-full px-8">
+                <Button variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-8">
                   WhatsApp
                 </Button>
               </a>
               <Link to="/b2b">
-                <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-full px-8">
+                <Button variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-8">
                   {isFr ? "Partenariat B2B" : "B2B Partnership"}
                 </Button>
               </Link>

@@ -1,15 +1,22 @@
-import type { Hono } from "hono";
+import type { Context, Hono } from "hono";
 import type { HttpBindings } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import fs from "fs";
 import path from "path";
+import { renderSeoHtml } from "./seo-html";
 
 type App = Hono<{ Bindings: HttpBindings }>;
 
-function serveIndexHtml(c: any, distPath: string) {
+function serveIndexHtml(
+  c: Context<{ Bindings: HttpBindings }>,
+  distPath: string,
+  status: 200 | 404,
+) {
   const indexPath = path.resolve(distPath, "index.html");
-  const content = fs.readFileSync(indexPath, "utf-8");
-  return c.html(content, 200);
+  const template = fs.readFileSync(indexPath, "utf-8");
+  const pathname = new URL(c.req.url).pathname;
+  const content = renderSeoHtml(template, pathname);
+  return c.html(content, status);
 }
 
 function shouldServeSpaFallback(pathname: string, method: string) {
@@ -36,7 +43,7 @@ export function serveStaticFiles(app: App) {
     const url = new URL(c.req.url);
 
     if (shouldServeSpaFallback(url.pathname, c.req.method)) {
-      return serveIndexHtml(c, distPath);
+      return serveIndexHtml(c, distPath, 404);
     }
 
     return c.json({ error: "Not Found" }, 404);
@@ -46,7 +53,7 @@ export function serveStaticFiles(app: App) {
     const url = new URL(c.req.url);
 
     if (shouldServeSpaFallback(url.pathname, c.req.method)) {
-      return serveIndexHtml(c, distPath);
+      return serveIndexHtml(c, distPath, 404);
     }
 
     return c.json({ error: "Not Found" }, 404);

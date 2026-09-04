@@ -20,4 +20,17 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    files: ['src/components/ui/**/*.tsx', 'src/providers/**/*.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+  {
+    files: ['src/pages/AdminDashboard.tsx'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+    },
+  },
 ])

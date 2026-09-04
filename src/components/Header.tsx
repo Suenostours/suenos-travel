@@ -61,6 +61,7 @@ export default function Header() {
               <Link
                 key={item.path}
                 to={item.path}
+                aria-current={isActive(item.path) ? "page" : undefined}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive(item.path)
                     ? "text-[#A91D2D]"
@@ -77,7 +78,7 @@ export default function Header() {
             {/* Language switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-1 text-[#4B5563]">
+                <Button variant="ghost" size="sm" className="gap-1 text-[#4B5563]" aria-label="Choose language">
                   <Globe className="h-4 w-4" />
                   <span className="uppercase text-xs font-semibold">{locale}</span>
                 </Button>
@@ -100,19 +101,19 @@ export default function Header() {
             </a>
 
             {/* CTA Quote */}
-            <Link to="/quote">
-              <Button className="bg-[#A91D2D] hover:bg-[#8a1824] text-white text-sm px-4 py-2 rounded-full">
+            <Button asChild className="bg-[#A91D2D] hover:bg-[#8a1824] text-white text-sm px-4 py-2 rounded-full">
+              <Link to="/quote">
                 {t("nav.quote")}
-              </Button>
-            </Link>
+              </Link>
+            </Button>
 
             {/* Admin */}
             {admin && (
-              <Link to="/admin">
-                <Button variant="outline" size="sm" className="text-xs">
+              <Button asChild variant="outline" size="sm" className="text-xs">
+                <Link to="/admin">
                   Dashboard
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             )}
           </div>
 
@@ -120,6 +121,9 @@ export default function Header() {
           <button
             className="md:hidden p-2 rounded-md text-[#4B5563]"
             onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-navigation"
           >
             {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -128,11 +132,12 @@ export default function Header() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 space-y-2">
+        <div id="mobile-navigation" className="md:hidden bg-white border-t border-gray-100 px-4 py-4 space-y-2">
           {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
+              aria-current={isActive(item.path) ? "page" : undefined}
               onClick={() => setMobileOpen(false)}
               className={`block px-3 py-2 rounded-md text-sm font-medium ${
                 isActive(item.path)

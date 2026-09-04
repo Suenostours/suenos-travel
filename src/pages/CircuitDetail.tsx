@@ -52,11 +52,12 @@ export default function CircuitDetail() {
     { enabled: Boolean(slug) },
   );
 
-  const tourData = data as any;
-  const tour = tourData?.tours;
-  const translation = tourData?.tour_translations;
-  const cities = Array.isArray(tourData?.cities) ? tourData.cities : [];
-  const cityNames = cities.map((city: any) => city?.name).filter(Boolean);
+  const tour = data?.tours;
+  const translation = data?.tour_translations;
+  const cities = data?.cities ?? [];
+  const cityNames = cities
+    .map((city) => city.name)
+    .filter((name): name is string => Boolean(name));
   const cityText = cityNames.join(", ");
   const quotePath = `/quote${slug ? `?tour=${encodeURIComponent(slug)}` : ""}`;
 
@@ -101,10 +102,10 @@ export default function CircuitDetail() {
   const tourSlug = slug ?? tour.slug;
   const canonicalPath = `/circuits/${tourSlug}`;
   const seoTitle =
-    cleanText(translation.metaTitle ?? translation.meta_title) ||
+    cleanText(translation.metaTitle) ||
     `${title} | Morocco DMC Tour for Agencies`;
   const seoDescription =
-    trimDescription(translation.metaDescription ?? translation.meta_description) ||
+    trimDescription(translation.metaDescription) ||
     trimDescription(description) ||
     DEFAULT_TOUR_DESCRIPTION;
   const seoImage = tour.mainImage || DEFAULT_TOUR_IMAGE;
@@ -165,7 +166,7 @@ export default function CircuitDetail() {
       <section className="bg-[#F9F7F4]">
         <div className="relative h-[400px] md:h-[500px]">
           {tour.mainImage ? (
-            <img src={tour.mainImage} alt={title} className="w-full h-full object-cover" />
+            <img src={tour.mainImage} alt={title} fetchPriority="high" decoding="async" className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full bg-[#D8CEC4]" />
           )}

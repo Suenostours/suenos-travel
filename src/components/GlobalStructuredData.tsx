@@ -6,6 +6,7 @@ export default function GlobalStructuredData() {
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": `${BASE_URL}/#organization`,
     name: "Suenos Travel",
     alternateName: "Morocco Incoming by Suenos Travel",
     url: BASE_URL,
@@ -18,17 +19,32 @@ export default function GlobalStructuredData() {
   const travelAgencyJsonLd = {
     "@context": "https://schema.org",
     "@type": "TravelAgency",
-    name: "Suenos Travel",
+    "@id": `${BASE_URL}/#travel-agency`,
+    name: "Morocco Incoming by Suenos Travel",
+    legalName: "Suenos Travel",
     url: BASE_URL,
     description:
       "Morocco DMC and incoming travel agency for tour operators, travel agencies, groups, MICE and corporate travel.",
     areaServed: "Morocco",
     telephone: "+212661925611",
-    address: {
-      "@type": "PostalAddress",
-      addressCountry: "MA",
-      addressLocality: "Agadir",
-    },
+    email: "resa@suenos-travel.com",
+    identifier: [
+      { "@type": "PropertyValue", name: "Moroccan travel agency licence", value: "ODV-0564" },
+      { "@type": "PropertyValue", name: "IATA numeric code", value: "54273844" },
+    ],
+    address: [
+      {
+        "@type": "PostalAddress",
+        addressCountry: "MA",
+        addressLocality: "Agadir",
+      },
+      {
+        "@type": "PostalAddress",
+        addressCountry: "MA",
+        addressLocality: "Casablanca",
+      },
+    ],
+    parentOrganization: { "@id": `${BASE_URL}/#organization` },
   };
 
   const websiteJsonLd = {
@@ -38,8 +54,7 @@ export default function GlobalStructuredData() {
     url: BASE_URL,
     inLanguage: "en",
     publisher: {
-      "@type": "Organization",
-      name: "Suenos Travel",
+      "@id": `${BASE_URL}/#organization`,
     },
   };
 

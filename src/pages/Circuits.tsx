@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router";
+import { Helmet } from "react-helmet-async";
 import { useI18n } from "@/providers/i18n";
 import { trpc } from "@/providers/trpc";
 import SEO from "@/components/SEO";
 import { Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+const BASE_URL = "https://www.morocco-incoming.com";
 
 const typeFilters = [
   { key: "all", label: "All", labelFr: "Tous" },
@@ -66,38 +69,61 @@ export default function Circuits() {
 
   const filtered = filter === "all" ? tours : tours.filter((tour) => tour.type === filter);
   const hasTours = tours.length > 0;
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: BASE_URL },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Morocco Circuits and Group Tours for Travel Agencies",
+        item: `${BASE_URL}/circuits`,
+      },
+    ],
+  };
 
   return (
     <>
       <SEO
-        title="Morocco Private & Group Tours for Agencies | DMC Morocco"
-        description="Explore Morocco circuits for travel agencies and tour operators: private tours, group tours, Sahara, imperial cities, luxury, family and incentive itineraries."
+        title="Morocco Circuits for Travel Agencies | B2B Group Tours"
+        description="Explore tailor-made Morocco circuits for travel agencies, tour operators and groups: imperial cities, Sahara routes, coastal stays and private programs."
         canonical="/circuits"
         image="/images/circuit-sahara.jpg"
       />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
+      </Helmet>
 
       <section className="bg-[#F9F7F4] py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h1 className="font-serif text-4xl md:text-5xl font-bold text-[#1F2937]">Morocco Circuits</h1>
+            <nav className="mb-5 text-sm text-[#6B7280]" aria-label="Breadcrumb">
+              <Link to="/" className="hover:text-[#A91D2D]">Home</Link>
+              <span className="mx-2" aria-hidden="true">/</span>
+              <span aria-current="page">Morocco circuits</span>
+            </nav>
+            <h1 className="font-serif text-4xl md:text-5xl font-bold text-[#1F2937]">
+              Morocco Circuits and Group Tours for Travel Agencies
+            </h1>
             <p className="mt-4 text-[#4B5563] max-w-2xl mx-auto">
               {locale === "fr"
-                ? "Circuits soigneusement concus pour les agences de voyage, tour-operateurs et groupes corporate."
-                : "Carefully crafted itineraries for travel agencies, tour operators, and corporate groups."}
+                ? "Catalogue de circuits sur mesure pour agences, tour-operateurs, groupes et programmes prives au Maroc."
+                : "Discover tailor-made Morocco circuits for travel agencies and tour operators, including private FIT programs, agency groups and series departures across the imperial cities, Sahara and Atlantic coast."}
             </p>
             <p className="mt-3 text-sm text-[#6B7280] max-w-3xl mx-auto">
               {locale === "fr"
-                ? "Tous les programmes peuvent etre adaptes pour groupes prives, departs en serie, incentives et demandes white-label agence."
-                : "All programs can be adapted for private groups, series departures, incentives and agency white-label requests."}
+                ? "Chaque programme peut inclure guides, transport, hotels, operations locales et devis en tarifs nets agence."
+                : "Use this catalogue to discover program ideas; every route can be adapted with licensed guides, private transport or coaches, hotels, local operations and a net-rate quotation."}
             </p>
             <p className="mt-3 text-sm text-[#6B7280] max-w-3xl mx-auto">
               {locale === "fr" ? (
                 <>
-                  Nos <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">services DMC Maroc</Link> couvrent transport, guides, hotels, desert et <Link to="/mice" className="text-[#A91D2D] font-medium hover:underline">voyages incentive Maroc</Link> pour vos groupes.
+                  Nos <Link to="/dmc-morocco" className="text-[#A91D2D] font-medium hover:underline">services DMC Maroc</Link> et notre page <Link to="/morocco-group-tours" className="text-[#A91D2D] font-medium hover:underline">groupes agences</Link> expliquent comment nous operons les programmes presentes ici.
                 </>
               ) : (
                 <>
-                  Our <Link to="/dmc-morocco" className="text-[#A91D2D] font-medium hover:underline">DMC Morocco</Link> services cover transport, guides, hotels, desert programs, <Link to="/morocco-group-tours" className="text-[#A91D2D] font-medium hover:underline">Morocco group tours</Link> and <Link to="/mice-morocco" className="text-[#A91D2D] font-medium hover:underline">Morocco incentive travel</Link> for agency groups.
+                  For operating support, review our <Link to="/morocco-group-tours" className="text-[#A91D2D] font-medium hover:underline">Morocco group tours for agencies</Link>, <Link to="/morocco-tours-for-travel-agencies" className="text-[#A91D2D] font-medium hover:underline">tour programs for travel agencies</Link>, <Link to="/dmc-morocco" className="text-[#A91D2D] font-medium hover:underline">DMC Morocco services</Link> and <Link to="/incoming-agency-morocco" className="text-[#A91D2D] font-medium hover:underline">incoming agency support</Link>.
                 </>
               )}
             </p>
@@ -147,7 +173,7 @@ export default function Circuits() {
                 <div key={tour.slug} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all">
                   <div className="relative h-56 overflow-hidden">
                     {tour.mainImage ? (
-                      <img src={tour.mainImage} alt={tour.title ?? tour.slug} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={tour.mainImage} alt={tour.title ?? tour.slug} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
                       <div className="w-full h-full bg-[#F3EDE8] flex items-center justify-center px-6 text-center text-sm text-[#6B7280]">
                         {tour.title ?? tour.slug}
@@ -178,6 +204,15 @@ export default function Circuits() {
             </div>
           )}
 
+          <div className="mt-12 rounded-2xl border border-gray-100 bg-[#F3EDE8] p-7 md:p-8">
+            <h2 className="font-serif text-2xl font-bold text-[#1F2937]">
+              Build a route around the right Morocco destinations
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-[#4B5563]">
+              Compare our <Link to="/destinations/marrakech" className="text-[#A91D2D] font-medium hover:underline">Marrakech programs</Link>, <Link to="/destinations/fes" className="text-[#A91D2D] font-medium hover:underline">Fes and imperial city routes</Link>, <Link to="/destinations/merzouga" className="text-[#A91D2D] font-medium hover:underline">Merzouga Sahara extensions</Link>, <Link to="/destinations/essaouira" className="text-[#A91D2D] font-medium hover:underline">Essaouira coastal stays</Link> or the complete <Link to="/destinations" className="text-[#A91D2D] font-medium hover:underline">Morocco destinations guide</Link>. Share the preferred route through our <Link to="/quote" className="text-[#A91D2D] font-medium hover:underline">B2B quote form</Link> for an adapted proposal.
+            </p>
+          </div>
+
           <div className="mt-12 bg-white rounded-2xl border border-gray-100 p-8 md:p-10 text-center shadow-sm">
             <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1F2937]">
               {locale === "fr" ? "Besoin d'un programme Maroc sur mesure ?" : "Need a custom Morocco program?"}
@@ -198,9 +233,9 @@ export default function Circuits() {
                   {locale === "fr" ? "Devenir partenaire B2B" : "Become a B2B Partner"}
                 </Button>
               </Link>
-              <Link to="/services">
+              <Link to="/morocco-tours-for-travel-agencies">
                 <Button variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
-                  {locale === "fr" ? "Voir les services DMC" : "View DMC Services"}
+                  {locale === "fr" ? "Voir les programmes agences" : "View Agency Tour Services"}
                 </Button>
               </Link>
             </div>

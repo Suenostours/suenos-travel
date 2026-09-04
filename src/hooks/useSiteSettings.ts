@@ -1,5 +1,4 @@
 import { trpc } from "@/providers/trpc";
-import { useMemo } from "react";
 
 const FALLBACKS: Record<string, string> = {
   agency_name: "Suenos Travel",
@@ -34,26 +33,23 @@ export function useSiteSettings() {
     return FALLBACKS[key] ?? "";
   };
 
-  return useMemo(
-    () => ({
-      email: get("email"),
-      phone: get("phone"),
-      whatsapp: get("whatsapp"),
-      addressAgadir: get("address_agadir"),
-      addressCasablanca: get("address_casablanca"),
-      agencyName: get("agency_name"),
-      license: get("license"),
-      iata: get("iata"),
-      facebook: get("facebook"),
-      instagram: get("instagram"),
-      linkedin: get("linkedin"),
-      tiktok: get("tiktok"),
-      heroTitle: get("hero_title"),
-      heroSubtitle: get("hero_subtitle"),
-      metaTitle: get("meta_title"),
-      metaDescription: get("meta_description"),
-      isLoading,
-    }),
-    [settings, isLoading]
-  );
+  return {
+    email: get("email"),
+    phone: get("phone"),
+    whatsapp: get("whatsapp"),
+    addressAgadir: get("address_agadir"),
+    addressCasablanca: get("address_casablanca"),
+    agencyName: get("agency_name"),
+    license: get("license"),
+    iata: get("iata"),
+    facebook: get("facebook"),
+    instagram: get("instagram"),
+    linkedin: get("linkedin"),
+    tiktok: get("tiktok"),
+    heroTitle: get("hero_title"),
+    heroSubtitle: get("hero_subtitle"),
+    metaTitle: get("meta_title"),
+    metaDescription: get("meta_description"),
+    isLoading,
+  };
 }

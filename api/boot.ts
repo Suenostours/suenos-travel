@@ -1,5 +1,6 @@
-import { Hono } from "hono";
+import { Hono, type Context } from "hono";
 import { bodyLimit } from "hono/body-limit";
+import { compress } from "hono/compress";
 import type { HttpBindings } from "@hono/node-server";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "./router";
@@ -7,16 +8,58 @@ import { createContext } from "./context";
 import { env } from "./lib/env";
 import { registerUploadRoutes } from "./upload-handler";
 import { getDb } from "./queries/connection";
-import { tours, cities, blogPosts, admins, siteSettings } from "@db/schema";
-import { eq, and, sql } from "drizzle-orm";
-import bcrypt from "bcryptjs";
-import mysql from "mysql2/promise";
+import { tours, cities, blogPosts, seoSettings } from "@db/schema";
+import { eq, and } from "drizzle-orm";
 import path from "path";
 import fs from "fs";
+import { getCanonicalRedirect } from "./lib/canonical-url";
+import { STATIC_SITEMAP_PAGES } from "./lib/sitemap-pages";
+import { renderSeoHtml } from "./lib/seo-html";
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
-app.use(bodyLimit({ maxSize: 50 * 1024 * 1024 }));
+app.use("*", compress());
+
+app.use("*", async (c, next) => {
+  await next();
+
+  c.header("X-Content-Type-Options", "nosniff");
+  c.header("X-Frame-Options", "DENY");
+  c.header("Referrer-Policy", "strict-origin-when-cross-origin");
+  c.header("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  c.header(
+    "Content-Security-Policy",
+    "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://res.cloudinary.com https://www.google-analytics.com https://www.googleadservices.com https://googleads.g.doubleclick.net; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net; frame-src https://www.googletagmanager.com https://td.doubleclick.net; font-src 'self' data:",
+  );
+
+  if (env.isProduction) {
+    c.header("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  }
+
+  const pathname = new URL(c.req.url).pathname;
+  if (pathname.startsWith("/assets/")) {
+    c.header("Cache-Control", "public, max-age=31536000, immutable");
+  } else if (pathname.startsWith("/images/") || pathname === "/favicon.svg") {
+    c.header("Cache-Control", "public, max-age=604800, stale-while-revalidate=86400");
+  } else if (c.res.headers.get("Content-Type")?.includes("text/html")) {
+    c.header("Cache-Control", "no-cache");
+  }
+});
+
+app.use("*", async (c, next) => {
+  const redirectUrl = getCanonicalRedirect({
+    requestUrl: c.req.url,
+    method: c.req.method,
+    forwardedHost: c.req.header("x-forwarded-host") ?? c.req.header("host"),
+    forwardedProto: c.req.header("x-forwarded-proto"),
+  });
+
+  if (redirectUrl) return c.redirect(redirectUrl, 308);
+  return next();
+});
+
+app.use("/api/upload", bodyLimit({ maxSize: 15 * 1024 * 1024 }));
+app.use("/api/trpc/*", bodyLimit({ maxSize: 1 * 1024 * 1024 }));
 
 function formatSitemapDate(value?: Date | string | null) {
   const fallback = new Date();
@@ -38,153 +81,21 @@ function sitemapEntry(loc: string, lastmod: string, changefreq: string, priority
 </url>`;
 }
 
-// ─── Auto-create tables using mysql2 pool (same method as connection.ts) ───
-async function initTables() {
-  try {
-    const pool = mysql.createPool({ uri: env.databaseUrl });
-
-    const statements = [
-      `CREATE TABLE IF NOT EXISTS admins (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, email varchar(320) NOT NULL UNIQUE, password_hash varchar(255) NOT NULL, name varchar(255) NOT NULL, role enum('super_admin','admin','editor') NOT NULL DEFAULT 'editor', created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)`,
-      `CREATE TABLE IF NOT EXISTS site_settings (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, \`key\` varchar(100) NOT NULL UNIQUE, \`value\` text NOT NULL, \`group\` varchar(50) NOT NULL DEFAULT 'general', updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)`,
-      `CREATE TABLE IF NOT EXISTS users (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, unionId varchar(255) NOT NULL UNIQUE, name varchar(255), email varchar(320), avatar text, role enum('user','admin') NOT NULL DEFAULT 'user', createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, lastSignInAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
-      `CREATE TABLE IF NOT EXISTS cities (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, slug varchar(100) NOT NULL UNIQUE, main_image text, gallery json, active tinyint unsigned NOT NULL DEFAULT 1, created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)`,
-      `CREATE TABLE IF NOT EXISTS city_translations (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, city_id bigint unsigned NOT NULL, locale enum('fr','en') NOT NULL DEFAULT 'en', name varchar(255) NOT NULL, description text, meta_title varchar(255), meta_description text)`,
-      `CREATE TABLE IF NOT EXISTS tours (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, slug varchar(100) NOT NULL UNIQUE, main_image text, gallery json, duration varchar(50), \`type\` enum('private','small_group','corporate','desert','family','luxury','cultural','adventure','short_break','coast','sports','wellness','romantic') NOT NULL DEFAULT 'private', featured tinyint unsigned NOT NULL DEFAULT 0, active tinyint unsigned NOT NULL DEFAULT 1, created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)`,
-      `CREATE TABLE IF NOT EXISTS tour_translations (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, tour_id bigint unsigned NOT NULL, locale enum('fr','en') NOT NULL DEFAULT 'en', title varchar(255) NOT NULL, description text, program text, highlights text, inclusions text, exclusions text, meta_title varchar(255), meta_description text)`,
-      `CREATE TABLE IF NOT EXISTS tour_cities (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, tour_id bigint unsigned NOT NULL, city_id bigint unsigned NOT NULL)`,
-      `CREATE TABLE IF NOT EXISTS excursions (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, slug varchar(100) NOT NULL UNIQUE, city_id bigint unsigned, main_image text, gallery json, duration varchar(50), active tinyint unsigned NOT NULL DEFAULT 1, created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)`,
-      `CREATE TABLE IF NOT EXISTS excursion_translations (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, excursion_id bigint unsigned NOT NULL, locale enum('fr','en') NOT NULL DEFAULT 'en', title varchar(255) NOT NULL, description text, highlights text, meta_title varchar(255), meta_description text)`,
-      `CREATE TABLE IF NOT EXISTS blog_posts (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, slug varchar(100) NOT NULL UNIQUE, main_image text, category varchar(100), tags json, \`status\` enum('draft','published') NOT NULL DEFAULT 'draft', published_at timestamp NULL, active tinyint unsigned NOT NULL DEFAULT 1, created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)`,
-      `CREATE TABLE IF NOT EXISTS blog_translations (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, post_id bigint unsigned NOT NULL, locale enum('fr','en') NOT NULL DEFAULT 'en', title varchar(255) NOT NULL, content text, meta_title varchar(255), meta_description text)`,
-      `CREATE TABLE IF NOT EXISTS media (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, filename varchar(255) NOT NULL, original_name varchar(255) NOT NULL, \`path\` text NOT NULL, mime_type varchar(100), \`size\` int, created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
-      `CREATE TABLE IF NOT EXISTS contact_requests (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, name varchar(255) NOT NULL, email varchar(320) NOT NULL, phone varchar(50), subject varchar(255), message text NOT NULL, \`status\` enum('new','treated','archived') NOT NULL DEFAULT 'new', created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
-      `CREATE TABLE IF NOT EXISTS quote_requests (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, agency_name varchar(255), contact_person varchar(255), email varchar(320) NOT NULL, whatsapp varchar(50), country varchar(100), travel_type varchar(50), dates varchar(100), duration varchar(50), adults int, children int, preferred_destinations text, preferred_circuit varchar(255), hotel_category varchar(50), transport_type varchar(50), guide_language varchar(50), budget_range varchar(100), special_requests text, \`status\` enum('new','treated','archived') NOT NULL DEFAULT 'new', created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
-      `CREATE TABLE IF NOT EXISTS partner_requests (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, agency_name varchar(255) NOT NULL, country varchar(100), website varchar(255), contact_person varchar(255) NOT NULL, email varchar(320) NOT NULL, whatsapp varchar(50), business_type varchar(100), expected_volume varchar(100), \`status\` enum('new','treated','archived') NOT NULL DEFAULT 'new', created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
-      `CREATE TABLE IF NOT EXISTS seo_settings (id bigint unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, \`path\` varchar(255) NOT NULL UNIQUE, meta_title varchar(255), meta_description text, og_image text, canonical text, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)`,
-    ];
-
-    for (const stmt of statements) {
-      try {
-        await pool.query(stmt);
-      } catch (err: any) {
-        if (err?.message?.includes("already exists")) {
-          // ignore
-        } else {
-          console.log("[initTables] Skipped:", err.message);
-        }
-      }
-    }
-    await pool.end();
-    console.log("[initTables] All tables ensured");
-    return true;
-  } catch (err: any) {
-    console.log("[initTables] Connection error:", err.message || err);
-    return false;
-  }
-}
-
-// Seed route - creates admin account and default settings
-app.get("/api/seed", async (c) => {
-  try {
-    const db = getDb();
-
-    // Create tables first if they don't exist
-    const tablesOk = await initTables();
-    if (!tablesOk) {
-      return c.json({ error: "Failed to initialize database tables. Check Railway Deploy Logs." }, 500);
-    }
-
-    // Check if admin already exists
-    let existing: any[] = [];
-    try {
-      existing = await db
-        .select()
-        .from(admins)
-        .where(sql`${admins.email} = "admin@suenos-travel.com"`)
-        .limit(1);
-    } catch (tableErr: any) {
-      return c.json({
-        error: "Database query failed after table creation.",
-        detail: tableErr.message,
-      }, 500);
-    }
-
-    if (existing.length > 0) {
-      return c.json({ message: "Already seeded", adminExists: true });
-    }
-
-    // Create admin
-    const hash = await bcrypt.hash("Admin@12345", 12);
-    await db.insert(admins).values({
-      email: "admin@suenos-travel.com",
-      passwordHash: hash,
-      name: "Super Admin",
-      role: "super_admin",
-    });
-
-    // Create site settings
-    const settings = [
-      { key: "agency_name", value: "Suenos Travel", group: "general" },
-      { key: "email", value: "resa@suenos-travel.com", group: "general" },
-      { key: "phone", value: "+212 661 925 611", group: "general" },
-      { key: "whatsapp", value: "+212 661 925 611", group: "general" },
-      { key: "address_agadir", value: "Hay Salam Imm Elbssita Av Ahaj Messoud El Wafkaoui & Av Abdellah Guenon Bur n13 2eme Etg.", group: "general" },
-      { key: "address_casablanca", value: "CASABLANCA, PHILIPS BUSINESS CENTER 304 BOULEVARD MOHAMED 5, 6EME ETG BUR 602", group: "general" },
-      { key: "facebook", value: "", group: "social" },
-      { key: "instagram", value: "", group: "social" },
-      { key: "linkedin", value: "", group: "social" },
-      { key: "tiktok", value: "", group: "social" },
-      { key: "license", value: "ODV-0564", group: "general" },
-      { key: "iata", value: "54273844", group: "general" },
-      { key: "hero_title", value: "Your Trusted DMC Partner in Morocco", group: "home" },
-      { key: "hero_subtitle", value: "Tailor-made Morocco travel experiences for international agencies, tour operators, corporate groups, and private travelers.", group: "home" },
-      { key: "meta_title", value: "Morocco Incoming by Suenos Travel | DMC Morocco", group: "seo" },
-      { key: "meta_description", value: "Your trusted DMC partner in Morocco. Tailor-made tours, MICE, B2B services for travel agencies and tour operators.", group: "seo" },
-      { key: "google_analytics", value: "", group: "pixels" },
-      { key: "google_tag_manager", value: "", group: "pixels" },
-      { key: "meta_pixel", value: "", group: "pixels" },
-      { key: "tiktok_pixel", value: "", group: "pixels" },
-      { key: "custom_head", value: "", group: "pixels" },
-    ];
-
-    for (const s of settings) {
-      try { await db.insert(siteSettings).values(s); } catch {}
-    }
-
-    return c.json({
-      success: true,
-      message: "Database seeded successfully",
-      admin: {
-        email: "admin@suenos-travel.com",
-        password: "Admin@12345",
-      },
-      settingsCreated: settings.length,
-    });
-  } catch (err: any) {
-    return c.json({ error: err.message || "Seed failed" }, 500);
-  }
-});
-
 // Upload routes
 registerUploadRoutes(app);
 
 // Sitemap.xml
 app.get("/sitemap.xml", async (c) => {
   const baseUrl = "https://www.morocco-incoming.com";
-  const db = getDb();
   const today = formatSitemapDate();
-  let urls = [
-    sitemapEntry(`${baseUrl}/`, today, "weekly", "1.0"),
-    sitemapEntry(`${baseUrl}/circuits`, today, "weekly", "0.9"),
-    sitemapEntry(`${baseUrl}/destinations`, today, "weekly", "0.9"),
-    sitemapEntry(`${baseUrl}/services`, today, "monthly", "0.8"),
-    sitemapEntry(`${baseUrl}/about`, today, "monthly", "0.8"),
-    sitemapEntry(`${baseUrl}/mice`, today, "monthly", "0.8"),
-    sitemapEntry(`${baseUrl}/b2b`, today, "monthly", "0.8"),
-    sitemapEntry(`${baseUrl}/blog`, today, "weekly", "0.8"),
-    sitemapEntry(`${baseUrl}/contact`, today, "monthly", "0.7"),
-    sitemapEntry(`${baseUrl}/quote`, today, "monthly", "0.7"),
-  ];
+  const urls = STATIC_SITEMAP_PAGES.map((page) =>
+    sitemapEntry(
+      `${baseUrl}${page.path}`,
+      today,
+      page.changefreq,
+      page.priority.toFixed(1),
+    ),
+  );
   const staticBlogSlugs = [
     "what-does-a-dmc-in-morocco-do-for-travel-agencies",
     "how-to-choose-a-morocco-incoming-agency",
@@ -195,18 +106,23 @@ app.get("/sitemap.xml", async (c) => {
     urls.push(sitemapEntry(`${baseUrl}/blog/${slug}`, today, "monthly", "0.6"));
   }
 
-  const tourRows = await db.select({ slug: tours.slug, updatedAt: tours.updatedAt }).from(tours).where(eq(tours.active, 1));
-  for (const t of tourRows) {
-    urls.push(sitemapEntry(`${baseUrl}/circuits/${t.slug}`, formatSitemapDate(t.updatedAt), "monthly", "0.8"));
-  }
-  const cityRows = await db.select({ slug: cities.slug, updatedAt: cities.updatedAt }).from(cities).where(eq(cities.active, 1));
-  for (const c of cityRows) {
-    urls.push(sitemapEntry(`${baseUrl}/destinations/${c.slug}`, formatSitemapDate(c.updatedAt), "monthly", "0.7"));
-  }
-  const blogRows = await db.select({ slug: blogPosts.slug, updatedAt: blogPosts.updatedAt }).from(blogPosts).where(and(eq(blogPosts.status, "published"), eq(blogPosts.active, 1)));
-  for (const b of blogRows) {
-    if (staticBlogSlugs.includes(b.slug) || legacyBlogSlugs.includes(b.slug)) continue;
-    urls.push(sitemapEntry(`${baseUrl}/blog/${b.slug}`, formatSitemapDate(b.updatedAt), "monthly", "0.6"));
+  try {
+    const db = getDb();
+    const tourRows = await db.select({ slug: tours.slug, updatedAt: tours.updatedAt }).from(tours).where(eq(tours.active, 1));
+    for (const t of tourRows) {
+      urls.push(sitemapEntry(`${baseUrl}/circuits/${t.slug}`, formatSitemapDate(t.updatedAt), "monthly", "0.8"));
+    }
+    const cityRows = await db.select({ slug: cities.slug, updatedAt: cities.updatedAt }).from(cities).where(eq(cities.active, 1));
+    for (const c of cityRows) {
+      urls.push(sitemapEntry(`${baseUrl}/destinations/${c.slug}`, formatSitemapDate(c.updatedAt), "monthly", "0.7"));
+    }
+    const blogRows = await db.select({ slug: blogPosts.slug, updatedAt: blogPosts.updatedAt }).from(blogPosts).where(and(eq(blogPosts.status, "published"), eq(blogPosts.active, 1)));
+    for (const b of blogRows) {
+      if (staticBlogSlugs.includes(b.slug) || legacyBlogSlugs.includes(b.slug)) continue;
+      urls.push(sitemapEntry(`${baseUrl}/blog/${b.slug}`, formatSitemapDate(b.updatedAt), "monthly", "0.6"));
+    }
+  } catch {
+    console.warn("[sitemap] Database unavailable; serving static URLs only.");
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -219,14 +135,46 @@ ${urls.join("\n")}
 // robots.txt
 app.get("/robots.txt", (c) => {
   const baseUrl = "https://www.morocco-incoming.com";
-  return c.text(`User-agent: *\nAllow: /\nSitemap: ${baseUrl}/sitemap.xml`, 200, { "Content-Type": "text/plain" });
+  return c.text(
+    `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\nSitemap: ${baseUrl}/sitemap.xml\n`,
+    200,
+    { "Content-Type": "text/plain" },
+  );
 });
 
 // ─── SEO: Explicit frontend routes (serve index.html) ───
-function serveIndexHtml(c: any) {
+async function serveIndexHtml(c: Context<{ Bindings: HttpBindings }>) {
   try {
     const filePath = path.resolve(import.meta.dirname, "../dist/public/index.html");
-    const content = fs.readFileSync(filePath, "utf-8");
+    const template = fs.readFileSync(filePath, "utf-8");
+    const pathname = new URL(c.req.url).pathname;
+    let override: {
+      title?: string | null;
+      description?: string | null;
+      canonical?: string | null;
+      image?: string | null;
+    } | undefined;
+
+    try {
+      const rows = await getDb()
+        .select()
+        .from(seoSettings)
+        .where(eq(seoSettings.path, pathname))
+        .limit(1);
+      const saved = rows[0];
+      if (saved) {
+        override = {
+          title: saved.metaTitle,
+          description: saved.metaDescription,
+          canonical: saved.canonical,
+          image: saved.ogImage,
+        };
+      }
+    } catch {
+      console.warn("[seo] Database unavailable; using page defaults.");
+    }
+
+    const content = renderSeoHtml(template, pathname, override);
     return c.html(content, 200);
   } catch {
     return c.json({ error: "index.html not found" }, 500);
@@ -234,6 +182,7 @@ function serveIndexHtml(c: any) {
 }
 
 // Public SEO pages
+app.get("/", serveIndexHtml);
 app.get("/circuits", serveIndexHtml);
 app.get("/circuits/:slug", serveIndexHtml);
 app.get("/destinations", serveIndexHtml);
@@ -248,8 +197,14 @@ app.get("/contact", serveIndexHtml);
 app.get("/quote", serveIndexHtml);
 app.get("/privacy", serveIndexHtml);
 app.get("/terms", serveIndexHtml);
+app.get("/dmc-morocco", serveIndexHtml);
+app.get("/incoming-agency-morocco", serveIndexHtml);
+app.get("/morocco-tours-for-travel-agencies", serveIndexHtml);
+app.get("/morocco-group-tours", serveIndexHtml);
+app.get("/mice-morocco", serveIndexHtml);
 app.get("/admin", serveIndexHtml);
 app.get("/admin/:path", serveIndexHtml);
+app.get("/admin/*", serveIndexHtml);
 
 // tRPC endpoint
 app.use("/api/trpc/*", async (c) => {

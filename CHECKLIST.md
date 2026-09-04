@@ -49,9 +49,9 @@
 
 ## 2. IDENTIFIANTS ADMIN
 
-**Email** : `admin@morocco-incoming.com`  
-**Password** : `Admin@12345`  
-**Rôle** : `super_admin`
+Les identifiants ne doivent jamais être stockés dans Git. Créez le premier compte
+avec `SEED_ADMIN_EMAIL` et `SEED_ADMIN_PASSWORD`, puis retirez ces variables de
+l'environnement après le seed.
 
 ---
 

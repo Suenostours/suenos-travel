@@ -1392,7 +1392,7 @@ export default function BlogDetail() {
 
       <section className="bg-[#F9F7F4]">
         <div className="relative h-[300px] md:h-[400px]">
-          <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
+          <img src={post.image} alt={post.title} width={1184} height={864} fetchPriority="high" decoding="async" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
             <div className="max-w-4xl mx-auto">

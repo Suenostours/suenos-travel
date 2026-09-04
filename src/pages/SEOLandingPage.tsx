@@ -36,7 +36,9 @@ type LandingPageData = {
     items?: { title: string; description: string; path?: string }[];
     text?: string;
   }[];
+  processTitle?: string;
   processSteps?: string[];
+  relatedLinks: { label: string; path: string }[];
   faq: { question: string; answer: string }[];
 };
 
@@ -44,11 +46,11 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
   dmcMorocco: {
     path: "/dmc-morocco",
     targetKeyword: "DMC Morocco",
-    seoTitle: "DMC Morocco | Local Destination Management Company for Agencies",
-    metaDescription: "Local Morocco DMC for travel agencies, tour operators, groups and MICE. Tailor-made programs, net agency rates and on-site support.",
+    seoTitle: "DMC Morocco for Travel Agencies | Local B2B Partner",
+    metaDescription: "Work with a licensed local DMC in Morocco for tailor-made circuits, groups, MICE, hotels, guides, transport, net agency rates and on-site support.",
     h1: "DMC Morocco for Travel Agencies and Tour Operators",
     eyebrow: "Local Morocco destination management company",
-    intro: "Morocco Incoming by Suenos Travel supports foreign travel agencies, tour operators and MICE planners with Morocco programs built for B2B needs: realistic routing, reliable suppliers, net agency rates and local operational support from a local DMC in Morocco.",
+    intro: "Morocco Incoming by Suenos Travel is a licensed local DMC in Morocco for foreign travel agencies, tour operators and MICE planners. We build B2B programs with realistic routing, coordinated local suppliers, net agency rates and on-site operational support.",
     whyTitle: "Why foreign travel agencies need a local Morocco DMC",
     whyText: "Morocco is easy to sell, but the operation can become complex: long driving distances, seasonal hotel demand, multilingual guiding, desert logistics, incentive venues and supplier coordination. A local DMC helps your agency protect quality, timing and client expectations from first quote to final departure.",
     providesTitle: "Our DMC services in Morocco",
@@ -75,7 +77,7 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
       "Dedicated B2B incoming division",
       "Net agency rates",
       "White-label programs",
-      "24-48h quote response",
+      "24–48h standard quote response",
       "On-site support",
     ],
     contentSections: [
@@ -121,12 +123,35 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
           { title: "DMC for Sahara and desert circuits", description: "Realistic desert routing, Ouarzazate and Merzouga logistics, Sahara camps, 4x4 support and adapted pacing for groups or private clients.", path: "/destinations/merzouga" },
         ],
       },
+      {
+        title: "Who our Morocco DMC works with",
+        intro: "Our dedicated B2B incoming division supports travel professionals that need one accountable local partner from proposal through operation.",
+        items: [
+          { title: "Travel agencies", description: "Tailor-made private programs, group requests and white-label itineraries prepared for resale." },
+          { title: "Tour operators", description: "Series departures, contracted group programs and multi-city operations with local coordination." },
+          { title: "MICE planners", description: "Incentives, meetings, delegate logistics, gala events and pre- or post-event extensions.", path: "/mice-morocco" },
+          { title: "Specialist travel designers", description: "Luxury, cultural, adventure and special-interest programs adapted to the client profile." },
+        ],
+      },
+    ],
+    processTitle: "How a Morocco DMC quote becomes an operated program",
+    processSteps: ["Agency brief", "Routing & supplier plan", "Net-rate quote", "Refinement & confirmation", "On-site operation"],
+    relatedLinks: [
+      { label: "Incoming agency Morocco services", path: "/incoming-agency-morocco" },
+      { label: "Morocco group tours for agencies", path: "/morocco-group-tours" },
+      { label: "Morocco tours for travel agencies", path: "/morocco-tours-for-travel-agencies" },
+      { label: "MICE Morocco operations", path: "/mice-morocco" },
+      { label: "Morocco circuit catalogue", path: "/circuits" },
+      { label: "Morocco destinations", path: "/destinations" },
+      { label: "Request a B2B quote", path: "/quote" },
+      { label: "What a DMC in Morocco does", path: "/blog/what-does-a-dmc-in-morocco-do-for-travel-agencies" },
     ],
     faq: [
       { question: "What does a DMC in Morocco do for travel agencies?", answer: "A Morocco DMC coordinates local services such as hotels, riads, licensed guides, private transport, excursions, restaurants, Sahara camps, MICE logistics and on-site assistance for agencies and tour operators." },
       { question: "Can Suenos Travel work with agency net rates?", answer: "Yes. We prepare B2B proposals with agency-friendly conditions and net rates according to the program, season, hotels and group profile." },
       { question: "Is Morocco Incoming a local DMC in Morocco?", answer: "Yes. Morocco Incoming by Suenos Travel is the B2B incoming division of a licensed Moroccan travel agency with operations in Agadir and Casablanca." },
       { question: "Do you support Morocco DMC programs for groups and MICE?", answer: "Yes. We support meetings, incentives, corporate groups, gala dinners, team building, transfers, delegate logistics and group circuits in Morocco." },
+      { question: "How should an agency choose the best DMC in Morocco for its needs?", answer: "Look for verifiable licensing, relevant destination and group experience, clear net-rate proposals, realistic routing, responsive communication and dependable on-site support. The right DMC is the one whose operating model fits your agency, market and client profile." },
     ],
   },
   incomingAgencyMorocco: {
@@ -185,6 +210,16 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
       },
     ],
     processSteps: ["Brief", "Routing", "Net Quote", "Confirmation", "Operation", "Follow-up"],
+    relatedLinks: [
+      { label: "DMC Morocco services", path: "/dmc-morocco" },
+      { label: "Morocco circuit catalogue", path: "/circuits" },
+      { label: "Morocco group tours for agencies", path: "/morocco-group-tours" },
+      { label: "Morocco tours for travel agencies", path: "/morocco-tours-for-travel-agencies" },
+      { label: "MICE Morocco operations", path: "/mice-morocco" },
+      { label: "Morocco destinations", path: "/destinations" },
+      { label: "Request an incoming proposal", path: "/quote" },
+      { label: "How to choose a Morocco incoming agency", path: "/blog/how-to-choose-a-morocco-incoming-agency" },
+    ],
     faq: [
       { question: "What is an incoming agency in Morocco?", answer: "An incoming agency Morocco partner manages travel services inside Morocco for foreign agencies, tour operators, companies and groups." },
       { question: "What is the difference between Incoming Morocco and a DMC?", answer: "Incoming Morocco services focus on local ground handling and travel operations. A DMC also designs destination programs, MICE, incentives and full local experiences. Morocco Incoming combines both roles for B2B partners." },
@@ -218,6 +253,14 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
     ],
     localDmcTitle: "Why agencies work with Suenos Travel",
     localDmcText: "Our local team helps agencies turn a sales idea into a workable Morocco operation, with clear inclusions, adapted routing and support from quotation to on-site delivery.",
+    relatedLinks: [
+      { label: "Browse Morocco circuits", path: "/circuits" },
+      { label: "Morocco group tour operations", path: "/morocco-group-tours" },
+      { label: "DMC Morocco services", path: "/dmc-morocco" },
+      { label: "Incoming agency Morocco services", path: "/incoming-agency-morocco" },
+      { label: "Morocco destinations", path: "/destinations" },
+      { label: "Request a B2B quote", path: "/quote" },
+    ],
     faq: [
       { question: "Do you create white-label Morocco tours for agencies?", answer: "Yes. We can prepare tailor-made programs that agencies sell under their own brand, depending on the request and operating conditions." },
       { question: "Can programs include Sahara and coastal destinations?", answer: "Yes. We build routes across the imperial cities, Sahara, Atlas Mountains, Atlantic coast and northern Morocco." },
@@ -250,6 +293,14 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
     ],
     localDmcTitle: "Why work with a Moroccan group travel partner",
     localDmcText: "A local partner helps adapt the program to the group profile, anticipate bottlenecks and coordinate suppliers in real time while the group is travelling.",
+    relatedLinks: [
+      { label: "Morocco circuit catalogue", path: "/circuits" },
+      { label: "Morocco tours for travel agencies", path: "/morocco-tours-for-travel-agencies" },
+      { label: "DMC Morocco services", path: "/dmc-morocco" },
+      { label: "Incoming agency Morocco services", path: "/incoming-agency-morocco" },
+      { label: "MICE Morocco operations", path: "/mice-morocco" },
+      { label: "Request a group quote", path: "/quote" },
+    ],
     faq: [
       { question: "What group sizes can you support in Morocco?", answer: "We support small private groups, leisure groups, corporate groups and larger series depending on route, hotels and season." },
       { question: "Can group tours be customized by market?", answer: "Yes. We adapt pacing, hotel category, guide language, meals and experiences according to the client market and agency brief." },
@@ -318,6 +369,15 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
           { title: "Supplier coordination", description: "Communication with transport, venues, guides, restaurants, hotels and activity providers." },
         ],
       },
+    ],
+    relatedLinks: [
+      { label: "Corporate event service overview", path: "/mice" },
+      { label: "DMC Morocco services", path: "/dmc-morocco" },
+      { label: "Morocco group tours for agencies", path: "/morocco-group-tours" },
+      { label: "Morocco tours for travel agencies", path: "/morocco-tours-for-travel-agencies" },
+      { label: "Morocco destinations", path: "/destinations" },
+      { label: "Request a MICE proposal", path: "/quote" },
+      { label: "MICE Morocco destination guide", path: "/blog/mice-morocco-best-destinations-for-incentive-groups" },
     ],
     faq: [
       { question: "Can you support incentive travel in Morocco?", answer: "Yes. We design and operate incentive programs with hotels, transport, experiences, dinners, team-building activities and local assistance." },
@@ -389,12 +449,12 @@ function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
                 </Button>
               </Link>
               <Link to="/quote">
-                <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-full px-6">
+                <Button variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-6">
                   Request a Morocco Program
                 </Button>
               </Link>
               <Link to="/b2b">
-                <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-full px-6">
+                <Button variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-6">
                   Become a B2B Partner
                 </Button>
               </Link>
@@ -480,7 +540,9 @@ function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
 
               {page.processSteps && (
                 <div className="bg-white rounded-2xl p-7 md:p-8 border border-gray-100 shadow-sm">
-                  <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1F2937]">How the B2B incoming process works</h2>
+                  <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1F2937]">
+                    {page.processTitle ?? "How the B2B incoming process works"}
+                  </h2>
                   <div className="mt-6 grid sm:grid-cols-3 gap-4">
                     {page.processSteps.map((step, index) => (
                       <div key={step} className="rounded-2xl border border-gray-100 bg-[#F9F7F4] p-5">
@@ -495,9 +557,13 @@ function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
               <div className="bg-white rounded-2xl p-7 md:p-8 border border-gray-100 shadow-sm">
                 <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1F2937]">{page.localDmcTitle}</h2>
                 <p className="mt-4 text-[#4B5563] leading-relaxed">{page.localDmcText}</p>
-                <p className="mt-4 text-sm text-[#6B7280] leading-relaxed">
-                  Explore our <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">Morocco DMC services</Link>, browse <Link to="/circuits" className="text-[#A91D2D] font-medium hover:underline">Morocco circuits for agencies</Link>, review <Link to="/destinations" className="text-[#A91D2D] font-medium hover:underline">key Morocco destinations</Link>, see our <Link to="/mice" className="text-[#A91D2D] font-medium hover:underline">MICE services</Link> or request <Link to="/quote" className="text-[#A91D2D] font-medium hover:underline">B2B net rates</Link>.
-                </p>
+                <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+                  {page.relatedLinks.slice(0, 5).map((item) => (
+                    <Link key={item.path} to={item.path} className="text-[#A91D2D] font-medium hover:underline">
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
               </div>
 
               <div className="bg-white rounded-2xl p-7 md:p-8 border border-gray-100 shadow-sm" id="faq">
@@ -541,13 +607,7 @@ function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
               <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                 <h2 className="font-semibold text-[#1F2937]">Useful links</h2>
                 <ul className="mt-4 space-y-3 text-sm">
-                  {[
-                    { label: "Morocco DMC services", path: "/services" },
-                    { label: "Morocco tours for agencies", path: "/circuits" },
-                    { label: "Morocco destinations", path: "/destinations" },
-                    { label: "MICE Morocco support", path: "/mice" },
-                    { label: "B2B partnership", path: "/b2b" },
-                  ].map((item) => (
+                  {page.relatedLinks.map((item) => (
                     <li key={item.path}>
                       <Link to={item.path} className="inline-flex items-center gap-1 text-[#A91D2D] font-medium hover:underline">
                         {item.label} <ArrowRight className="h-3.5 w-3.5" />
@@ -571,7 +631,7 @@ function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
                 </Button>
               </Link>
               <Link to="/b2b">
-                <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-full px-6">
+                <Button variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-6">
                   Become a B2B Partner
                 </Button>
               </Link>

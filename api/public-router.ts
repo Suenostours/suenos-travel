@@ -94,7 +94,7 @@ export const publicRouter = createRouter({
       const db = getDb();
       const locale = withLocale(input.locale ?? "en");
       const conditions = [eq(excursions.active, 1)];
-      let query = db
+      const query = db
         .select({
           id: excursions.id,
           slug: excursions.slug,

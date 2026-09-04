@@ -18,13 +18,8 @@ export default function Quote() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
-  const [country, setCountry] = useState("");
-  const [travelType, setTravelType] = useState("");
   const [dates, setDates] = useState("");
   const [pax, setPax] = useState("");
-  const [destinations, setDestinations] = useState("");
-  const [hotel, setHotel] = useState("");
-  const [budget, setBudget] = useState("");
   const [brief, setBrief] = useState("");
 
   const createQuote = trpc.forms.createQuote.useMutation({
@@ -116,13 +111,8 @@ export default function Quote() {
                     agencyName: agency,
                     contactPerson: name,
                     whatsapp,
-                    country,
-                    travelType,
                     dates,
                     numberOfPax: pax ? parseInt(pax) : undefined,
-                    preferredDestinations: destinations,
-                    hotelCategory: hotel,
-                    budgetRange: budget,
                     specialRequests: brief,
                   });
                 }} className="space-y-5">
@@ -154,39 +144,12 @@ export default function Quote() {
 
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <Label>{isFr ? "Pays" : "Country"}</Label>
-                      <Input className="mt-1" value={country} onChange={(e) => setCountry(e.target.value)} />
-                    </div>
-                    <div>
-                      <Label>{isFr ? "Type de voyage" : "Travel Type"}</Label>
-                      <Input className="mt-1" value={travelType} onChange={(e) => setTravelType(e.target.value)} />
-                    </div>
-                  </div>
-
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
                       <Label>{isFr ? "Dates souhaitées" : "Preferred Dates"}</Label>
                       <Input className="mt-1" value={dates} onChange={(e) => setDates(e.target.value)} />
                     </div>
                     <div>
                       <Label>{isFr ? "Nombre de voyageurs" : "Number of Pax"}</Label>
                       <Input type="number" min={1} className="mt-1" value={pax} onChange={(e) => setPax(e.target.value)} />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label>{isFr ? "Destinations souhaitées" : "Preferred Destinations"}</Label>
-                    <Input className="mt-1" value={destinations} onChange={(e) => setDestinations(e.target.value)} />
-                  </div>
-
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
-                      <Label>{isFr ? "Catégorie d'hôtel" : "Hotel Category"}</Label>
-                      <Input className="mt-1" value={hotel} onChange={(e) => setHotel(e.target.value)} />
-                    </div>
-                    <div>
-                      <Label>{isFr ? "Budget approximatif" : "Approximate Budget"}</Label>
-                      <Input className="mt-1" value={budget} onChange={(e) => setBudget(e.target.value)} />
                     </div>
                   </div>
 

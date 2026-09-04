@@ -258,12 +258,12 @@ export const formsRouter = createRouter({
     .input(
       z.object({
         agencyName: z.string().trim().min(1).max(255),
-        country: z.string().max(100).optional(),
+        country: z.string().trim().min(1).max(100),
         website: z.string().max(255).optional(),
         contactPerson: z.string().trim().min(1).max(255),
         email: z.string().email(),
         whatsapp: z.string().max(50).optional(),
-        businessType: z.string().max(100).optional(),
+        businessType: z.string().trim().min(1).max(100),
         expectedVolume: z.string().max(100).optional(),
       }),
     )

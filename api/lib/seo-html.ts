@@ -53,9 +53,9 @@ const STATIC_META: Record<string, Omit<SeoMeta, "canonical">> = {
       "Partner with Suenos Travel for Morocco B2B travel services, net agency rates, tailor-made tours, group programs, MICE and incoming support.",
   },
   "/blog": {
-    title: "Morocco Travel Blog for Agencies & Tour Operators",
+    title: "Morocco DMC & Group Travel Insights for Agencies",
     description:
-      "Morocco travel insights, destination guides and DMC advice for agencies, tour operators, groups and corporate travel planners.",
+      "Practical Morocco DMC guidance for travel agencies: group operations, MICE planning, destination advice, sample programs and local travel expertise.",
   },
   "/contact": {
     title: "Contact Suenos Travel | DMC Morocco for Agencies",
@@ -68,9 +68,9 @@ const STATIC_META: Record<string, Omit<SeoMeta, "canonical">> = {
       "Request a custom Morocco travel quote for agencies, groups, private tours, MICE and incentives with Suenos Travel DMC.",
   },
   "/dmc-morocco": {
-    title: "DMC Morocco for Travel Agencies | Local B2B Partner",
+    title: "DMC Morocco for Travel Agencies | Licensed Local Partner",
     description:
-      "Work with a licensed local DMC in Morocco for tailor-made circuits, groups, MICE, hotels, guides, transport, net agency rates and on-site support.",
+      "Licensed Morocco DMC for travel agencies and tour operators. Get tailor-made itineraries, net rates, group and MICE operations, and local support.",
   },
   "/incoming-agency-morocco": {
     title: "Incoming Agency Morocco | B2B Travel Partner for Groups",
@@ -83,14 +83,14 @@ const STATIC_META: Record<string, Omit<SeoMeta, "canonical">> = {
       "Morocco tours for travel agencies and tour operators. Imperial cities, Sahara, Atlas, coast, MICE and tailor-made group programs with net agency rates.",
   },
   "/morocco-group-tours": {
-    title: "Morocco Group Tours for Agencies | B2B Programs",
+    title: "Morocco Group Tours for Travel Agencies | Local DMC",
     description:
-      "Morocco group tours for agencies, tour operators and MICE planners. Custom circuits, hotels, transport, guides and local support.",
+      "Plan Morocco group tours with a licensed local DMC: custom itineraries, hotels, coaches, guides, net agency rates and on-site support.",
   },
   "/mice-morocco": {
-    title: "MICE Morocco | Incentive Travel & Corporate Groups DMC",
+    title: "MICE Morocco DMC | Incentives, Corporate Groups & Events",
     description:
-      "MICE Morocco DMC for incentive travel, corporate groups, meetings, gala dinners, team building and delegate logistics.",
+      "Plan MICE and incentive travel in Morocco with a licensed local DMC: venues, hotels, transport, gala dinners, team building and delegate logistics.",
   },
   "/privacy": {
     title: "Privacy Policy | Suenos Travel",

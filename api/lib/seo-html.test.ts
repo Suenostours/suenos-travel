@@ -8,7 +8,7 @@ describe("SEO HTML rendering", () => {
       "/dmc-morocco",
     );
 
-    expect(html).toContain("DMC Morocco for Travel Agencies | Local B2B Partner");
+    expect(html).toContain("DMC Morocco for Travel Agencies | Licensed Local Partner");
     expect(html).toContain('rel="canonical" href="https://www.morocco-incoming.com/dmc-morocco"');
     expect(html).toContain('name="robots" content="index, follow"');
   });

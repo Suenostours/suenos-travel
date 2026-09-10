@@ -146,6 +146,7 @@ export const formsRouter = createRouter({
       enforceSubmissionRateLimit(ctx.req);
       const db = getDb();
       await db.insert(contactRequests).values(input);
+      console.info('[forms] submission stored: type="Contact Request"');
       await sendSubmissionNotification({
         type: "Contact Request",
         replyTo: input.email,
@@ -210,6 +211,7 @@ export const formsRouter = createRouter({
         ...storedInput,
         specialRequests: storedBrief || undefined,
       });
+      console.info('[forms] submission stored: type="Quote Request"');
       const legacyPax = (input.adults ?? 0) + (input.children ?? 0);
       const totalPax = numberOfPax ?? (legacyPax || undefined);
       await sendSubmissionNotification({
@@ -271,6 +273,7 @@ export const formsRouter = createRouter({
       enforceSubmissionRateLimit(ctx.req);
       const db = getDb();
       await db.insert(partnerRequests).values(input);
+      console.info('[forms] submission stored: type="B2B Partner Request"');
       await sendSubmissionNotification({
         type: "B2B Partner Request",
         replyTo: input.email,

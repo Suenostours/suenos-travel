@@ -86,8 +86,8 @@ export default function Blog() {
   return (
     <>
       <SEO
-        title="Morocco Travel Blog for Agencies & Tour Operators"
-        description="Morocco travel insights, destination guides and DMC advice for agencies, tour operators, groups and corporate travel planners."
+        title="Morocco DMC & Group Travel Insights for Agencies"
+        description="Practical Morocco DMC guidance for travel agencies: group operations, MICE planning, destination advice, sample programs and local travel expertise."
         canonical="/blog"
         image="/images/hero-desert.jpg"
       />

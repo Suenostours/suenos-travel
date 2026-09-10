@@ -47,8 +47,8 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
   dmcMorocco: {
     path: "/dmc-morocco",
     targetKeyword: "DMC Morocco",
-    seoTitle: "DMC Morocco for Travel Agencies | Local B2B Partner",
-    metaDescription: "Work with a licensed local DMC in Morocco for tailor-made circuits, groups, MICE, hotels, guides, transport, net agency rates and on-site support.",
+    seoTitle: "DMC Morocco for Travel Agencies | Licensed Local Partner",
+    metaDescription: "Licensed Morocco DMC for travel agencies and tour operators. Get tailor-made itineraries, net rates, group and MICE operations, and local support.",
     h1: "DMC Morocco for Travel Agencies and Tour Operators",
     eyebrow: "Local Morocco destination management company",
     intro: "Morocco Incoming by Suenos Travel is a licensed local DMC in Morocco for foreign travel agencies, tour operators and MICE planners. We build B2B programs with realistic routing, coordinated local suppliers, net agency rates and on-site operational support.",
@@ -343,8 +343,8 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
   moroccoGroupTours: {
     path: "/morocco-group-tours",
     targetKeyword: "Morocco group tours",
-    seoTitle: "Morocco Group Tours for Agencies | B2B Programs",
-    metaDescription: "Morocco group tours for agencies, tour operators and MICE planners. Custom circuits, hotels, transport, guides and local support.",
+    seoTitle: "Morocco Group Tours for Travel Agencies | Local DMC",
+    metaDescription: "Plan Morocco group tours with a licensed local DMC: custom itineraries, hotels, coaches, guides, net agency rates and on-site support.",
     h1: "Morocco Group Tours for Agencies and Tour Operators",
     eyebrow: "Group travel operations across Morocco",
     intro: "Suenos Travel creates Morocco group tours for agencies, tour operators and corporate planners who need organized logistics, reliable local suppliers, group-friendly pacing and destination expertise.",
@@ -428,8 +428,8 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
   miceMorocco: {
     path: "/mice-morocco",
     targetKeyword: "MICE Morocco",
-    seoTitle: "MICE Morocco | Incentive Travel & Corporate Groups DMC",
-    metaDescription: "MICE Morocco DMC for incentive travel, corporate groups, meetings, gala dinners, team building and delegate logistics.",
+    seoTitle: "MICE Morocco DMC | Incentives, Corporate Groups & Events",
+    metaDescription: "Plan MICE and incentive travel in Morocco with a licensed local DMC: venues, hotels, transport, gala dinners, team building and delegate logistics.",
     h1: "MICE Morocco DMC for Incentives and Corporate Groups",
     eyebrow: "Corporate events and incentive travel in Morocco",
     intro: "Morocco Incoming by Suenos Travel supports MICE planners, companies and agencies with incentive travel, corporate groups, meetings, gala dinners, team building and local logistics across Morocco.",

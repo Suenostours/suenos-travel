@@ -31,13 +31,13 @@ export function trackPageView(params: EventParams) {
 
 export function trackLeadEvent(eventName: string, params?: EventParams) {
   sendGtag("event", eventName, params);
-  sendGoogleAdsConversion();
 }
 
 function trackFormSubmission(eventName: string, formType: string) {
   const params = { form_type: formType };
   trackLeadEvent(eventName, params);
   sendGtag("event", "generate_lead", params);
+  sendGoogleAdsConversion();
 }
 
 export function trackContactFormSubmit() {

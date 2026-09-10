@@ -89,6 +89,7 @@ export function buildSeoGraph({
     name: "Suenos Travel",
     alternateName: "Morocco Incoming by Suenos Travel",
     url: SITE_ORIGIN,
+    logo: `${SITE_ORIGIN}/favicon.svg`,
     email: "resa@suenos-travel.com",
     telephone: "+212661925611",
     sameAs: [
@@ -103,6 +104,7 @@ export function buildSeoGraph({
     name: "Morocco Incoming by Suenos Travel",
     legalName: "Suenos Travel",
     url: SITE_ORIGIN,
+    logo: `${SITE_ORIGIN}/favicon.svg`,
     description:
       "Licensed Morocco DMC and incoming travel agency for travel agencies, tour operators, groups and MICE.",
     areaServed: { "@type": "Country", name: "Morocco" },

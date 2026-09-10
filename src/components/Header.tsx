@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useState, useEffect } from "react";
 import { Menu, X, Globe, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PRIMARY_PHONE_DISPLAY, WHATSAPP_URL } from "@/lib/contact-details";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -91,13 +92,13 @@ export default function Header() {
 
             {/* Phone */}
             <a
-              href="https://wa.me/212661925611"
+              href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-sm text-[#A91D2D] hover:text-[#8a1824] transition-colors"
             >
               <Phone className="h-4 w-4" />
-              <span className="hidden lg:inline">+212 661 925 611</span>
+              <span className="hidden lg:inline">{PRIMARY_PHONE_DISPLAY}</span>
             </a>
 
             {/* CTA Quote */}
@@ -157,13 +158,13 @@ export default function Header() {
               {locale === "fr" ? "Switch to English" : "Passer en Français"}
             </button>
             <a
-              href="https://wa.me/212661925611"
+              href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[#A91D2D]"
             >
               <Phone className="h-4 w-4" />
-              WhatsApp +212 661 925 611
+              WhatsApp {PRIMARY_PHONE_DISPLAY}
             </a>
             <Link
               to="/quote"

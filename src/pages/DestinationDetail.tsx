@@ -6,6 +6,7 @@ import { ArrowLeft, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { safeJsonLd } from "@/lib/structured-data";
 import type { TouristDestination, WithContext } from "schema-dts";
+import { WHATSAPP_URL } from "@/lib/contact-details";
 
 const BASE_URL = "https://www.morocco-incoming.com";
 
@@ -520,7 +521,7 @@ export default function DestinationDetail() {
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="mt-3 w-full rounded-full">
-                  <a href="https://wa.me/212661925611" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                  <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">WhatsApp</a>
                 </Button>
               </div>
             </div>

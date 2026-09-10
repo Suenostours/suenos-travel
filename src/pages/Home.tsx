@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { optimizedImageUrl } from "@/lib/images";
+import { PRIMARY_PHONE_DISPLAY, WHATSAPP_URL } from "@/lib/contact-details";
 
 const servicesData = [
   { icon: Compass, title: "Tailor-Made Morocco Tours", desc: "Custom-designed itineraries crafted to match your clients' preferences, pace, and interests." },
@@ -132,13 +133,13 @@ export default function Home() {
                 </Button>
               </div>
               <a
-                href="https://wa.me/212661925611"
+                href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm text-[#A91D2D] hover:text-[#8a1824] transition-colors"
               >
                 <Phone className="h-4 w-4" />
-                {t("hero.whatsapp")} +212 661 925 611
+                {t("hero.whatsapp")} {PRIMARY_PHONE_DISPLAY}
               </a>
             </div>
             <div className="relative">

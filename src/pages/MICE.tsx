@@ -3,6 +3,7 @@ import { useI18n } from "@/providers/i18n";
 import SEO from "@/components/SEO";
 import { Building2, Users, Calendar, Mic, PartyPopper, Bus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { WHATSAPP_URL } from "@/lib/contact-details";
 
 const miceServices = [
   { icon: Building2, title: "Venue Sourcing", titleFr: "Recherche de Lieux", desc: "From palace riads to modern convention centers, we find the perfect venue for your event size and style.", descFr: "De riads-palais aux centres de convention modernes, nous trouvons le lieu parfait." },
@@ -78,7 +79,7 @@ export default function MICE() {
                 </Link>
               </Button>
               <Button asChild variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 rounded-full px-8">
-                <a href="https://wa.me/212661925611" target="_blank" rel="noopener noreferrer">
+                <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
                   WhatsApp
                 </a>
               </Button>

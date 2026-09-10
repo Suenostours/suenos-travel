@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import type { TouristTrip, WithContext } from "schema-dts";
 import { optimizedImageUrl } from "@/lib/images";
 import { safeJsonLd } from "@/lib/structured-data";
+import { WHATSAPP_URL } from "@/lib/contact-details";
 
 const BASE_URL = "https://www.morocco-incoming.com";
 const DEFAULT_TOUR_IMAGE = "/images/hero-desert.jpg";
@@ -267,7 +268,7 @@ export default function CircuitDetail() {
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="mt-3 w-full rounded-full">
-                  <a href="https://wa.me/212661925611" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                  <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">WhatsApp</a>
                 </Button>
                 <Button asChild variant="outline" className="mt-3 w-full rounded-full">
                   <Link to="/b2b">

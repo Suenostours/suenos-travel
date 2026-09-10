@@ -7,6 +7,7 @@ import type {
   WebPage,
   WebSite,
 } from "schema-dts";
+import { PRIMARY_PHONE_E164 } from "@/lib/contact-details";
 
 export const SITE_ORIGIN = "https://www.morocco-incoming.com";
 
@@ -91,7 +92,7 @@ export function buildSeoGraph({
     url: SITE_ORIGIN,
     logo: `${SITE_ORIGIN}/favicon.svg`,
     email: "resa@suenos-travel.com",
-    telephone: "+212661925611",
+    telephone: PRIMARY_PHONE_E164,
     sameAs: [
       "https://www.facebook.com/suenos.travel1",
       "https://www.instagram.com/suenos.travel1",
@@ -109,7 +110,7 @@ export function buildSeoGraph({
       "Licensed Morocco DMC and incoming travel agency for travel agencies, tour operators, groups and MICE.",
     areaServed: { "@type": "Country", name: "Morocco" },
     email: "resa@suenos-travel.com",
-    telephone: "+212661925611",
+    telephone: PRIMARY_PHONE_E164,
     address: [
       { "@type": "PostalAddress", addressCountry: "MA", addressLocality: "Agadir" },
       { "@type": "PostalAddress", addressCountry: "MA", addressLocality: "Casablanca" },

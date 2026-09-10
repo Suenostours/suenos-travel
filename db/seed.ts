@@ -40,8 +40,8 @@ async function seed() {
   const settings = [
     { key: "agency_name", value: "Suenos Travel", group: "general" },
     { key: "email", value: "resa@suenos-travel.com", group: "general" },
-    { key: "phone", value: "+212 661 925 611", group: "general" },
-    { key: "whatsapp", value: "+212 661 925 611", group: "general" },
+    { key: "phone", value: "+212 637 206 493", group: "general" },
+    { key: "whatsapp", value: "+212 637 206 493", group: "general" },
     { key: "address_agadir", value: "Hay Salam Imm Elbssita Av Ahaj Messoud El Wafkaoui & Av Abdellah Guenon Bur n13 2eme Etg.", group: "general" },
     { key: "address_casablanca", value: "CASABLANCA, PHILIPS BUSINESS CENTER 304 BOULEVARD MOHAMED 5, 6EME ETG BUR 602", group: "general" },
     { key: "facebook", value: "", group: "social" },

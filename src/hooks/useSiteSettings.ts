@@ -1,10 +1,11 @@
 import { trpc } from "@/providers/trpc";
+import { PRIMARY_PHONE_DISPLAY } from "@/lib/contact-details";
 
 const FALLBACKS: Record<string, string> = {
   agency_name: "Suenos Travel",
   email: "resa@suenos-travel.com",
-  phone: "+212 661 925 611",
-  whatsapp: "+212 661 925 611",
+  phone: PRIMARY_PHONE_DISPLAY,
+  whatsapp: PRIMARY_PHONE_DISPLAY,
   address_agadir: "Hay Salam Imm Elbssita Av Ahaj Messoud El Wafkaoui & Av Abdellah Guenon Bur n13 2eme Etg.",
   address_casablanca: "CASABLANCA, PHILIPS BUSINESS CENTER 304 BOULEVARD MOHAMED 5, 6EME ETG BUR 602",
   license: "ODV-0564",

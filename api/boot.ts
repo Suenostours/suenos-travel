@@ -21,7 +21,7 @@ import { eq, and } from "drizzle-orm";
 import path from "path";
 import fs from "fs";
 import { getCanonicalRedirect } from "./lib/canonical-url";
-import { STATIC_BLOG_PAGES, STATIC_SITEMAP_PAGES, SITE_CONTENT_LAST_MODIFIED } from "./lib/sitemap-pages";
+import { getStaticBlogLastModified, STATIC_BLOG_PAGES, STATIC_SITEMAP_PAGES } from "./lib/sitemap-pages";
 import { isKnownStaticContentPath, renderSeoHtml } from "./lib/seo-html";
 
 type SeoOverride = {
@@ -243,7 +243,7 @@ app.get("/sitemap.xml", async (c) => {
   );
   const legacyBlogSlugs = ["what-does-a-morocco-dmc-do-for-travel-agencies"];
   for (const slug of STATIC_BLOG_PAGES) {
-    urls.push(sitemapEntry(`${baseUrl}/blog/${slug}`, SITE_CONTENT_LAST_MODIFIED, "monthly", "0.6"));
+    urls.push(sitemapEntry(`${baseUrl}/blog/${slug}`, getStaticBlogLastModified(slug), "monthly", "0.6"));
   }
 
   try {

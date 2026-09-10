@@ -7,13 +7,13 @@ import { ArrowRight, Calendar, Tag } from "lucide-react";
 const blogPosts = [
   {
     slug: "what-does-a-dmc-in-morocco-do-for-travel-agencies",
-    title: "What Does a DMC in Morocco Do for Travel Agencies?",
-    titleFr: "What Does a DMC in Morocco Do for Travel Agencies?",
+    title: "How to Choose the Best DMC in Morocco for Your Travel Agency",
+    titleFr: "How to Choose the Best DMC in Morocco for Your Travel Agency",
     image: "/images/about-riad.jpg",
     date: "2026-06-19",
     category: "DMC Morocco",
-    excerpt: "Learn what a DMC in Morocco does for agencies, tour operators, groups and MICE planners, from hotels and guides to local logistics.",
-    excerptFr: "Learn what a DMC in Morocco does for agencies, tour operators, groups and MICE planners, from hotels and guides to local logistics.",
+    excerpt: "A practical checklist for comparing Morocco DMC partners by licensing, B2B fit, group operations, communication and on-site support.",
+    excerptFr: "A practical checklist for comparing Morocco DMC partners by licensing, B2B fit, group operations, communication and on-site support.",
   },
   {
     slug: "how-to-choose-a-morocco-incoming-agency",

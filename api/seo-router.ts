@@ -3,7 +3,7 @@ import { createRouter, publicQuery, adminQuery } from "./middleware";
 import { getDb } from "./queries/connection";
 import { seoSettings, tours, cities, blogPosts } from "@db/schema";
 import { eq, and } from "drizzle-orm";
-import { STATIC_BLOG_PAGES, STATIC_SITEMAP_PAGES, SITE_CONTENT_LAST_MODIFIED } from "./lib/sitemap-pages";
+import { getStaticBlogLastModified, STATIC_BLOG_PAGES, STATIC_SITEMAP_PAGES } from "./lib/sitemap-pages";
 
 const seoPath = z
   .string()
@@ -73,7 +73,7 @@ export const seoRouter = createRouter({
     }));
     const legacyBlogSlugs = ["what-does-a-morocco-dmc-do-for-travel-agencies"];
     for (const slug of STATIC_BLOG_PAGES) {
-      pages.push({ url: `${baseUrl}/blog/${slug}`, lastmod: SITE_CONTENT_LAST_MODIFIED, changefreq: "monthly", priority: 0.6 });
+      pages.push({ url: `${baseUrl}/blog/${slug}`, lastmod: getStaticBlogLastModified(slug), changefreq: "monthly", priority: 0.6 });
     }
 
     const tourRows = await db.select({ slug: tours.slug, updatedAt: tours.updatedAt }).from(tours).where(eq(tours.active, 1));

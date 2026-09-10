@@ -68,7 +68,7 @@ const STATIC_META: Record<string, Omit<SeoMeta, "canonical">> = {
       "Request a custom Morocco travel quote for agencies, groups, private tours, MICE and incentives with Suenos Travel DMC.",
   },
   "/dmc-morocco": {
-    title: "DMC Morocco for Travel Agencies | Licensed Local Partner",
+    title: "DMC in Morocco for Travel Agencies | Licensed Local Partner",
     description:
       "Licensed Morocco DMC for travel agencies and tour operators. Get tailor-made itineraries, net rates, group and MICE operations, and local support.",
   },
@@ -83,7 +83,7 @@ const STATIC_META: Record<string, Omit<SeoMeta, "canonical">> = {
       "Morocco tours for travel agencies and tour operators. Imperial cities, Sahara, Atlas, coast, MICE and tailor-made group programs with net agency rates.",
   },
   "/morocco-group-tours": {
-    title: "Morocco Group Tours for Travel Agencies | Local DMC",
+    title: "Morocco Group Tours for Travel Agencies | B2B DMC",
     description:
       "Plan Morocco group tours with a licensed local DMC: custom itineraries, hotels, coaches, guides, net agency rates and on-site support.",
   },
@@ -106,13 +106,13 @@ const STATIC_META: Record<string, Omit<SeoMeta, "canonical">> = {
 
 const BLOG_META: Record<string, Omit<SeoMeta, "canonical">> = {
   "/blog/what-does-a-dmc-in-morocco-do-for-travel-agencies": {
-    title: "What Does a DMC in Morocco Do for Travel Agencies?",
+    title: "Best DMC in Morocco for Travel Agencies | Selection Guide",
     description:
-      "Learn how a Morocco DMC supports agencies with itinerary design, hotels, transport, guides, MICE logistics, net rates and local operations.",
+      "A practical guide to choosing the best DMC in Morocco for your travel agency: licensing, B2B rates, group operations, communication and local support.",
     type: "article",
     image: "/images/about-riad.jpg",
     datePublished: "2026-06-19",
-    dateModified: "2026-06-19",
+    dateModified: "2026-09-10",
   },
   "/blog/how-to-choose-a-morocco-incoming-agency": {
     title: "How to Choose a Morocco Incoming Agency | B2B Guide",

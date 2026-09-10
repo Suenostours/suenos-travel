@@ -46,10 +46,10 @@ type LandingPageData = {
 const landingPages: Record<LandingPageKey, LandingPageData> = {
   dmcMorocco: {
     path: "/dmc-morocco",
-    targetKeyword: "DMC Morocco",
-    seoTitle: "DMC Morocco for Travel Agencies | Licensed Local Partner",
+    targetKeyword: "DMC in Morocco",
+    seoTitle: "DMC in Morocco for Travel Agencies | Licensed Local Partner",
     metaDescription: "Licensed Morocco DMC for travel agencies and tour operators. Get tailor-made itineraries, net rates, group and MICE operations, and local support.",
-    h1: "DMC Morocco for Travel Agencies and Tour Operators",
+    h1: "DMC in Morocco for Travel Agencies and Tour Operators",
     eyebrow: "Local Morocco destination management company",
     intro: "Morocco Incoming by Suenos Travel is a licensed local DMC in Morocco for foreign travel agencies, tour operators and MICE planners. We build B2B programs with realistic routing, coordinated local suppliers, net agency rates and on-site operational support.",
     whyTitle: "Why foreign travel agencies need a local Morocco DMC",
@@ -145,7 +145,7 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
       { label: "Morocco circuit catalogue", path: "/circuits" },
       { label: "Morocco destinations", path: "/destinations" },
       { label: "Request a B2B quote", path: "/quote" },
-      { label: "What a DMC in Morocco does", path: "/blog/what-does-a-dmc-in-morocco-do-for-travel-agencies" },
+      { label: "How to choose the best DMC in Morocco for your agency", path: "/blog/what-does-a-dmc-in-morocco-do-for-travel-agencies" },
     ],
     faq: [
       { question: "What does a DMC in Morocco do for travel agencies?", answer: "A Morocco DMC coordinates local services such as hotels, riads, licensed guides, private transport, excursions, restaurants, Sahara camps, MICE logistics and on-site assistance for agencies and tour operators." },
@@ -342,10 +342,10 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
   },
   moroccoGroupTours: {
     path: "/morocco-group-tours",
-    targetKeyword: "Morocco group tours",
-    seoTitle: "Morocco Group Tours for Travel Agencies | Local DMC",
+    targetKeyword: "Morocco group tours for travel agencies",
+    seoTitle: "Morocco Group Tours for Travel Agencies | B2B DMC",
     metaDescription: "Plan Morocco group tours with a licensed local DMC: custom itineraries, hotels, coaches, guides, net agency rates and on-site support.",
-    h1: "Morocco Group Tours for Agencies and Tour Operators",
+    h1: "Morocco Group Tours for Travel Agencies and Tour Operators",
     eyebrow: "Group travel operations across Morocco",
     intro: "Suenos Travel creates Morocco group tours for agencies, tour operators and corporate planners who need organized logistics, reliable local suppliers, group-friendly pacing and destination expertise.",
     whyTitle: "Why group tours need careful Morocco operations",
@@ -415,6 +415,7 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
       { label: "DMC Morocco services", path: "/dmc-morocco" },
       { label: "Incoming agency Morocco services", path: "/incoming-agency-morocco" },
       { label: "MICE Morocco operations", path: "/mice-morocco" },
+      { label: "How to choose a DMC in Morocco for agency groups", path: "/blog/what-does-a-dmc-in-morocco-do-for-travel-agencies" },
       { label: "Request a group quote", path: "/quote" },
     ],
     faq: [

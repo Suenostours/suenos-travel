@@ -35,3 +35,9 @@ export const STATIC_BLOG_PAGES = [
   "sahara-desert-camps",
   "marrakech-hidden-gems",
 ] as const;
+
+export function getStaticBlogLastModified(slug: (typeof STATIC_BLOG_PAGES)[number]) {
+  return slug === "what-does-a-dmc-in-morocco-do-for-travel-agencies"
+    ? PRIORITY_SEO_LAST_MODIFIED
+    : SITE_CONTENT_LAST_MODIFIED;
+}

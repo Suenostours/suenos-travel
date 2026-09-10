@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PRIORITY_SEO_LAST_MODIFIED, STATIC_BLOG_PAGES, STATIC_SITEMAP_PAGES } from "./sitemap-pages";
+import { getStaticBlogLastModified, PRIORITY_SEO_LAST_MODIFIED, SITE_CONTENT_LAST_MODIFIED, STATIC_BLOG_PAGES, STATIC_SITEMAP_PAGES } from "./sitemap-pages";
 
 describe("STATIC_SITEMAP_PAGES", () => {
   it("includes every targeted B2B landing page once", () => {
@@ -35,5 +35,10 @@ describe("STATIC_SITEMAP_PAGES", () => {
   it("includes every editorial article once", () => {
     expect(STATIC_BLOG_PAGES).toHaveLength(7);
     expect(new Set(STATIC_BLOG_PAGES).size).toBe(STATIC_BLOG_PAGES.length);
+  });
+
+  it("marks the refreshed DMC selection guide with its real update date", () => {
+    expect(getStaticBlogLastModified("what-does-a-dmc-in-morocco-do-for-travel-agencies")).toBe(PRIORITY_SEO_LAST_MODIFIED);
+    expect(getStaticBlogLastModified("morocco-travel-guide-2026")).toBe(SITE_CONTENT_LAST_MODIFIED);
   });
 });

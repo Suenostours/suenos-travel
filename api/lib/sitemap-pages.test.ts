@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { STATIC_BLOG_PAGES, STATIC_SITEMAP_PAGES } from "./sitemap-pages";
+import { PRIORITY_SEO_LAST_MODIFIED, STATIC_BLOG_PAGES, STATIC_SITEMAP_PAGES } from "./sitemap-pages";
 
 describe("STATIC_SITEMAP_PAGES", () => {
   it("includes every targeted B2B landing page once", () => {
@@ -22,6 +22,14 @@ describe("STATIC_SITEMAP_PAGES", () => {
     const paths = STATIC_SITEMAP_PAGES.map((page) => page.path);
     expect(new Set(paths).size).toBe(paths.length);
     expect(paths.filter((path) => path !== "/" && path.endsWith("/"))).toEqual([]);
+  });
+
+  it("marks the freshly optimized SEO pages with their real update date", () => {
+    const priorityPaths = ["/blog", "/dmc-morocco", "/morocco-group-tours", "/mice-morocco"];
+
+    for (const path of priorityPaths) {
+      expect(STATIC_SITEMAP_PAGES.find((page) => page.path === path)?.lastmod).toBe(PRIORITY_SEO_LAST_MODIFIED);
+    }
   });
 
   it("includes every editorial article once", () => {

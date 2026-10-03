@@ -1,15 +1,15 @@
 import { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router";
 import Layout from "@/components/Layout";
-import Services from "@/pages/Services";
-import CircuitDetail from "@/pages/CircuitDetail";
 
 const Home = lazy(() => import("@/pages/Home"));
 const FrenchHome = lazy(() => import("@/pages/FrenchHome"));
 const FrenchCommercialLanding = lazy(() => import("@/pages/FrenchCommercialLanding"));
 const Circuits = lazy(() => import("@/pages/Circuits"));
+const CircuitDetail = lazy(() => import("@/pages/CircuitDetail"));
 const Destinations = lazy(() => import("@/pages/Destinations"));
 const DestinationDetail = lazy(() => import("@/pages/DestinationDetail"));
+const Services = lazy(() => import("@/pages/Services"));
 const About = lazy(() => import("@/pages/About"));
 const MICE = lazy(() => import("@/pages/MICE"));
 const B2B = lazy(() => import("@/pages/B2B"));

@@ -1,9 +1,8 @@
-import { Helmet } from "react-helmet-async";
 import { Link } from "react-router";
 import SEO from "@/components/SEO";
+import StructuredData from "@/components/StructuredData";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
-import { safeJsonLd } from "@/lib/structured-data";
 
 const BASE_URL = "https://www.morocco-incoming.com";
 
@@ -535,57 +534,58 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
   },
 };
 
-function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
+function buildLandingSchemas(pageKey: LandingPageKey) {
   const page = landingPages[pageKey];
   const absoluteUrl = `${BASE_URL}${page.path}`;
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "@id": `${absoluteUrl}#faq`,
-    mainEntity: page.faq.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.answer,
+  return [
+    {
+      id: "landing-faq-schema",
+      value: {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "@id": `${absoluteUrl}#faq`,
+        inLanguage: "en",
+        mainEntity: page.faq.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer },
+        })),
       },
-    })),
-  };
-  const serviceJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "@id": `${absoluteUrl}#service`,
-    name: page.h1,
-    serviceType: page.targetKeyword,
-    description: page.metaDescription,
-    url: absoluteUrl,
-    areaServed: {
-      "@type": "Country",
-      name: "Morocco",
     },
-    provider: {
-      "@type": "TravelAgency",
-      "@id": `${BASE_URL}/#travel-agency`,
-      name: "Morocco Incoming by Suenos Travel",
-      url: BASE_URL,
+    {
+      id: "landing-service-schema",
+      value: {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "@id": `${absoluteUrl}#service`,
+        name: page.h1,
+        serviceType: page.targetKeyword,
+        description: page.metaDescription,
+        url: absoluteUrl,
+        inLanguage: "en",
+        areaServed: { "@type": "Country", name: "Morocco" },
+        provider: {
+          "@type": "TravelAgency",
+          "@id": `${BASE_URL}/#travel-agency`,
+          name: "Morocco Incoming by Suenos Travel",
+          url: BASE_URL,
+        },
+        audience: {
+          "@type": "BusinessAudience",
+          audienceType: "Travel agencies, tour operators, MICE planners and corporate travel buyers",
+        },
+      },
     },
-    audience: {
-      "@type": "BusinessAudience",
-      audienceType: "Travel agencies, tour operators, MICE planners and corporate travel buyers",
-    },
-  };
+  ];
+}
+
+function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
+  const page = landingPages[pageKey];
+  const schemas = buildLandingSchemas(pageKey);
   return (
     <>
-      <SEO
-        title={page.seoTitle}
-        description={page.metaDescription}
-        canonical={page.path}
-        image="/images/hero-desert.jpg"
-      />
-      <Helmet>
-        <script type="application/ld+json">{safeJsonLd(faqJsonLd)}</script>
-        <script type="application/ld+json">{safeJsonLd(serviceJsonLd)}</script>
-      </Helmet>
+      <SEO />
+      {schemas.map((schema) => <StructuredData key={schema.id} id={schema.id} value={schema.value} />)}
 
       <section className="bg-[#0F172A] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">

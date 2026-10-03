@@ -1,13 +1,15 @@
 import { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router";
 import Layout from "@/components/Layout";
+import Services from "@/pages/Services";
+import CircuitDetail from "@/pages/CircuitDetail";
 
 const Home = lazy(() => import("@/pages/Home"));
+const FrenchHome = lazy(() => import("@/pages/FrenchHome"));
+const FrenchCommercialLanding = lazy(() => import("@/pages/FrenchCommercialLanding"));
 const Circuits = lazy(() => import("@/pages/Circuits"));
-const CircuitDetail = lazy(() => import("@/pages/CircuitDetail"));
 const Destinations = lazy(() => import("@/pages/Destinations"));
 const DestinationDetail = lazy(() => import("@/pages/DestinationDetail"));
-const Services = lazy(() => import("@/pages/Services"));
 const About = lazy(() => import("@/pages/About"));
 const MICE = lazy(() => import("@/pages/MICE"));
 const B2B = lazy(() => import("@/pages/B2B"));
@@ -61,25 +63,34 @@ export default function App() {
           {/* Public Routes */}
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
+            <Route path="/fr" element={<FrenchHome />} />
             <Route path="/circuits" element={<Circuits />} />
+            <Route path="/fr/circuits" element={<Circuits />} />
             <Route path="/circuits/:slug" element={<CircuitDetail />} />
             <Route path="/destinations" element={<Destinations />} />
             <Route path="/destinations/:slug" element={<DestinationDetail />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/fr/services" element={<Services />} />
             <Route path="/about" element={<About />} />
+            <Route path="/fr/about" element={<About />} />
             <Route path="/mice" element={<MICE />} />
             <Route path="/b2b" element={<B2B />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogDetail />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/quote" element={<Quote />} />
+            <Route path="/fr/quote" element={<Quote />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/dmc-morocco" element={<DmcMoroccoLanding />} />
             <Route path="/incoming-agency-morocco" element={<IncomingAgencyMoroccoLanding />} />
+            <Route path="/fr/incoming-agency-morocco" element={<FrenchCommercialLanding pageKey="incomingAgency" />} />
             <Route path="/morocco-tours-for-travel-agencies" element={<MoroccoToursForTravelAgenciesLanding />} />
+            <Route path="/fr/morocco-tours-for-travel-agencies" element={<FrenchCommercialLanding pageKey="toursForAgencies" />} />
             <Route path="/morocco-group-tours" element={<MoroccoGroupToursLanding />} />
             <Route path="/mice-morocco" element={<MiceMoroccoLanding />} />
+            <Route path="/fr/mice-morocco" element={<FrenchCommercialLanding pageKey="miceMorocco" />} />
+            <Route path="/fr/circuits/:slug" element={<CircuitDetail />} />
           </Route>
 
           {/* Admin Routes */}

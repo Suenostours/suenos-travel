@@ -304,7 +304,14 @@ export default function DestinationDetail() {
   const isFr = locale === "fr";
 
   const dest = slug ? destinationDetails[slug] : null;
-  if (!dest) return <div className="py-24 text-center">Destination not found</div>;
+  if (!dest) {
+    return (
+      <>
+        <SEO />
+        <div className="py-24 text-center">Destination not found</div>
+      </>
+    );
+  }
 
   const title = isFr ? dest.nameFr : dest.name;
   const description = isFr ? dest.aboutFr : dest.about;
@@ -361,12 +368,7 @@ export default function DestinationDetail() {
 
   return (
     <>
-      <SEO
-        title={`${title} Morocco B2B Excursions & Programs | Suenos Travel DMC`}
-        description={`Plan ${title} excursions, day trips and Morocco programs for travel agencies, groups and MICE planners with Suenos Travel DMC.`}
-        canonical={`/destinations/${slug}`}
-        image={dest.image}
-      />
+      <SEO />
       <Helmet>
         <script type="application/ld+json">{safeJsonLd(destinationJsonLd)}</script>
         <script type="application/ld+json">{safeJsonLd(faqJsonLd)}</script>

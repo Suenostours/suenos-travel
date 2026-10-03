@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useLocation } from "react-router";
 import { useI18n } from "@/providers/i18n";
 import { trpc } from "@/providers/trpc";
 import SEO from "@/components/SEO";
@@ -8,9 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { trackQuoteFormSubmit } from "@/lib/tracking";
+import { getRequestedTourSlug, getValidatedTourContext } from "@/lib/quote-tour-context";
+import { useSsrData } from "@/providers/ssr-data";
 
 export default function Quote() {
   const { locale } = useI18n();
+  const location = useLocation();
+  const ssrData = useSsrData();
   const isFr = locale === "fr";
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
@@ -21,24 +26,59 @@ export default function Quote() {
   const [dates, setDates] = useState("");
   const [pax, setPax] = useState("");
   const [brief, setBrief] = useState("");
+  const requestedTourSlug = getRequestedTourSlug(location.search);
+  const hasTourParameter = new URLSearchParams(location.search).has("tour");
+  const matchingSsrTour = ssrData.routeData.kind === "quote-tour"
+    && ssrData.routeData.slug === requestedTourSlug
+    && ssrData.routeData.locale === locale
+      ? ssrData.routeData
+      : undefined;
+  const initialTour = matchingSsrTour?.state === "found" || matchingSsrTour?.state === "missing"
+    ? matchingSsrTour.data ?? null
+    : undefined;
+  const {
+    data: selectedTour,
+    isLoading: isTourLoading,
+    isError: isTourError,
+  } = trpc.public.getTour.useQuery(
+    { slug: requestedTourSlug ?? "", locale },
+    {
+      enabled: Boolean(requestedTourSlug) && matchingSsrTour?.state !== "unavailable",
+      initialData: initialTour,
+      staleTime: initialTour !== undefined ? 5 * 60 * 1000 : 0,
+      retry: 1,
+    },
+  );
+  const tourContext = getValidatedTourContext(
+    requestedTourSlug,
+    selectedTour
+      ? {
+          slug: selectedTour.tours.slug,
+          title: selectedTour.tour_translations?.title,
+        }
+      : null,
+  );
+  const isInvalidTourContext = hasTourParameter && (
+    !requestedTourSlug
+    || matchingSsrTour?.state === "unavailable"
+    || (!isTourLoading && (isTourError || !selectedTour))
+  );
+  const isTourContextPending = Boolean(requestedTourSlug) && isTourLoading;
 
   const createQuote = trpc.forms.createQuote.useMutation({
     onSuccess: () => {
       trackQuoteFormSubmit();
       setSubmitted(true);
     },
-    onError: (err) => setError(err.message),
+    onError: (err) => setError(isFr
+      ? "La demande n'a pas pu être envoyée. Veuillez réessayer ou nous contacter directement."
+      : err.message),
   });
 
   if (submitted) {
     return (
       <main className="min-h-screen bg-[#F8F7F4] pt-24 pb-16 flex items-center justify-center">
-        <SEO
-          title="Request a Morocco DMC Quote | B2B Tours, Groups & MICE"
-          description="Request a custom Morocco travel quote for agencies, groups, private tours, MICE and incentives with Suenos Travel DMC."
-          canonical="/quote"
-          image="/images/hero-desert.jpg"
-        />
+        <SEO />
         <div className="text-center max-w-md mx-auto px-4">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Check className="h-8 w-8 text-green-600" />
@@ -51,8 +91,8 @@ export default function Quote() {
               ? "Merci. Notre équipe DMC vous contactera dans les 24 à 48 heures avec un programme sur mesure."
               : "Thank you. Our DMC team will contact you within 24-48 hours with a tailor-made program."}
           </p>
-          <Button onClick={() => window.location.href = "/"} className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full">
-            {isFr ? "Retour à l'accueil" : "Back to Home"}
+          <Button asChild className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full">
+            <Link to={isFr ? "/fr" : "/"}>{isFr ? "Retour à l'accueil" : "Back to Home"}</Link>
           </Button>
         </div>
       </main>
@@ -61,12 +101,7 @@ export default function Quote() {
 
   return (
     <main className="min-h-screen bg-[#F8F7F4]">
-      <SEO
-        title="Request a Morocco DMC Quote | B2B Tours, Groups & MICE"
-        description="Request a custom Morocco travel quote for agencies, groups, private tours, MICE and incentives with Suenos Travel DMC."
-        canonical="/quote"
-        image="/images/hero-desert.jpg"
-      />
+      <SEO />
 
       <section className="bg-gradient-to-br from-[#A91D2D] to-[#1F2937] py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 text-center">
@@ -98,11 +133,17 @@ export default function Quote() {
             <div className="md:col-span-2">
               <div className="bg-white rounded-2xl shadow-sm border border-[#E5E7EB] p-6 md:p-8">
                 {error && (
-                  <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg mb-4">{error}</div>
+                  <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg mb-4" role="alert" aria-live="polite">{error}</div>
                 )}
                 <form onSubmit={(e) => {
                   e.preventDefault();
                   setError("");
+                  if (isTourContextPending) {
+                    setError(isFr
+                      ? "Veuillez patienter pendant la vérification du programme sélectionné."
+                      : "Please wait while we verify the selected programme.");
+                    return;
+                  }
                   if (!name.trim()) { setError(isFr ? "La personne à contacter est requise" : "Contact person is required"); return; }
                   if (!email.trim()) { setError(isFr ? "L'email est requis" : "Email is required"); return; }
                   if (!brief.trim()) { setError(isFr ? "La description de la demande est requise" : "Request / brief is required"); return; }
@@ -112,7 +153,8 @@ export default function Quote() {
                     contactPerson: name,
                     whatsapp,
                     dates,
-                    numberOfPax: pax ? parseInt(pax) : undefined,
+                    numberOfPax: pax ? Number.parseInt(pax, 10) : undefined,
+                    preferredCircuit: tourContext?.preferredCircuit,
                     specialRequests: brief,
                   });
                 }} className="space-y-5">
@@ -120,42 +162,71 @@ export default function Quote() {
                     {isFr ? "Votre projet" : "Your project"}
                   </h2>
 
+                  {tourContext && (
+                    <div className="rounded-xl border border-[#A91D2D]/20 bg-[#A91D2D]/5 p-4">
+                      <Label htmlFor="selected-programme">
+                        {isFr ? "Programme sélectionné" : "Selected programme"}
+                      </Label>
+                      <Input
+                        id="selected-programme"
+                        className="mt-1 bg-white"
+                        value={tourContext.title}
+                        readOnly
+                      />
+                      <p className="mt-2 text-xs text-[#6B7280]">
+                        {isFr
+                          ? "Ce programme sera joint à votre demande de devis."
+                          : "This programme will be included with your quote request."}
+                      </p>
+                    </div>
+                  )}
+
+                  {isInvalidTourContext && (
+                    <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800" role="status">
+                      {isFr
+                        ? "Le programme sélectionné n'est pas disponible. Vous pouvez toujours envoyer une demande sur mesure."
+                        : "The selected programme is unavailable. You can still send a custom request."}
+                    </p>
+                  )}
+
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <Label>{isFr ? "Nom de l'agence" : "Agency Name"}</Label>
-                      <Input className="mt-1" value={agency} onChange={(e) => setAgency(e.target.value)} />
+                      <Label htmlFor="agency-name">{isFr ? "Nom de l'agence" : "Agency Name"}</Label>
+                      <Input id="agency-name" name="agencyName" autoComplete="organization" className="mt-1" value={agency} onChange={(e) => setAgency(e.target.value)} />
                     </div>
                     <div>
-                      <Label>{isFr ? "Personne à contacter" : "Contact Person"} *</Label>
-                      <Input required className="mt-1" value={name} onChange={(e) => setName(e.target.value)} />
+                      <Label htmlFor="contact-person">{isFr ? "Personne à contacter" : "Contact Person"} *</Label>
+                      <Input id="contact-person" name="contactPerson" autoComplete="name" required className="mt-1" value={name} onChange={(e) => setName(e.target.value)} />
                     </div>
                   </div>
 
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <Label>Email *</Label>
-                      <Input type="email" required className="mt-1" value={email} onChange={(e) => setEmail(e.target.value)} />
+                      <Label htmlFor="quote-email">Email *</Label>
+                      <Input id="quote-email" name="email" autoComplete="email" type="email" required className="mt-1" value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
                     <div>
-                      <Label>WhatsApp</Label>
-                      <Input className="mt-1" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
+                      <Label htmlFor="quote-whatsapp">WhatsApp</Label>
+                      <Input id="quote-whatsapp" name="whatsapp" autoComplete="tel" inputMode="tel" className="mt-1" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
                     </div>
                   </div>
 
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <Label>{isFr ? "Dates souhaitées" : "Preferred Dates"}</Label>
-                      <Input className="mt-1" value={dates} onChange={(e) => setDates(e.target.value)} />
+                      <Label htmlFor="preferred-dates">{isFr ? "Dates souhaitées" : "Preferred Dates"}</Label>
+                      <Input id="preferred-dates" name="dates" className="mt-1" value={dates} onChange={(e) => setDates(e.target.value)} />
                     </div>
                     <div>
-                      <Label>{isFr ? "Nombre de voyageurs" : "Number of Pax"}</Label>
-                      <Input type="number" min={1} className="mt-1" value={pax} onChange={(e) => setPax(e.target.value)} />
+                      <Label htmlFor="number-of-pax">{isFr ? "Nombre de voyageurs" : "Number of Pax"}</Label>
+                      <Input id="number-of-pax" name="numberOfPax" type="number" min={1} className="mt-1" value={pax} onChange={(e) => setPax(e.target.value)} />
                     </div>
                   </div>
 
                   <div>
-                    <Label>{isFr ? "Parlez-nous de votre demande" : "Tell us about your request"} *</Label>
+                    <Label htmlFor="quote-brief">{isFr ? "Parlez-nous de votre demande" : "Tell us about your request"} *</Label>
                     <Textarea
+                      id="quote-brief"
+                      name="brief"
                       required
                       className="mt-1"
                       rows={6}
@@ -167,9 +238,11 @@ export default function Quote() {
                     />
                   </div>
 
-                  <Button type="submit" disabled={createQuote.isPending} className="w-full bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full disabled:opacity-50">
+                  <Button type="submit" disabled={createQuote.isPending || isTourContextPending} className="w-full bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full disabled:opacity-50">
                     <Send className="mr-2 h-4 w-4" />
-                    {createQuote.isPending
+                    {isTourContextPending
+                      ? (isFr ? "Vérification du programme..." : "Checking programme...")
+                      : createQuote.isPending
                       ? (isFr ? "Envoi en cours..." : "Sending...")
                       : (isFr ? "Envoyer la demande" : "Send Request")
                     }

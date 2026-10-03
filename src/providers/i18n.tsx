@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useCallback, useEffect, type ReactNode } from "react";
 
 export type Locale = "fr" | "en";
 
@@ -123,19 +123,21 @@ const translations: Record<Locale, Record<string, string>> = {
 
 const I18nContext = createContext<I18nContextType | null>(null);
 
-export function I18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    const saved = window.localStorage.getItem("site-locale");
-    return saved === "fr" ? "fr" : "en";
-  });
-
+export function I18nProvider({
+  children,
+  initialLocale = "en",
+}: {
+  children: ReactNode;
+  initialLocale?: Locale;
+}) {
+  const locale = initialLocale;
   useEffect(() => {
     document.documentElement.lang = locale;
     window.localStorage.setItem("site-locale", locale);
   }, [locale]);
 
   const setLocale = useCallback((l: Locale) => {
-    setLocaleState(l);
+    window.localStorage.setItem("site-locale", l);
   }, []);
 
   const t = useCallback(

@@ -3,12 +3,7 @@ import SEO from "@/components/SEO";
 export default function Terms() {
   return (
     <>
-      <SEO
-        title="Terms & Conditions | Suenos Travel"
-        description="Terms and conditions of Suenos Travel DMC Morocco."
-        canonical="/terms"
-        noindex
-      />
+      <SEO />
 
       <section className="bg-[#F9F7F4] py-16 md:py-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">

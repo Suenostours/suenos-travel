@@ -1,34 +1,18 @@
-import { Helmet } from "react-helmet-async";
+import { useLayoutEffect } from "react";
 import { useLocation } from "react-router";
 import { trpc } from "@/providers/trpc";
 import { buildSeoGraph, safeJsonLd } from "@/lib/structured-data";
+import { normalizeSeoPath, resolveClientSeoMeta, type SeoOverrides } from "@/lib/seo-meta";
 
-const BASE_URL = "https://www.morocco-incoming.com";
-
-interface SEOProps {
-  title: string;
-  description: string;
-  canonical: string;
+interface SEOProps extends SeoOverrides {
+  title?: string;
+  description?: string;
+  canonical?: string;
   image?: string;
   noindex?: boolean;
-  type?: string;
+  type?: "website" | "article";
   datePublished?: string;
   dateModified?: string;
-}
-
-function toAbsoluteUrl(value: string) {
-  if (/^https?:\/\//i.test(value)) {
-    const url = new URL(value);
-    if (
-      url.hostname === "morocco-incoming.com" ||
-      url.hostname === "www.morocco-incoming.com"
-    ) {
-      return `${BASE_URL}${url.pathname}${url.search}${url.hash}`;
-    }
-    return value;
-  }
-  const path = value.startsWith("/") ? value : `/${value}`;
-  return `${BASE_URL}${path}`;
 }
 
 export default function SEO({
@@ -36,57 +20,166 @@ export default function SEO({
   description,
   canonical,
   image,
-  noindex = false,
-  type = "website",
+  noindex,
+  type,
   datePublished,
   dateModified,
+  alternates,
 }: SEOProps) {
   const location = useLocation();
-  const { data: savedMeta } = trpc.seo.getByPath.useQuery(
+  const { data: savedMeta, isLoading: isSavedMetaLoading } = trpc.seo.getByPath.useQuery(
     { path: location.pathname },
     { staleTime: 5 * 60 * 1000, retry: 1 },
   );
-  const resolvedTitle = savedMeta?.metaTitle?.trim() || title;
-  const resolvedDescription = savedMeta?.metaDescription?.trim() || description;
-  const resolvedCanonical = savedMeta?.canonical?.trim() || canonical;
-  const resolvedImage = savedMeta?.ogImage?.trim() || image;
-  const canonicalUrl = toAbsoluteUrl(resolvedCanonical);
-  const imageUrl = resolvedImage ? toAbsoluteUrl(resolvedImage) : undefined;
-  const structuredData = !noindex
+  const hasExplicitPageMeta = Boolean(title && description && canonical);
+  const resolved = resolveClientSeoMeta(location.pathname, {
+    title,
+    description,
+    canonical,
+    image,
+    noindex: noindex ?? (hasExplicitPageMeta ? false : undefined),
+    type,
+    datePublished,
+    dateModified,
+    alternates,
+  }, savedMeta);
+  const structuredData = !resolved.noindex
     ? buildSeoGraph({
         pathname: location.pathname,
-        title: resolvedTitle,
-        description: resolvedDescription,
-        canonical: canonicalUrl,
-        image: imageUrl,
-        type,
-        datePublished,
-        dateModified,
+        title: resolved.title,
+        description: resolved.description,
+        canonical: resolved.canonical,
+        image: resolved.image,
+        type: resolved.type,
+        datePublished: resolved.datePublished,
+        dateModified: resolved.dateModified,
+        locale: resolved.locale,
       })
     : null;
+  const structuredDataJson = structuredData ? safeJsonLd(structuredData) : null;
+  const {
+    title: resolvedTitle,
+    description: resolvedDescription,
+    canonical: resolvedCanonical,
+    image: resolvedImage,
+    noindex: resolvedNoindex,
+    type: resolvedType,
+    locale: resolvedLocale,
+    alternates: resolvedAlternates,
+  } = resolved;
+  const alternateEn = resolvedAlternates?.en;
+  const alternateFr = resolvedAlternates?.fr;
+  const alternateDefault = resolvedAlternates?.xDefault;
 
-  return (
-    <Helmet>
-      <title>{resolvedTitle}</title>
-      <meta name="description" content={resolvedDescription} />
-      <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
-      <link rel="canonical" href={canonicalUrl} />
-      <meta property="og:site_name" content="Morocco Incoming by Suenos Travel" />
-      <meta property="og:title" content={resolvedTitle} />
-      <meta property="og:description" content={resolvedDescription} />
-      <meta property="og:type" content={type} />
-      <meta property="og:url" content={canonicalUrl} />
-      <meta property="og:locale" content="en_US" />
-      {imageUrl && <meta property="og:image" content={imageUrl} />}
-      {imageUrl && <meta property="og:image:width" content="1344" />}
-      {imageUrl && <meta property="og:image:height" content="768" />}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={resolvedTitle} />
-      <meta name="twitter:description" content={resolvedDescription} />
-      {imageUrl && <meta name="twitter:image" content={imageUrl} />}
-      {structuredData && (
-        <script type="application/ld+json">{safeJsonLd(structuredData)}</script>
-      )}
-    </Helmet>
-  );
+  useLayoutEffect(() => {
+    const serverCanonical = document.head.querySelector<HTMLLinkElement>(
+      'link[data-seo-path][rel="canonical"]',
+    );
+    if (
+      isSavedMetaLoading &&
+      serverCanonical?.dataset.seoPath === normalizeSeoPath(location.pathname)
+    ) {
+      return;
+    }
+
+    const selectors = [
+      "title",
+      'meta[name="description"]',
+      'meta[name="robots"]',
+      'link[rel="canonical"]',
+      'meta[property="og:site_name"]',
+      'meta[property="og:title"]',
+      'meta[property="og:description"]',
+      'meta[property="og:type"]',
+      'meta[property="og:url"]',
+      'meta[property="og:locale"]',
+      'meta[property="og:image"]',
+      'meta[property="og:image:width"]',
+      'meta[property="og:image:height"]',
+      'meta[name="twitter:card"]',
+      'meta[name="twitter:title"]',
+      'meta[name="twitter:description"]',
+      'meta[name="twitter:image"]',
+      'link[rel="alternate"][hreflang]',
+      "script#route-seo-graph",
+    ];
+    document.querySelectorAll(selectors.join(",")).forEach((element) => element.remove());
+
+    const addMeta = (attribute: "name" | "property", key: string, content: string) => {
+      const element = document.createElement("meta");
+      element.setAttribute(attribute, key);
+      element.content = content;
+      element.dataset.routeSeo = "true";
+      document.head.append(element);
+    };
+
+    const titleElement = document.createElement("title");
+    titleElement.textContent = resolvedTitle;
+    titleElement.dataset.routeSeo = "true";
+    document.head.append(titleElement);
+
+    addMeta("name", "description", resolvedDescription);
+    addMeta("name", "robots", resolvedNoindex ? "noindex, nofollow" : "index, follow");
+
+    const canonicalElement = document.createElement("link");
+    canonicalElement.rel = "canonical";
+    canonicalElement.href = resolvedCanonical;
+    canonicalElement.dataset.routeSeo = "true";
+    document.head.append(canonicalElement);
+
+    addMeta("property", "og:site_name", "Morocco Incoming by Suenos Travel");
+    addMeta("property", "og:title", resolvedTitle);
+    addMeta("property", "og:description", resolvedDescription);
+    addMeta("property", "og:type", resolvedType ?? "website");
+    addMeta("property", "og:url", resolvedCanonical);
+    addMeta("property", "og:locale", resolvedLocale === "fr" ? "fr_FR" : "en_US");
+    if (resolvedImage) {
+      addMeta("property", "og:image", resolvedImage);
+      addMeta("property", "og:image:width", "1344");
+      addMeta("property", "og:image:height", "768");
+    }
+    addMeta("name", "twitter:card", "summary_large_image");
+    addMeta("name", "twitter:title", resolvedTitle);
+    addMeta("name", "twitter:description", resolvedDescription);
+    if (resolvedImage) addMeta("name", "twitter:image", resolvedImage);
+
+    if (structuredDataJson) {
+      const script = document.createElement("script");
+      script.id = "route-seo-graph";
+      script.type = "application/ld+json";
+      script.textContent = structuredDataJson;
+      script.dataset.routeSeo = "true";
+      document.head.append(script);
+    }
+    if (alternateEn && alternateFr && alternateDefault) {
+      ([
+        ["en", alternateEn],
+        ["fr", alternateFr],
+        ["x-default", alternateDefault],
+      ] as const).forEach(([hreflang, href]) => {
+        const link = document.createElement("link");
+        link.rel = "alternate";
+        link.hreflang = hreflang;
+        link.href = href;
+        link.dataset.routeSeo = "true";
+        document.head.append(link);
+      });
+    }
+  }, [
+    alternateDefault,
+    alternateEn,
+    alternateFr,
+    isSavedMetaLoading,
+    location.pathname,
+    resolvedCanonical,
+    resolvedDescription,
+    resolvedImage,
+    resolvedLocale,
+    resolvedNoindex,
+    resolvedTitle,
+    resolvedType,
+    structuredDataJson,
+  ]);
+
+  return null;
 }

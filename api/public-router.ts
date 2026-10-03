@@ -1,8 +1,10 @@
 import { z } from "zod";
 import { createRouter, publicQuery } from "./middleware";
 import { getDb } from "./queries/connection";
-import { tours, tourTranslations, tourCities, cities, cityTranslations, excursions, excursionTranslations, blogPosts, blogTranslations } from "@db/schema";
+import { cities, cityTranslations, excursions, excursionTranslations, blogPosts, blogTranslations } from "@db/schema";
 import { eq, and, sql } from "drizzle-orm";
+import { getPublicTour } from "./queries/public-tour";
+import { listPublicTours } from "./queries/public-tours";
 
 function withLocale(locale: string) {
   return locale === "fr" ? "fr" : "en";
@@ -13,51 +15,20 @@ export const publicRouter = createRouter({
   listTours: publicQuery
     .input(z.object({ locale: z.string().optional(), type: z.string().optional(), featured: z.boolean().optional() }))
     .query(async ({ input }) => {
-      const db = getDb();
       const locale = withLocale(input.locale ?? "en");
-      const conditions = [eq(tours.active, 1)];
-      if (input.type) conditions.push(sql`${tours.type} = ${input.type}`);
-      if (input.featured) conditions.push(eq(tours.featured, 1));
-
-      const rows = await db
-        .select({
-          id: tours.id,
-          slug: tours.slug,
-          mainImage: tours.mainImage,
-          duration: tours.duration,
-          type: tours.type,
-          featured: tours.featured,
-          title: tourTranslations.title,
-          description: tourTranslations.description,
-          metaTitle: tourTranslations.metaTitle,
-          metaDescription: tourTranslations.metaDescription,
-        })
-        .from(tours)
-        .leftJoin(tourTranslations, and(eq(tourTranslations.tourId, tours.id), eq(tourTranslations.locale, locale)))
-        .where(and(...conditions));
-
-      return rows;
+      return listPublicTours({ ...input, locale });
     }),
 
   getTour: publicQuery
-    .input(z.object({ slug: z.string(), locale: z.string().optional() }))
+    .input(
+      z.object({
+        slug: z.string().trim().min(1).max(160).regex(/^[a-z0-9-]+$/),
+        locale: z.string().optional(),
+      }),
+    )
     .query(async ({ input }) => {
-      const db = getDb();
       const locale = withLocale(input.locale ?? "en");
-      const tRows = await db
-        .select()
-        .from(tours)
-        .leftJoin(tourTranslations, and(eq(tourTranslations.tourId, tours.id), eq(tourTranslations.locale, locale)))
-        .where(eq(tours.slug, input.slug))
-        .limit(1);
-      if (tRows.length === 0) return null;
-      const tc = await db
-        .select({ name: cityTranslations.name, slug: cities.slug })
-        .from(tourCities)
-        .leftJoin(cities, eq(cities.id, tourCities.cityId))
-        .leftJoin(cityTranslations, and(eq(cityTranslations.cityId, cities.id), eq(cityTranslations.locale, locale)))
-        .where(eq(tourCities.tourId, tRows[0].tours.id));
-      return { ...tRows[0], cities: tc };
+      return getPublicTour(input.slug, locale);
     }),
 
   // ─── Cities ───

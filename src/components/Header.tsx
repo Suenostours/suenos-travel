@@ -11,13 +11,42 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { localeSwitchUrl, localizedPath, splitLocalePath } from "@/lib/locale-routes";
+import { trpc } from "@/providers/trpc";
+import { useSsrData } from "@/providers/ssr-data";
 
 export default function Header() {
-  const { locale, setLocale, t } = useI18n();
+  const { locale, t } = useI18n();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { admin } = useAuth();
+  const ssrData = useSsrData();
+  const { basePath } = splitLocalePath(location.pathname);
+  const tourSlugMatch = basePath.match(/^\/circuits\/([a-z0-9-]+)$/);
+  const tourSlug = tourSlugMatch?.[1];
+  const matchingSsrTour = ssrData.routeData.kind === "tour"
+    && ssrData.routeData.locale === "en"
+    && ssrData.routeData.slug === tourSlug
+      ? ssrData.routeData
+      : undefined;
+  const initialEnglishTour = matchingSsrTour?.state === "found" || matchingSsrTour?.state === "missing"
+    ? matchingSsrTour.data ?? null
+    : undefined;
+  const { data: englishTour } = trpc.public.getTour.useQuery(
+    { slug: tourSlug ?? "", locale: "en" },
+    {
+      enabled: locale === "en" && Boolean(tourSlug) && matchingSsrTour?.state !== "unavailable",
+      initialData: initialEnglishTour,
+      staleTime: initialEnglishTour !== undefined ? 5 * 60 * 1000 : 0,
+    },
+  );
+  const hasFrenchTourEquivalent = !tourSlug || locale === "fr"
+    ? undefined
+    : englishTour?.hasFrenchTranslation === true;
+  const englishPath = localeSwitchUrl(location, "en");
+  const frenchPath = localeSwitchUrl(location, "fr", { hasFrenchTourEquivalent });
+  const languageSwitchPath = locale === "fr" ? englishPath : frenchPath;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -25,17 +54,26 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const navItems = [
-    { label: t("nav.home"), path: "/" },
-    { label: t("nav.circuits"), path: "/circuits" },
-    { label: t("nav.destinations"), path: "/destinations" },
-    { label: t("nav.services"), path: "/services" },
-    { label: t("nav.mice"), path: "/mice" },
-    { label: t("nav.b2b"), path: "/b2b" },
-  ];
+  const navItems = locale === "fr"
+    ? [
+        { label: t("nav.home"), path: "/fr" },
+        { label: t("nav.circuits"), path: "/fr/circuits" },
+        { label: t("nav.services"), path: "/fr/services" },
+        { label: t("nav.mice"), path: "/fr/mice-morocco" },
+        { label: t("nav.b2b"), path: "/fr/incoming-agency-morocco" },
+        { label: t("nav.about"), path: "/fr/about" },
+      ]
+    : [
+        { label: t("nav.home"), path: "/" },
+        { label: t("nav.circuits"), path: "/circuits" },
+        { label: t("nav.destinations"), path: "/destinations" },
+        { label: t("nav.services"), path: "/services" },
+        { label: t("nav.mice"), path: "/mice" },
+        { label: t("nav.b2b"), path: "/b2b" },
+      ];
 
   const isActive = (path: string) => {
-    if (path === "/") return location.pathname === "/";
+    if (path === "/" || path === "/fr") return location.pathname === path;
     return location.pathname.startsWith(path);
   };
 
@@ -50,7 +88,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 shrink-0">
+          <Link to={localizedPath("/", locale)} className="flex items-center gap-2 shrink-0">
             <span className="text-xl md:text-2xl font-serif font-semibold text-[#1F2937]">
               Suenos Travel
             </span>
@@ -79,14 +117,22 @@ export default function Header() {
             {/* Language switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-1 text-[#4B5563]" aria-label="Choose language">
+                  <Button variant="ghost" size="sm" className="gap-1 text-[#4B5563]" aria-label={locale === "fr" ? "Choisir la langue" : "Choose language"}>
                   <Globe className="h-4 w-4" />
                   <span className="uppercase text-xs font-semibold">{locale}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setLocale("en")}>English</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLocale("fr")}>Français</DropdownMenuItem>
+                {englishPath ? (
+                  <DropdownMenuItem asChild><a href={englishPath}>English</a></DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem disabled>English</DropdownMenuItem>
+                )}
+                {frenchPath ? (
+                  <DropdownMenuItem asChild><a href={frenchPath}>Français</a></DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem disabled>Français</DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -103,7 +149,7 @@ export default function Header() {
 
             {/* CTA Quote */}
             <Button asChild className="bg-[#A91D2D] hover:bg-[#8a1824] text-white text-sm px-4 py-2 rounded-full">
-              <Link to="/quote">
+                <Link to={localizedPath("/quote", locale)}>
                 {t("nav.quote")}
               </Link>
             </Button>
@@ -122,7 +168,9 @@ export default function Header() {
           <button
             className="md:hidden p-2 rounded-md text-[#4B5563]"
             onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-label={mobileOpen
+              ? (locale === "fr" ? "Fermer le menu de navigation" : "Close navigation menu")
+              : (locale === "fr" ? "Ouvrir le menu de navigation" : "Open navigation menu")}
             aria-expanded={mobileOpen}
             aria-controls="mobile-navigation"
           >
@@ -150,13 +198,15 @@ export default function Header() {
             </Link>
           ))}
           <div className="pt-2 border-t border-gray-100 flex flex-col gap-2">
-            <button
-              onClick={() => setLocale(locale === "fr" ? "en" : "fr")}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-[#4B5563]"
-            >
-              <Globe className="h-4 w-4" />
-              {locale === "fr" ? "Switch to English" : "Passer en Français"}
-            </button>
+            {languageSwitchPath && (
+              <a
+                href={languageSwitchPath}
+                className="flex items-center gap-2 px-3 py-2 text-sm text-[#4B5563]"
+              >
+                <Globe className="h-4 w-4" />
+                {locale === "fr" ? "Passer en anglais" : "Passer en français"}
+              </a>
+            )}
             <a
               href={WHATSAPP_URL}
               target="_blank"
@@ -167,7 +217,7 @@ export default function Header() {
               WhatsApp {PRIMARY_PHONE_DISPLAY}
             </a>
             <Link
-              to="/quote"
+              to={localizedPath("/quote", locale)}
               onClick={() => setMobileOpen(false)}
               className="block px-3 py-2 text-sm font-medium text-[#A91D2D]"
             >

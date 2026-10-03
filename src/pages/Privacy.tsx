@@ -3,12 +3,7 @@ import SEO from "@/components/SEO";
 export default function Privacy() {
   return (
     <>
-      <SEO
-        title="Privacy Policy | Suenos Travel"
-        description="Privacy policy of Suenos Travel DMC Morocco."
-        canonical="/privacy"
-        noindex
-      />
+      <SEO />
 
       <section className="bg-[#F9F7F4] py-16 md:py-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">

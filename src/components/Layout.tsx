@@ -1,41 +1,40 @@
 import { Outlet } from "react-router";
 import { HelmetProvider } from "react-helmet-async";
-import { I18nProvider } from "@/providers/i18n";
 import { MessageCircle } from "lucide-react";
 import Analytics from "@/components/Analytics";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { WHATSAPP_URL } from "@/lib/contact-details";
+import { useI18n } from "@/providers/i18n";
 
 export default function Layout() {
+  const { locale } = useI18n();
   return (
     <HelmetProvider>
-      <I18nProvider>
-        <Analytics />
-        <div className="min-h-screen flex flex-col bg-[#F9F7F4]">
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-[#1F2937] focus:shadow-lg"
-          >
-            Skip to main content
-          </a>
-          <Header />
-          <main id="main-content" className="flex-1">
-            <Outlet />
-          </main>
-          <Footer />
-          {/* Floating WhatsApp */}
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#25D366] hover:bg-[#128C7E] rounded-full flex items-center justify-center shadow-lg transition-colors"
-            aria-label="WhatsApp"
-          >
-            <MessageCircle className="h-7 w-7 text-white" />
-          </a>
-        </div>
-      </I18nProvider>
+      <Analytics />
+      <div className="min-h-screen flex flex-col bg-[#F9F7F4]">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-[#1F2937] focus:shadow-lg"
+        >
+          {locale === "fr" ? "Aller au contenu principal" : "Skip to main content"}
+        </a>
+        <Header />
+        <main id="main-content" className="flex-1">
+          <Outlet />
+        </main>
+        <Footer />
+        {/* Floating WhatsApp */}
+        <a
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#25D366] hover:bg-[#128C7E] rounded-full flex items-center justify-center shadow-lg transition-colors"
+          aria-label="WhatsApp"
+        >
+          <MessageCircle className="h-7 w-7 text-white" />
+        </a>
+      </div>
     </HelmetProvider>
   );
 }

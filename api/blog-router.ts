@@ -191,7 +191,7 @@ export const formsRouter = createRouter({
         adults: z.number().int().nonnegative().max(10000).optional(),
         children: z.number().int().nonnegative().max(10000).optional(),
         preferredDestinations: z.string().max(2000).optional(),
-        preferredCircuit: z.string().max(255).optional(),
+        preferredCircuit: z.string().trim().max(255).optional(),
         hotelCategory: z.string().max(50).optional(),
         transportType: z.string().max(50).optional(),
         guideLanguage: z.string().max(50).optional(),

@@ -85,12 +85,7 @@ export default function Blog() {
 
   return (
     <>
-      <SEO
-        title="Morocco DMC & Group Travel Insights for Agencies"
-        description="Practical Morocco DMC guidance for travel agencies: group operations, MICE planning, destination advice, sample programs and local travel expertise."
-        canonical="/blog"
-        image="/images/hero-desert.jpg"
-      />
+      <SEO />
 
       <section className="bg-[#F9F7F4] py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

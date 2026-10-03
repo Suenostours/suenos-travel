@@ -10,6 +10,7 @@ describe("SEO HTML rendering", () => {
 
     expect(html).toContain("DMC in Morocco for Travel Agencies | Licensed Local Partner");
     expect(html).toContain('rel="canonical" href="https://www.morocco-incoming.com/dmc-morocco"');
+    expect(html).toContain('data-seo-path="/dmc-morocco"');
     expect(html).toContain('name="robots" content="index, follow"');
   });
 
@@ -39,6 +40,22 @@ describe("SEO HTML rendering", () => {
     expect(html).toContain('type="application/ld+json"');
     expect(html).toContain('"@type":"BlogPosting"');
     expect(html).toContain('"@type":"BreadcrumbList"');
+    expect(html.match(/id="route-seo-graph"/g)).toHaveLength(1);
+  });
+
+  it("renders the same dynamic tour title used by the client resolver", () => {
+    const html = renderSeoHtml(
+      "<html><head><title>Old</title></head><body></body></html>",
+      "/circuits/imperial-cities-morocco",
+      {
+        title: "Imperial Cities Morocco | Morocco DMC Tour for Agencies",
+        description: "A classic route through Morocco's imperial cities.",
+        noindex: false,
+      },
+    );
+
+    expect(html).toContain("Imperial Cities Morocco | Morocco DMC Tour for Agencies");
+    expect(html).toContain('name="robots" content="index, follow"');
   });
 
   it("does not emit structured data for a forced noindex response", () => {
@@ -50,5 +67,39 @@ describe("SEO HTML rendering", () => {
 
     expect(html).toContain('name="robots" content="noindex, nofollow"');
     expect(html).not.toContain('type="application/ld+json"');
+  });
+
+  it("keeps a dynamic tour indexable when its database lookup is temporarily unavailable", () => {
+    const html = renderSeoHtml(
+      "<html><head><title>Old</title></head><body></body></html>",
+      "/circuits/imperial-cities-morocco",
+    );
+
+    expect(html).toContain("Imperial Cities Morocco | Morocco DMC Tour for Agencies");
+    expect(html).toContain('name="robots" content="index, follow"');
+    expect(html).toContain('id="route-seo-graph"');
+  });
+
+  it("renders reciprocal hreflang and additional safe tour schema", () => {
+    const html = renderSeoHtml(
+      "<html><head><title>Old</title></head><body></body></html>",
+      "/fr/circuits/imperial-cities-morocco",
+      {
+        title: "Villes impériales du Maroc | Circuit au Maroc pour agences",
+        description: "Circuit culturel.",
+        noindex: false,
+        alternates: {
+          en: "https://www.morocco-incoming.com/circuits/imperial-cities-morocco",
+          fr: "https://www.morocco-incoming.com/fr/circuits/imperial-cities-morocco",
+          xDefault: "https://www.morocco-incoming.com/circuits/imperial-cities-morocco",
+        },
+      },
+      [{ id: "tourist-trip-schema", value: { "@type": "TouristTrip", name: "</script>" } }],
+    );
+
+    expect(html).toContain('hreflang="en" href="https://www.morocco-incoming.com/circuits/imperial-cities-morocco"');
+    expect(html).toContain('hreflang="fr" href="https://www.morocco-incoming.com/fr/circuits/imperial-cities-morocco"');
+    expect(html).toContain('id="tourist-trip-schema"');
+    expect(html).not.toContain("</script></script>");
   });
 });

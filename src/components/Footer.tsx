@@ -2,9 +2,12 @@ import { Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { Mail, MapPin, MessageCircle } from "lucide-react";
+import { localizedPath } from "@/lib/locale-routes";
 
 export default function Footer() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
+  const isFr = locale === "fr";
+  const pathFor = (path: string) => localizedPath(path, locale);
   const {
     email,
     phone,
@@ -14,6 +17,36 @@ export default function Footer() {
     license,
     iata,
   } = useSiteSettings();
+  const exploreLinks = isFr
+    ? [
+        { label: "Accueil", path: "/fr" },
+        { label: "Catalogue de circuits", path: "/fr/circuits" },
+        { label: "Services", path: "/fr/services" },
+        { label: "MICE", path: "/fr/mice-morocco" },
+        { label: "Agence réceptive", path: "/fr/incoming-agency-morocco" },
+      ]
+    : [
+        { label: t("nav.circuits"), path: "/circuits" },
+        { label: t("nav.destinations"), path: "/destinations" },
+        { label: t("nav.services"), path: "/services" },
+        { label: t("nav.mice"), path: "/mice" },
+        { label: t("nav.b2b"), path: "/b2b" },
+        { label: t("nav.blog"), path: "/blog" },
+      ];
+  const b2bLinks = isFr
+    ? [
+        { label: "Agence réceptive au Maroc", path: "/fr/incoming-agency-morocco" },
+        { label: "Circuits pour agences de voyage", path: "/fr/morocco-tours-for-travel-agencies" },
+        { label: "MICE au Maroc", path: "/fr/mice-morocco" },
+        { label: "Services réceptifs", path: "/fr/services" },
+      ]
+    : [
+        { label: "DMC Morocco", path: "/dmc-morocco" },
+        { label: "Incoming Agency Morocco", path: "/incoming-agency-morocco" },
+        { label: "Tours for Travel Agencies", path: "/morocco-tours-for-travel-agencies" },
+        { label: "Morocco Group Tours", path: "/morocco-group-tours" },
+        { label: "MICE Morocco", path: "/mice-morocco" },
+      ];
 
   return (
     <footer className="bg-[#0F172A] text-gray-300">
@@ -25,13 +58,13 @@ export default function Footer() {
               Morocco Incoming by Suenos Travel
             </h3>
             <p className="text-sm text-gray-400 leading-relaxed">
-              Licensed Morocco DMC and incoming agency for international agencies,
-              tour operators, MICE planners, and corporate groups. Based in
-              Agadir &amp; Casablanca.
+              {isFr
+                ? "DMC et agence réceptive au Maroc pour les agences internationales, les tour-opérateurs, les organisateurs MICE et les groupes d'entreprise. Équipe basée à Agadir et Casablanca."
+                : "Licensed Morocco DMC and incoming agency for international agencies, tour operators, MICE planners, and corporate groups. Based in Agadir & Casablanca."}
             </p>
             <div className="flex flex-wrap items-center gap-2 text-sm">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#A91D2D]/20 text-[#E8A0A0] text-xs font-medium">
-                Licensed Agency {license}
+                {isFr ? "Agence agréée" : "Licensed Agency"} {license}
               </span>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-medium">
                 IATA {iata}
@@ -45,14 +78,7 @@ export default function Footer() {
               {t("footer.explore")}
             </h4>
             <ul className="space-y-2.5">
-              {[
-                { label: t("nav.circuits"), path: "/circuits" },
-                { label: t("nav.destinations"), path: "/destinations" },
-                { label: t("nav.services"), path: "/services" },
-                { label: t("nav.mice"), path: "/mice" },
-                { label: t("nav.b2b"), path: "/b2b" },
-                { label: t("nav.blog"), path: "/blog" },
-              ].map((item) => (
+              {exploreLinks.map((item) => (
                 <li key={item.path}>
                   <Link
                     to={item.path}
@@ -68,16 +94,10 @@ export default function Footer() {
           {/* Col 3: B2B SEO Links */}
           <div>
             <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
-              B2B Morocco Services
+              {isFr ? "Services B2B au Maroc" : "B2B Morocco Services"}
             </h4>
             <ul className="space-y-2.5">
-              {[
-                { label: "DMC Morocco", path: "/dmc-morocco" },
-                { label: "Incoming Agency Morocco", path: "/incoming-agency-morocco" },
-                { label: "Tours for Travel Agencies", path: "/morocco-tours-for-travel-agencies" },
-                { label: "Morocco Group Tours", path: "/morocco-group-tours" },
-                { label: "MICE Morocco", path: "/mice-morocco" },
-              ].map((item) => (
+              {b2bLinks.map((item) => (
                 <li key={item.path}>
                   <Link
                     to={item.path}
@@ -96,12 +116,18 @@ export default function Footer() {
               {t("footer.company")}
             </h4>
             <ul className="space-y-2.5">
-              {[
-                { label: t("nav.about"), path: "/about" },
-                { label: t("nav.contact"), path: "/contact" },
-                { label: t("footer.privacy"), path: "/privacy" },
-                { label: t("footer.terms"), path: "/terms" },
-              ].map((item) => (
+              {(isFr
+                ? [
+                    { label: "Accueil", path: "/fr" },
+                    { label: "À propos", path: "/fr/about" },
+                    { label: "Nos services", path: "/fr/services" },
+                  ]
+                : [
+                    { label: t("nav.about"), path: pathFor("/about") },
+                    { label: t("nav.contact"), path: pathFor("/contact") },
+                    { label: t("footer.privacy"), path: pathFor("/privacy") },
+                    { label: t("footer.terms"), path: pathFor("/terms") },
+                  ]).map((item) => (
                 <li key={item.path}>
                   <Link
                     to={item.path}
@@ -121,16 +147,16 @@ export default function Footer() {
             </h4>
             <div className="space-y-3">
               <Link
-                to="/quote"
+                to={pathFor("/quote")}
                 className="block w-full bg-[#A91D2D] hover:bg-[#8a1824] text-center text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
               >
                 {t("nav.quote")}
               </Link>
               <Link
-                to="/b2b"
+                to={isFr ? "/fr/incoming-agency-morocco" : "/b2b"}
                 className="block w-full border border-white/20 hover:bg-white/10 text-center text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
               >
-                Become a B2B Partner
+                {isFr ? "Devenir partenaire B2B" : "Become a B2B Partner"}
               </Link>
               <div className="space-y-2 pt-2">
                 <a
@@ -151,14 +177,14 @@ export default function Footer() {
                 </a>
                 <div className="flex items-start gap-2 text-sm text-gray-400">
                   <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
-                  <span>Casablanca &amp; Agadir, Morocco</span>
+                  <span>{isFr ? "Casablanca et Agadir, Maroc" : "Casablanca & Agadir, Morocco"}</span>
                 </div>
                 <div className="text-xs text-gray-500 pl-6 space-y-0.5">
                   <p>{addressCasablanca}</p>
                   <p>{addressAgadir}</p>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-400 pt-1">
-                  <span className="text-xs">Phone: {phone}</span>
+                  <span className="text-xs">{isFr ? "Téléphone" : "Phone"}: {phone}</span>
                 </div>
               </div>
             </div>
@@ -171,12 +197,8 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Suenos Travel. {t("footer.rights")}
           </p>
           <div className="flex items-center gap-4 text-xs text-gray-500">
-            <Link to="/privacy" className="hover:text-gray-300 transition-colors">
-              {t("footer.privacy")}
-            </Link>
-            <Link to="/terms" className="hover:text-gray-300 transition-colors">
-              {t("footer.terms")}
-            </Link>
+            {!isFr && <Link to="/privacy" className="hover:text-gray-300 transition-colors">{t("footer.privacy")}</Link>}
+            {!isFr && <Link to="/terms" className="hover:text-gray-300 transition-colors">{t("footer.terms")}</Link>}
             <Link to="/admin/login" className="hover:text-gray-300 transition-colors">
               {t("nav.admin")}
             </Link>

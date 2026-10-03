@@ -1,19 +1,17 @@
-import { useParams, Link } from "react-router";
+import { useParams, Link, useLocation } from "react-router";
 import { useI18n } from "@/providers/i18n";
 import { trpc } from "@/providers/trpc";
-import { Helmet } from "react-helmet-async";
 import SEO from "@/components/SEO";
+import StructuredData from "@/components/StructuredData";
 import { ArrowLeft, Clock, MapPin, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { TouristTrip, WithContext } from "schema-dts";
 import { optimizedImageUrl } from "@/lib/images";
-import { safeJsonLd } from "@/lib/structured-data";
+import { buildTourSeoMeta } from "@/lib/seo-meta";
+import { buildTouristTripSchema } from "@/lib/tour-schema";
 import { WHATSAPP_URL } from "@/lib/contact-details";
-
-const BASE_URL = "https://www.morocco-incoming.com";
-const DEFAULT_TOUR_IMAGE = "/images/hero-desert.jpg";
-const DEFAULT_TOUR_DESCRIPTION =
-  "Tailor-made Morocco tour for travel agencies, tour operators, groups and B2B partners with Suenos Travel DMC.";
+import { useSsrData } from "@/providers/ssr-data";
+import { localizedPath } from "@/lib/locale-routes";
+import { localizeTourDuration, localizeTourType } from "@/lib/tour-display";
 
 function splitText(text?: string | null) {
   if (!text) return [];
@@ -24,37 +22,29 @@ function splitText(text?: string | null) {
     .filter(Boolean);
 }
 
-function formatType(type?: string) {
-  return type ? type.replace(/_/g, " ") : "-";
-}
-
-function cleanText(value?: string | null) {
-  return value?.replace(/\s+/g, " ").trim() ?? "";
-}
-
-function trimDescription(value?: string | null, maxLength = 155) {
-  const text = cleanText(value);
-  if (text.length <= maxLength) return text;
-
-  const trimmed = text.slice(0, maxLength).trim();
-  const lastSpace = trimmed.lastIndexOf(" ");
-  return `${(lastSpace > 80 ? trimmed.slice(0, lastSpace) : trimmed).trim()}...`;
-}
-
-function toAbsoluteUrl(value: string) {
-  if (/^https?:\/\//i.test(value)) return value;
-  const path = value.startsWith("/") ? value : `/${value}`;
-  return `${BASE_URL}${path}`;
-}
-
 export default function CircuitDetail() {
   const { slug } = useParams<{ slug: string }>();
+  const location = useLocation();
   const { locale } = useI18n();
+  const ssrData = useSsrData();
   const isFr = locale === "fr";
-  const { data, isLoading } = trpc.public.getTour.useQuery(
+  const matchingSsrTour = ssrData.routeData.kind === "tour"
+    && ssrData.routeData.slug === slug
+    && ssrData.routeData.locale === locale
+      ? ssrData.routeData
+      : undefined;
+  const initialTour = matchingSsrTour?.state === "found" || matchingSsrTour?.state === "missing"
+    ? matchingSsrTour.data ?? null
+    : undefined;
+  const { data, isLoading, isError: isQueryError } = trpc.public.getTour.useQuery(
     { slug: slug ?? "", locale },
-    { enabled: Boolean(slug) },
+    {
+      enabled: Boolean(slug) && matchingSsrTour?.state !== "unavailable",
+      initialData: initialTour,
+      staleTime: initialTour !== undefined ? 5 * 60 * 1000 : 0,
+    },
   );
+  const isError = isQueryError || matchingSsrTour?.state === "unavailable";
 
   const tour = data?.tours;
   const translation = data?.tour_translations;
@@ -63,37 +53,66 @@ export default function CircuitDetail() {
     .map((city) => city.name)
     .filter((name): name is string => Boolean(name));
   const cityText = cityNames.join(", ");
-  const quotePath = `/quote${slug ? `?tour=${encodeURIComponent(slug)}` : ""}`;
+  const cataloguePath = isFr ? "/fr/circuits" : "/circuits";
+  const quotePath = `${isFr ? "/fr/quote" : "/quote"}${slug ? `?tour=${encodeURIComponent(slug)}` : ""}`;
 
   if (isLoading) {
     return (
       <section className="bg-[#F9F7F4] py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-sm text-[#6B7280]">Loading tour...</p>
+          <p className="text-sm text-[#6B7280]">{isFr ? "Chargement du circuit…" : "Loading tour..."}</p>
         </div>
       </section>
     );
   }
 
+  if (isError) {
+    return (
+      <>
+        <SEO />
+        <section className="bg-[#F9F7F4] py-24">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+            <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#1F2937]">
+              {isFr ? "Circuit temporairement indisponible" : "Tour temporarily unavailable"}
+            </h1>
+            <p className="text-[#4B5563]">
+              {isFr
+                ? "Nous n'avons pas pu charger ce circuit. Veuillez réessayer dans quelques instants."
+                : "We could not load this tour. Please try again in a moment."}
+            </p>
+          </div>
+        </section>
+      </>
+    );
+  }
+
   if (!tour || !translation) {
     return (
-      <section className="bg-[#F9F7F4] py-24">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#1F2937]">
-            {isFr ? "Circuit introuvable" : "Tour not found"}
-          </h1>
-          <p className="text-[#4B5563]">
-            {isFr
-              ? "Ce circuit n'est pas disponible pour le moment."
-              : "This tour is not available right now."}
-          </p>
-          <Button asChild variant="outline" className="rounded-full">
-            <Link to="/circuits">
-              <ArrowLeft className="h-4 w-4 mr-2" /> {isFr ? "Retour aux circuits" : "Back to circuits"}
-            </Link>
-          </Button>
-        </div>
-      </section>
+      <>
+        <SEO
+          title="Page Not Found | Suenos Travel DMC Morocco"
+          description="The requested tour could not be found."
+          canonical={`/circuits/${slug ?? "not-found"}`}
+          noindex
+        />
+        <section className="bg-[#F9F7F4] py-24">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+            <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#1F2937]">
+              {isFr ? "Circuit introuvable" : "Tour not found"}
+            </h1>
+            <p className="text-[#4B5563]">
+              {isFr
+                ? "Ce circuit n'est pas disponible pour le moment."
+                : "This tour is not available right now."}
+            </p>
+            <Button asChild variant="outline" className="rounded-full">
+              <Link to={cataloguePath}>
+                <ArrowLeft className="h-4 w-4 mr-2" /> {isFr ? "Retour aux circuits" : "Back to circuits"}
+              </Link>
+            </Button>
+          </div>
+        </section>
+      </>
     );
   }
 
@@ -104,43 +123,33 @@ export default function CircuitDetail() {
   const title = translation.title ?? tour.slug;
   const description = translation.description ?? "";
   const tourSlug = slug ?? tour.slug;
-  const canonicalPath = `/circuits/${tourSlug}`;
-  const seoTitle =
-    cleanText(translation.metaTitle) ||
-    `${title} | Morocco DMC Tour for Agencies`;
-  const seoDescription =
-    trimDescription(translation.metaDescription) ||
-    trimDescription(description) ||
-    DEFAULT_TOUR_DESCRIPTION;
-  const seoImage = tour.mainImage || DEFAULT_TOUR_IMAGE;
-  const absoluteUrl = toAbsoluteUrl(canonicalPath);
-  const absoluteImage = toAbsoluteUrl(seoImage);
-  const tripJsonLd: WithContext<TouristTrip> = {
-    "@context": "https://schema.org",
-    "@type": "TouristTrip",
-    name: title,
-    description: seoDescription,
-    image: absoluteImage,
-    provider: {
-      "@type": "Organization",
-      name: "Suenos Travel",
-      url: BASE_URL,
-    },
-    touristType: "Travel agencies, tour operators, private groups and corporate travelers",
-    url: absoluteUrl,
-  };
+  const localizedDuration = localizeTourDuration(tour.duration, locale);
+  const localizedType = localizeTourType(tour.type, locale);
+  const canonicalPath = location.pathname || localizedPath(`/circuits/${tourSlug}`, locale);
+  const seo = buildTourSeoMeta({
+    pathname: canonicalPath,
+    title,
+    description,
+    metaTitle: translation.metaTitle,
+    metaDescription: translation.metaDescription,
+    image: tour.mainImage,
+    dateModified: tour.updatedAt?.toISOString(),
+    hasFrenchEquivalent: data.hasFrenchTranslation,
+  });
+  const tripJsonLd = buildTouristTripSchema({
+    title,
+    description: seo.description,
+    image: seo.image,
+    canonical: seo.canonical,
+    locale,
+  });
 
   return (
     <>
       <SEO
-        title={seoTitle}
-        description={seoDescription}
-        canonical={canonicalPath}
-        image={seoImage}
+        {...seo}
       />
-      <Helmet>
-        <script type="application/ld+json">{safeJsonLd(tripJsonLd)}</script>
-      </Helmet>
+      <StructuredData id="tourist-trip-schema" value={tripJsonLd} />
 
       <section className="bg-[#F9F7F4]">
         <div className="relative h-[400px] md:h-[500px]">
@@ -152,12 +161,12 @@ export default function CircuitDetail() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
-              <Link to="/circuits" className="inline-flex items-center gap-1 text-white/80 text-sm mb-4 hover:text-white">
+              <Link to={cataloguePath} className="inline-flex items-center gap-1 text-white/80 text-sm mb-4 hover:text-white">
                 <ArrowLeft className="h-4 w-4" /> {isFr ? "Retour aux circuits" : "Back to circuits"}
               </Link>
               <h1 className="font-serif text-3xl md:text-5xl font-bold text-white">{title}</h1>
               <div className="flex flex-wrap items-center gap-4 mt-4 text-white/80 text-sm">
-                {tour.duration && <span className="flex items-center gap-1"><Clock className="h-4 w-4" /> {tour.duration}</span>}
+                {localizedDuration && <span className="flex items-center gap-1"><Clock className="h-4 w-4" /> {localizedDuration}</span>}
                 {cityText && <span className="flex items-center gap-1"><MapPin className="h-4 w-4" /> {cityText}</span>}
               </div>
             </div>
@@ -243,7 +252,7 @@ export default function CircuitDetail() {
                 <p className="text-[#4B5563] leading-relaxed">
                   {isFr ? (
                     <>
-                      Ce programme peut etre adapte avec nos <Link to="/services" className="text-[#A91D2D] font-medium hover:underline">services DMC Maroc</Link>, conditions <Link to="/b2b" className="text-[#A91D2D] font-medium hover:underline">partenaire B2B</Link> et support <Link to="/mice" className="text-[#A91D2D] font-medium hover:underline">MICE Maroc</Link> pour groupes, incentives ou departs en serie.
+                      Ce programme peut être adapté avec nos <Link to="/fr/services" className="text-[#A91D2D] font-medium hover:underline">services DMC au Maroc</Link>, notre accompagnement <Link to="/fr/incoming-agency-morocco" className="text-[#A91D2D] font-medium hover:underline">partenaire B2B</Link> et notre support <Link to="/fr/mice-morocco" className="text-[#A91D2D] font-medium hover:underline">MICE au Maroc</Link> pour les groupes, incentives ou départs en série.
                     </>
                   ) : (
                     <>
@@ -258,8 +267,8 @@ export default function CircuitDetail() {
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 sticky top-24">
                 <h3 className="font-semibold text-[#1F2937] mb-4">{isFr ? "Demander ce programme" : "Request this Program"}</h3>
                 <div className="space-y-3 text-sm">
-                  {tour.duration && <div className="flex justify-between gap-4"><span className="text-[#6B7280]">{isFr ? "Durée" : "Duration"}</span><span className="font-medium">{tour.duration}</span></div>}
-                  <div className="flex justify-between gap-4"><span className="text-[#6B7280]">{isFr ? "Type" : "Type"}</span><span className="font-medium capitalize">{formatType(tour.type)}</span></div>
+                  {localizedDuration && <div className="flex justify-between gap-4"><span className="text-[#6B7280]">{isFr ? "Durée" : "Duration"}</span><span className="font-medium">{localizedDuration}</span></div>}
+                  {localizedType && <div className="flex justify-between gap-4"><span className="text-[#6B7280]">Type</span><span className="font-medium">{localizedType}</span></div>}
                   {cityText && <div className="flex justify-between gap-4"><span className="text-[#6B7280]">{isFr ? "Villes" : "Cities"}</span><span className="font-medium text-right">{cityText}</span></div>}
                 </div>
                 <Button asChild className="mt-6 w-full bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full">
@@ -271,8 +280,8 @@ export default function CircuitDetail() {
                   <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">WhatsApp</a>
                 </Button>
                 <Button asChild variant="outline" className="mt-3 w-full rounded-full">
-                  <Link to="/b2b">
-                    {isFr ? "Devenir partenaire B2B" : "Become a B2B Partner"}
+                  <Link to={isFr ? "/fr/incoming-agency-morocco" : "/b2b"}>
+                    {isFr ? "Services pour partenaires B2B" : "Become a B2B Partner"}
                   </Link>
                 </Button>
               </div>

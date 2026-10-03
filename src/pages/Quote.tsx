@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { trackQuoteFormSubmit } from "@/lib/tracking";
 import { getRequestedTourSlug, getValidatedTourContext } from "@/lib/quote-tour-context";
+import { getRequestedDestinationSlug, getValidatedDestinationContext } from "@/lib/public-destinations";
+import { buildQuoteRequestInput } from "@/lib/quote-request";
 import { useSsrData } from "@/providers/ssr-data";
 
 export default function Quote() {
@@ -28,6 +30,8 @@ export default function Quote() {
   const [brief, setBrief] = useState("");
   const requestedTourSlug = getRequestedTourSlug(location.search);
   const hasTourParameter = new URLSearchParams(location.search).has("tour");
+  const hasDestinationParameter = new URLSearchParams(location.search).has("destination");
+  const destinationContext = getValidatedDestinationContext(location.search, locale);
   const matchingSsrTour = ssrData.routeData.kind === "quote-tour"
     && ssrData.routeData.slug === requestedTourSlug
     && ssrData.routeData.locale === locale
@@ -63,6 +67,8 @@ export default function Quote() {
     || matchingSsrTour?.state === "unavailable"
     || (!isTourLoading && (isTourError || !selectedTour))
   );
+  const isInvalidDestinationContext = hasDestinationParameter
+    && !getRequestedDestinationSlug(location.search);
   const isTourContextPending = Boolean(requestedTourSlug) && isTourLoading;
 
   const createQuote = trpc.forms.createQuote.useMutation({
@@ -147,16 +153,18 @@ export default function Quote() {
                   if (!name.trim()) { setError(isFr ? "La personne à contacter est requise" : "Contact person is required"); return; }
                   if (!email.trim()) { setError(isFr ? "L'email est requis" : "Email is required"); return; }
                   if (!brief.trim()) { setError(isFr ? "La description de la demande est requise" : "Request / brief is required"); return; }
-                  createQuote.mutate({
+                  createQuote.mutate(buildQuoteRequestInput({
                     email,
                     agencyName: agency,
                     contactPerson: name,
                     whatsapp,
                     dates,
                     numberOfPax: pax ? Number.parseInt(pax, 10) : undefined,
-                    preferredCircuit: tourContext?.preferredCircuit,
                     specialRequests: brief,
-                  });
+                  }, {
+                    preferredDestinations: destinationContext?.preferredDestinations,
+                    preferredCircuit: tourContext?.preferredCircuit,
+                  }));
                 }} className="space-y-5">
                   <h2 className="font-serif text-xl font-bold text-[#1F2937] mb-4">
                     {isFr ? "Votre projet" : "Your project"}
@@ -181,11 +189,38 @@ export default function Quote() {
                     </div>
                   )}
 
+                  {destinationContext && (
+                    <div className="rounded-xl border border-[#A91D2D]/20 bg-[#A91D2D]/5 p-4">
+                      <Label htmlFor="selected-destination">
+                        {isFr ? "Destination sélectionnée" : "Selected destination"}
+                      </Label>
+                      <Input
+                        id="selected-destination"
+                        className="mt-1 bg-white"
+                        value={destinationContext.title}
+                        readOnly
+                      />
+                      <p className="mt-2 text-xs text-[#6B7280]">
+                        {isFr
+                          ? "Cette destination sera jointe à votre demande de devis."
+                          : "This destination will be included with your quote request."}
+                      </p>
+                    </div>
+                  )}
+
                   {isInvalidTourContext && (
                     <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800" role="status">
                       {isFr
                         ? "Le programme sélectionné n'est pas disponible. Vous pouvez toujours envoyer une demande sur mesure."
                         : "The selected programme is unavailable. You can still send a custom request."}
+                    </p>
+                  )}
+
+                  {isInvalidDestinationContext && (
+                    <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800" role="status">
+                      {isFr
+                        ? "La destination sélectionnée n'est pas disponible. Vous pouvez toujours envoyer une demande sur mesure."
+                        : "The selected destination is unavailable. You can still send a custom request."}
                     </p>
                   )}
 

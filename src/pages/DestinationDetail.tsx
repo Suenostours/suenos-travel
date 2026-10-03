@@ -503,22 +503,22 @@ export default function DestinationDetail() {
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="mt-3 w-full rounded-full">
-                  <Link to="/quote">
+                  <Link to={quotePath}>
                     {isFr ? "Programme sur mesure" : "Request a Tailor-Made Program"}
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="mt-3 w-full rounded-full">
-                  <Link to="/circuits">
+                  <Link to="/morocco-tours-for-travel-agencies">
                     {isFr ? "Voir les circuits Maroc" : "View Morocco Circuits"}
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="mt-3 w-full rounded-full">
-                  <Link to="/mice">
+                  <Link to="/mice-morocco">
                     {isFr ? "Support MICE" : "MICE Support"}
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="mt-3 w-full rounded-full">
-                  <Link to="/b2b">
+                  <Link to="/incoming-agency-morocco">
                     {isFr ? "Partenariat B2B" : "B2B Partnership"}
                   </Link>
                 </Button>

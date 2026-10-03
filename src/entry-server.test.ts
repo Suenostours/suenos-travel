@@ -103,6 +103,18 @@ describe("incremental SSR", () => {
     ] as const;
 
     expect(enHome).toContain("Your Local");
+    for (const path of [
+      "/dmc-morocco",
+      "/incoming-agency-morocco",
+      "/morocco-tours-for-travel-agencies",
+      "/morocco-group-tours",
+      "/mice-morocco",
+      "/destinations",
+      "/destinations/marrakech",
+      "/destinations/merzouga",
+    ]) {
+      expect(enHome).toContain(`href="${path}"`);
+    }
     for (const [pathname, heading, section] of routes) {
       const html = renderApp(pathname, {
         pathname,
@@ -148,6 +160,32 @@ describe("incremental SSR", () => {
     });
     expect(selectedQuote).toContain("Programme sélectionné");
     expect(selectedQuote).toContain('value="Villes impériales du Maroc"');
+
+    const selectedDestinationQuote = renderApp(
+      "/fr/quote?tour=imperial-cities-morocco&destination=fes",
+      {
+        pathname: "/fr/quote",
+        locale: "fr",
+        routeData: {
+          kind: "quote-tour",
+          slug: "imperial-cities-morocco",
+          locale: "fr",
+          state: "found",
+          data: syntheticTour("fr"),
+        },
+      },
+    );
+    expect(selectedDestinationQuote).toContain("Programme sélectionné");
+    expect(selectedDestinationQuote).toContain("Destination sélectionnée");
+    expect(selectedDestinationQuote).toContain('value="Fès"');
+
+    const invalidDestinationQuote = renderApp("/quote?destination=../../admin", {
+      pathname: "/quote",
+      locale: "en",
+      routeData: { kind: "none" },
+    });
+    expect(invalidDestinationQuote).toContain("The selected destination is unavailable");
+    expect(invalidDestinationQuote).not.toContain("Selected destination</label>");
 
     const unavailableQuote = renderApp("/fr/quote?tour=imperial-cities-morocco", {
       pathname: "/fr/quote",

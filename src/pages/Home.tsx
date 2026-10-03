@@ -33,18 +33,18 @@ import { optimizedImageUrl } from "@/lib/images";
 import { PRIMARY_PHONE_DISPLAY, WHATSAPP_URL } from "@/lib/contact-details";
 
 const servicesData = [
-  { icon: Compass, title: "Tailor-Made Morocco Tours", desc: "Custom-designed itineraries crafted to match your clients' preferences, pace, and interests." },
-  { icon: Network, title: "B2B Incoming Services", desc: "Complete ground handling with competitive net rates and dedicated support for travel partners." },
-  { icon: Landmark, title: "Cultural & Imperial Cities", desc: "Expert-led guided circuits through Morocco's historic imperial cities and UNESCO sites." },
-  { icon: Tent, title: "Sahara Desert Experiences", desc: "Authentic desert camps, camel treks, and starlit nights in the Merzouga dunes." },
-  { icon: Briefcase, title: "MICE & Corporate Travel", desc: "Professional planning for meetings, incentives, conferences, and corporate events." },
-  { icon: Crown, title: "Luxury & Premium Travel", desc: "VIP experiences, luxury riads, private guides, and exclusive access for discerning travelers." },
-  { icon: Baby, title: "Family & Group Travel", desc: "Safe, engaging, and well-paced programs designed for families and groups of all sizes." },
-  { icon: Car, title: "Transport & Transfers", desc: "Airport pickups, private vehicles, and reliable transport across all Moroccan destinations." },
-  { icon: BedDouble, title: "Hotels & Riads", desc: "Curated accommodation booking from boutique riads to international hotel chains." },
-  { icon: UserCheck, title: "Guides & Local Experiences", desc: "Multilingual, licensed guides with deep cultural knowledge and storytelling expertise." },
-  { icon: Mountain, title: "Sahara & Adventure", desc: "Trekking, mountain expeditions, and outdoor adventures for thrill-seeking travelers." },
-  { icon: Gift, title: "Incentive Travel", desc: "Reward programs and motivational trips that create lasting memories for teams and clients." },
+  { icon: Compass, title: "Tailor-Made Morocco Tours", desc: "Custom-designed itineraries crafted to match your clients' preferences, pace, and interests.", path: "/morocco-tours-for-travel-agencies" },
+  { icon: Network, title: "B2B Incoming Services", desc: "Complete ground handling with competitive net rates and dedicated support for travel partners.", path: "/incoming-agency-morocco" },
+  { icon: Landmark, title: "Cultural & Imperial Cities", desc: "Expert-led guided circuits through Morocco's historic imperial cities and UNESCO sites.", path: "/destinations/marrakech" },
+  { icon: Tent, title: "Sahara Desert Experiences", desc: "Authentic desert camps, camel treks, and starlit nights in the Merzouga dunes.", path: "/destinations/merzouga" },
+  { icon: Briefcase, title: "MICE & Corporate Travel", desc: "Professional planning for meetings, incentives, conferences, and corporate events.", path: "/mice-morocco" },
+  { icon: Crown, title: "Luxury & Premium Travel", desc: "VIP experiences, luxury riads, private guides, and exclusive access for discerning travelers.", path: "/morocco-tours-for-travel-agencies" },
+  { icon: Baby, title: "Family & Group Travel", desc: "Safe, engaging, and well-paced programs designed for families and groups of all sizes.", path: "/morocco-group-tours" },
+  { icon: Car, title: "Transport & Transfers", desc: "Airport pickups, private vehicles, and reliable transport across all Moroccan destinations.", path: "/services" },
+  { icon: BedDouble, title: "Hotels & Riads", desc: "Curated accommodation booking from boutique riads to international hotel chains.", path: "/services" },
+  { icon: UserCheck, title: "Guides & Local Experiences", desc: "Multilingual, licensed guides with deep cultural knowledge and storytelling expertise.", path: "/services" },
+  { icon: Mountain, title: "Sahara & Adventure", desc: "Trekking, mountain expeditions, and outdoor adventures for thrill-seeking travelers.", path: "/destinations/merzouga" },
+  { icon: Gift, title: "Incentive Travel", desc: "Reward programs and motivational trips that create lasting memories for teams and clients.", path: "/mice-morocco" },
 ];
 
 const testimonials = [
@@ -194,12 +194,14 @@ export default function Home() {
               Separate pages cover destination management, incoming operations, program discovery, group delivery and corporate travel.
             </p>
           </div>
-          <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { title: "DMC Morocco", description: "Full local destination management for agencies.", path: "/dmc-morocco" },
               { title: "Incoming Agency Morocco", description: "Ground handling and local operations.", path: "/incoming-agency-morocco" },
-              { title: "Morocco Circuits", description: "Discover B2B routes and program ideas.", path: "/circuits" },
+              { title: "Tours for Travel Agencies", description: "Tailor-made Morocco programs built for resale.", path: "/morocco-tours-for-travel-agencies" },
+              { title: "Morocco Group Tours", description: "Group routing, guides and on-site operations.", path: "/morocco-group-tours" },
               { title: "MICE Morocco", description: "Incentive and corporate group operations.", path: "/mice-morocco" },
+              { title: "Morocco Destinations", description: "Compare Marrakech, Agadir, Fes and Sahara hubs.", path: "/destinations" },
               { title: "B2B Partnership", description: "Review agency conditions and partner support.", path: "/b2b" },
               { title: "Request a Quote", description: "Send dates, group size and your agency brief.", path: "/quote" },
             ].map((item) => (
@@ -272,16 +274,17 @@ export default function Home() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {servicesData.map((s) => (
-              <div
+              <Link
                 key={s.title}
-                className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                to={s.path}
+                className="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-[#A91D2D]/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A91D2D] focus-visible:ring-offset-2 transition-all"
               >
                 <div className="w-10 h-10 rounded-lg bg-[#A91D2D]/10 flex items-center justify-center mb-4">
                   <s.icon className="h-5 w-5 text-[#A91D2D]" />
                 </div>
-                <h3 className="font-semibold text-[#1F2937] text-sm mb-2">{s.title}</h3>
+                <h3 className="font-semibold text-[#1F2937] group-hover:text-[#A91D2D] text-sm mb-2 transition-colors">{s.title}</h3>
                 <p className="text-xs text-[#6B7280] leading-relaxed">{s.desc}</p>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

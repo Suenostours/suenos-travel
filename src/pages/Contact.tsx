@@ -33,12 +33,7 @@ export default function Contact() {
   if (submitted) {
     return (
       <main className="min-h-screen bg-[#F8F7F4] pt-24 pb-16 flex items-center justify-center">
-        <SEO
-          title="Contact Suenos Travel | DMC Morocco for Agencies"
-          description="Contact Suenos Travel, a Morocco DMC for agencies, tour operators, companies, MICE and group travel requests."
-          canonical="/contact"
-          image="/images/about-riad.jpg"
-        />
+        <SEO />
         <div className="text-center max-w-md mx-auto px-4">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Check className="h-8 w-8 text-green-600" />
@@ -61,12 +56,7 @@ export default function Contact() {
 
   return (
     <main className="min-h-screen bg-[#F8F7F4]">
-      <SEO
-        title="Contact Suenos Travel | DMC Morocco for Agencies"
-        description="Contact Suenos Travel, a Morocco DMC for agencies, tour operators, companies, MICE and group travel requests."
-        canonical="/contact"
-        image="/images/about-riad.jpg"
-      />
+      <SEO />
 
       <section className="bg-gradient-to-br from-[#A91D2D] to-[#1F2937] py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 text-center">

@@ -1,29 +1,28 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { Helmet } from "react-helmet-async";
 import { useI18n } from "@/providers/i18n";
 import { trpc } from "@/providers/trpc";
 import SEO from "@/components/SEO";
 import { Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { optimizedImageUrl } from "@/lib/images";
-
-const BASE_URL = "https://www.morocco-incoming.com";
+import { useSsrData } from "@/providers/ssr-data";
+import { localizeTourDuration } from "@/lib/tour-display";
 
 const typeFilters = [
   { key: "all", label: "All", labelFr: "Tous" },
-  { key: "private", label: "Private", labelFr: "Prive" },
+  { key: "private", label: "Private", labelFr: "Privé" },
   { key: "small_group", label: "Small Group", labelFr: "Petit groupe" },
   { key: "corporate", label: "Corporate", labelFr: "Corporate" },
-  { key: "desert", label: "Desert", labelFr: "Desert" },
+  { key: "desert", label: "Desert", labelFr: "Désert" },
   { key: "family", label: "Family", labelFr: "Famille" },
   { key: "luxury", label: "Luxury", labelFr: "Luxe" },
   { key: "cultural", label: "Cultural", labelFr: "Culturel" },
   { key: "adventure", label: "Adventure", labelFr: "Aventure" },
-  { key: "short_break", label: "Short Break", labelFr: "Court sejour" },
-  { key: "coast", label: "Coast", labelFr: "Cote" },
+  { key: "short_break", label: "Short Break", labelFr: "Court séjour" },
+  { key: "coast", label: "Coast", labelFr: "Côte" },
   { key: "sports", label: "Sports", labelFr: "Sports" },
-  { key: "wellness", label: "Wellness", labelFr: "Bien-etre" },
+  { key: "wellness", label: "Wellness", labelFr: "Bien-être" },
   { key: "romantic", label: "Romantic", labelFr: "Romantique" },
 ];
 
@@ -59,68 +58,79 @@ const typeColors: Record<string, string> = {
   romantic: "bg-rose-100 text-rose-800",
 };
 
-function getTypeLabel(type: string) {
-  return typeLabels[type] ?? type.replace(/_/g, " ");
+const frenchTypeLabels: Record<string, string> = {
+  private: "Privé",
+  small_group: "Petit groupe",
+  corporate: "Entreprise",
+  desert: "Désert",
+  family: "Famille",
+  luxury: "Luxe et bien-être",
+  cultural: "Culture et histoire",
+  adventure: "Aventure et nature",
+  short_break: "Ville et nature",
+  coast: "Côte",
+  sports: "Sports",
+  wellness: "Bien-être",
+  romantic: "Romantique et luxe",
+};
+
+function getTypeLabel(type: string, locale: "en" | "fr") {
+  return (locale === "fr" ? frenchTypeLabels[type] : typeLabels[type]) ?? type.replace(/_/g, " ");
 }
 
 export default function Circuits() {
   const { locale } = useI18n();
+  const isFr = locale === "fr";
+  const ssrData = useSsrData();
   const [filter, setFilter] = useState("all");
-  const { data: tours = [], isLoading, error } = trpc.public.listTours.useQuery({ locale });
+  const matchingSsrCatalog = ssrData.routeData.kind === "tour-catalog"
+    && ssrData.routeData.locale === locale
+      ? ssrData.routeData
+      : undefined;
+  const initialTours = matchingSsrCatalog?.state === "found" || matchingSsrCatalog?.state === "empty"
+    ? matchingSsrCatalog.data ?? []
+    : undefined;
+  const { data: tours = [], isLoading, error: queryError } = trpc.public.listTours.useQuery(
+    { locale },
+    {
+      enabled: matchingSsrCatalog?.state !== "unavailable",
+      initialData: initialTours,
+      staleTime: initialTours !== undefined ? 5 * 60 * 1000 : 0,
+    },
+  );
+  const error = queryError || matchingSsrCatalog?.state === "unavailable";
 
   const filtered = filter === "all" ? tours : tours.filter((tour) => tour.type === filter);
   const hasTours = tours.length > 0;
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: BASE_URL },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Morocco Circuits and Group Tours for Travel Agencies",
-        item: `${BASE_URL}/circuits`,
-      },
-    ],
-  };
-
   return (
     <>
-      <SEO
-        title="Morocco Circuits for Travel Agencies | B2B Group Tours"
-        description="Explore tailor-made Morocco circuits for travel agencies, tour operators and groups: imperial cities, Sahara routes, coastal stays and private programs."
-        canonical="/circuits"
-        image="/images/circuit-sahara.jpg"
-      />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
-      </Helmet>
+      <SEO />
 
       <section className="bg-[#F9F7F4] py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <nav className="mb-5 text-sm text-[#6B7280]" aria-label="Breadcrumb">
-              <Link to="/" className="hover:text-[#A91D2D]">Home</Link>
+              <Link to={isFr ? "/fr" : "/"} className="hover:text-[#A91D2D]">{isFr ? "Accueil" : "Home"}</Link>
               <span className="mx-2" aria-hidden="true">/</span>
-              <span aria-current="page">Morocco circuits</span>
+              <span aria-current="page">{isFr ? "Circuits au Maroc" : "Morocco circuits"}</span>
             </nav>
             <h1 className="font-serif text-4xl md:text-5xl font-bold text-[#1F2937]">
-              Morocco Circuits and Group Tours for Travel Agencies
+              {isFr ? "Circuits au Maroc pour agences de voyage" : "Morocco Circuits and Group Tours for Travel Agencies"}
             </h1>
             <p className="mt-4 text-[#4B5563] max-w-2xl mx-auto">
-              {locale === "fr"
-                ? "Catalogue de circuits sur mesure pour agences, tour-operateurs, groupes et programmes prives au Maroc."
+              {isFr
+                ? "Découvrez les programmes disposant d'une traduction française complète dans notre catalogue pour agences, tour-opérateurs et groupes."
                 : "Discover tailor-made Morocco circuits for travel agencies and tour operators, including private FIT programs, agency groups and series departures across the imperial cities, Sahara and Atlantic coast."}
             </p>
             <p className="mt-3 text-sm text-[#6B7280] max-w-3xl mx-auto">
-              {locale === "fr"
-                ? "Chaque programme peut inclure guides, transport, hotels, operations locales et devis en tarifs nets agence."
+              {isFr
+                ? "Chaque itinéraire peut être adapté avec guides, transport, hôtels, prestations locales et proposition en tarifs nets pour l'agence."
                 : "Use this catalogue to discover program ideas; every route can be adapted with licensed guides, private transport or coaches, hotels, local operations and a net-rate quotation."}
             </p>
             <p className="mt-3 text-sm text-[#6B7280] max-w-3xl mx-auto">
-              {locale === "fr" ? (
+              {isFr ? (
                 <>
-                  Nos <Link to="/dmc-morocco" className="text-[#A91D2D] font-medium hover:underline">services DMC Maroc</Link> et notre page <Link to="/morocco-group-tours" className="text-[#A91D2D] font-medium hover:underline">groupes agences</Link> expliquent comment nous operons les programmes presentes ici.
+                  Consultez nos <Link to="/fr/services" className="text-[#A91D2D] font-medium hover:underline">services réceptifs</Link> ou notre page <Link to="/fr/morocco-tours-for-travel-agencies" className="text-[#A91D2D] font-medium hover:underline">circuits pour agences</Link> pour préparer un programme adapté.
                 </>
               ) : (
                 <>
@@ -141,36 +151,38 @@ export default function Circuits() {
                     : "bg-white text-[#4B5563] hover:bg-gray-50 border border-gray-200"
                 }`}
               >
-                {locale === "fr" ? f.labelFr : f.label}
+                {isFr ? f.labelFr : f.label}
               </button>
             ))}
           </div>
 
           {isLoading && (
-            <div className="text-center text-sm text-[#6B7280]">Loading tours...</div>
+            <div className="text-center text-sm text-[#6B7280]">{isFr ? "Chargement des circuits…" : "Loading tours..."}</div>
           )}
 
           {error && (
             <div className="bg-white rounded-2xl border border-red-100 p-8 text-center text-sm text-red-700 shadow-sm">
-              Unable to load tours right now.
+              {isFr ? "Le catalogue est temporairement indisponible." : "Unable to load tours right now."}
             </div>
           )}
 
           {!isLoading && !error && !hasTours && (
             <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center text-[#4B5563] shadow-sm">
-              No tours available yet. Please add tours from the admin dashboard.
+              {isFr ? "Aucun circuit traduit en français n'est disponible pour le moment." : "No tours available yet. Please add tours from the admin dashboard."}
             </div>
           )}
 
           {!isLoading && !error && hasTours && filtered.length === 0 && (
             <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center text-[#4B5563] shadow-sm">
-              No tours found for this filter.
+              {isFr ? "Aucun circuit ne correspond à ce filtre." : "No tours found for this filter."}
             </div>
           )}
 
           {!isLoading && !error && filtered.length > 0 && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filtered.map((tour) => (
+              {filtered.map((tour) => {
+                const localizedDuration = localizeTourDuration(tour.duration, locale);
+                return (
                 <div key={tour.slug} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all">
                   <div className="relative h-56 overflow-hidden">
                     {tour.mainImage ? (
@@ -182,61 +194,66 @@ export default function Circuits() {
                     )}
                     <div className="absolute top-3 left-3">
                       <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${typeColors[tour.type] ?? "bg-gray-100 text-gray-700"}`}>
-                        {getTypeLabel(tour.type)}
+                        {getTypeLabel(tour.type, locale)}
                       </span>
                     </div>
                   </div>
                   <div className="p-5 space-y-3">
                     <h3 className="font-semibold text-lg text-[#1F2937]">{tour.title ?? tour.slug}</h3>
-                    {tour.duration && (
+                    {localizedDuration && (
                       <div className="flex items-center gap-4 text-xs text-[#6B7280]">
-                        <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {tour.duration}</span>
+                        <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {localizedDuration}</span>
                       </div>
                     )}
                     {tour.description && <p className="text-sm text-[#4B5563] line-clamp-2">{tour.description}</p>}
                     <Button asChild variant="ghost" className="text-[#A91D2D] hover:text-[#8a1824] p-0 h-auto text-sm font-medium">
-                      <Link to={`/circuits/${tour.slug}`}>
-                        View Details <ArrowRight className="ml-1 h-4 w-4" />
+                      <Link to={`${isFr ? "/fr" : ""}/circuits/${tour.slug}`}>
+                        {isFr ? "Voir le programme" : "View Details"} <ArrowRight className="ml-1 h-4 w-4" />
                       </Link>
                     </Button>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
           <div className="mt-12 rounded-2xl border border-gray-100 bg-[#F3EDE8] p-7 md:p-8">
             <h2 className="font-serif text-2xl font-bold text-[#1F2937]">
-              Build a route around the right Morocco destinations
+              {isFr ? "Un catalogue fondé sur les traductions disponibles" : "Build a route around the right Morocco destinations"}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-[#4B5563]">
-              Compare our <Link to="/destinations/marrakech" className="text-[#A91D2D] font-medium hover:underline">Marrakech programs</Link>, <Link to="/destinations/fes" className="text-[#A91D2D] font-medium hover:underline">Fes and imperial city routes</Link>, <Link to="/destinations/merzouga" className="text-[#A91D2D] font-medium hover:underline">Merzouga Sahara extensions</Link>, <Link to="/destinations/essaouira" className="text-[#A91D2D] font-medium hover:underline">Essaouira coastal stays</Link> or the complete <Link to="/destinations" className="text-[#A91D2D] font-medium hover:underline">Morocco destinations guide</Link>. Share the preferred route through our <Link to="/quote" className="text-[#A91D2D] font-medium hover:underline">B2B quote form</Link> for an adapted proposal.
+              {isFr ? (
+                <>Cette page affiche uniquement les circuits actifs associés à une fiche française complète. Pour un itinéraire différent, consultez nos <Link to="/fr/morocco-tours-for-travel-agencies" className="text-[#A91D2D] font-medium hover:underline">services de conception de circuits</Link> ou envoyez votre brief via le <Link to="/fr/quote" className="text-[#A91D2D] font-medium hover:underline">formulaire de devis</Link>.</>
+              ) : (
+                <>Compare our <Link to="/destinations/marrakech" className="text-[#A91D2D] font-medium hover:underline">Marrakech programs</Link>, <Link to="/destinations/fes" className="text-[#A91D2D] font-medium hover:underline">Fes and imperial city routes</Link>, <Link to="/destinations/merzouga" className="text-[#A91D2D] font-medium hover:underline">Merzouga Sahara extensions</Link>, <Link to="/destinations/essaouira" className="text-[#A91D2D] font-medium hover:underline">Essaouira coastal stays</Link> or the complete <Link to="/destinations" className="text-[#A91D2D] font-medium hover:underline">Morocco destinations guide</Link>. Share the preferred route through our <Link to="/quote" className="text-[#A91D2D] font-medium hover:underline">B2B quote form</Link> for an adapted proposal.</>
+              )}
             </p>
           </div>
 
           <div className="mt-12 bg-white rounded-2xl border border-gray-100 p-8 md:p-10 text-center shadow-sm">
             <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1F2937]">
-              {locale === "fr" ? "Besoin d'un programme Maroc sur mesure ?" : "Need a custom Morocco program?"}
+              {isFr ? "Besoin d'un programme Maroc sur mesure ?" : "Need a custom Morocco program?"}
             </h2>
             <p className="mt-4 text-[#4B5563] max-w-2xl mx-auto">
-              {locale === "fr"
-                ? "Partagez vos dates, la taille du groupe et le budget cible. Nous preparerons un itineraire sur mesure pour votre agence ou entreprise."
+              {isFr
+                ? "Partagez vos dates, la taille du groupe et le budget cible afin de préparer un itinéraire adapté à votre agence ou entreprise."
                 : "Share your dates, group size and target budget. We will prepare a tailor-made itinerary for your agency or company."}
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-4">
               <Button asChild className="bg-[#A91D2D] hover:bg-[#8a1824] text-white rounded-full px-6">
-                <Link to="/quote">
-                  {locale === "fr" ? "Demander un devis sur mesure" : "Request a Custom Quote"}
+                <Link to={isFr ? "/fr/quote" : "/quote"}>
+                  {isFr ? "Demander un devis sur mesure" : "Request a Custom Quote"}
                 </Link>
               </Button>
               <Button asChild variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
-                <Link to="/b2b">
-                  {locale === "fr" ? "Devenir partenaire B2B" : "Become a B2B Partner"}
+                <Link to={isFr ? "/fr/incoming-agency-morocco" : "/b2b"}>
+                  {isFr ? "Découvrir notre accompagnement B2B" : "Become a B2B Partner"}
                 </Link>
               </Button>
               <Button asChild variant="outline" className="border-[#1F2937] text-[#1F2937] rounded-full px-6">
-                <Link to="/morocco-tours-for-travel-agencies">
-                  {locale === "fr" ? "Voir les programmes agences" : "View Agency Tour Services"}
+                <Link to={isFr ? "/fr/morocco-tours-for-travel-agencies" : "/morocco-tours-for-travel-agencies"}>
+                  {isFr ? "Voir les services pour agences" : "View Agency Tour Services"}
                 </Link>
               </Button>
             </div>

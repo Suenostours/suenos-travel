@@ -22,12 +22,7 @@ export default function Destinations() {
 
   return (
     <>
-      <SEO
-        title="Morocco Destinations for B2B Tours | Suenos Travel DMC"
-        description="Plan Morocco programs for agencies and groups across Marrakech, Fes, Casablanca, Rabat, Tangier, Agadir, Essaouira, the Atlas Mountains and Sahara."
-        canonical="/destinations"
-        image="/images/circuit-imperial.jpg"
-      />
+      <SEO />
 
       <section className="bg-[#F9F7F4] py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

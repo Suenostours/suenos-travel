@@ -20,6 +20,7 @@ type StructuredDataInput = {
   type?: string;
   datePublished?: string;
   dateModified?: string;
+  locale?: "en" | "fr";
 };
 
 const routeLabels: Record<string, string> = {
@@ -34,35 +35,49 @@ const routeLabels: Record<string, string> = {
   services: "Services",
 };
 
-function labelFromSegment(segment: string) {
-  return routeLabels[segment] ?? segment
+const frenchRouteLabels: Record<string, string> = {
+  circuits: "Circuits au Maroc",
+  services: "Services",
+  "incoming-agency-morocco": "Agence réceptive au Maroc",
+  "morocco-tours-for-travel-agencies": "Circuits pour agences de voyage",
+  "mice-morocco": "MICE au Maroc",
+};
+
+function labelFromSegment(segment: string, locale: "en" | "fr") {
+  return (locale === "fr" ? frenchRouteLabels[segment] : routeLabels[segment]) ?? segment
     .split("-")
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
 }
 
-function buildBreadcrumbs(pathname: string, canonical: string, title: string): BreadcrumbList | null {
+function buildBreadcrumbs(
+  pathname: string,
+  canonical: string,
+  title: string,
+  locale: "en" | "fr",
+): BreadcrumbList | null {
   const segments = pathname.split("/").filter(Boolean);
+  if (locale === "fr" && segments[0] === "fr") segments.shift();
   if (segments.length === 0) return null;
 
   const items = [
     {
       "@type": "ListItem" as const,
       position: 1,
-      name: "Home",
-      item: `${SITE_ORIGIN}/`,
+      name: locale === "fr" ? "Accueil" : "Home",
+      item: locale === "fr" ? `${SITE_ORIGIN}/fr` : `${SITE_ORIGIN}/`,
     },
   ];
 
-  let currentPath = "";
+  let currentPath = locale === "fr" ? "/fr" : "";
   segments.forEach((segment, index) => {
     currentPath += `/${segment}`;
     const isLast = index === segments.length - 1;
     items.push({
       "@type": "ListItem",
       position: index + 2,
-      name: isLast ? title.replace(/\s*\|.*$/, "") : labelFromSegment(segment),
+      name: isLast ? title.replace(/\s*\|.*$/, "") : labelFromSegment(segment, locale),
       item: isLast ? canonical : `${SITE_ORIGIN}${currentPath}`,
     });
   });
@@ -83,6 +98,7 @@ export function buildSeoGraph({
   type,
   datePublished,
   dateModified,
+  locale = "en",
 }: StructuredDataInput): Graph {
   const organization: Organization = {
     "@type": "Organization",
@@ -106,9 +122,10 @@ export function buildSeoGraph({
     legalName: "Suenos Travel",
     url: SITE_ORIGIN,
     logo: `${SITE_ORIGIN}/favicon.svg`,
-    description:
-      "Licensed Morocco DMC and incoming travel agency for travel agencies, tour operators, groups and MICE.",
-    areaServed: { "@type": "Country", name: "Morocco" },
+    description: locale === "fr"
+      ? "DMC et agence réceptive au Maroc pour agences de voyage, tour-opérateurs, groupes et MICE."
+      : "Licensed Morocco DMC and incoming travel agency for travel agencies, tour operators, groups and MICE.",
+    areaServed: { "@type": "Country", name: locale === "fr" ? "Maroc" : "Morocco" },
     email: "resa@suenos-travel.com",
     telephone: PRIMARY_PHONE_E164,
     address: [
@@ -135,8 +152,8 @@ export function buildSeoGraph({
     isPartOf: { "@id": `${SITE_ORIGIN}/#website` },
     about: { "@id": `${SITE_ORIGIN}/#travel-agency` },
     primaryImageOfPage: image ? { "@type": "ImageObject" as const, url: image } : undefined,
-    breadcrumb: pathname === "/" ? undefined : { "@id": `${canonical}#breadcrumb` },
-    inLanguage: "en",
+    breadcrumb: pathname === "/" || pathname === "/fr" ? undefined : { "@id": `${canonical}#breadcrumb` },
+    inLanguage: locale,
   };
 
   const page: WebPage = { ...pageBase, "@type": "WebPage" };
@@ -156,7 +173,7 @@ export function buildSeoGraph({
       }
     : null;
 
-  const breadcrumbs = buildBreadcrumbs(pathname, canonical, title);
+  const breadcrumbs = buildBreadcrumbs(pathname, canonical, title, locale);
   return {
     "@context": "https://schema.org",
     "@graph": [

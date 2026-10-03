@@ -1,258 +1,16 @@
 import { buildSeoGraph, safeJsonLd } from "../../src/lib/structured-data";
+import {
+  DEFAULT_SEO_IMAGE,
+  PUBLIC_ORIGIN,
+  getSeoMeta,
+  isKnownStaticContentPath,
+  normalizeSeoPath,
+  resolveSeoMeta,
+  type SeoOverrides,
+} from "../../src/lib/seo-meta";
 
-export const PUBLIC_ORIGIN = "https://www.morocco-incoming.com";
-
-export type SeoMeta = {
-  title: string;
-  description: string;
-  canonical: string;
-  image?: string;
-  noindex?: boolean;
-  type?: "website" | "article";
-  datePublished?: string;
-  dateModified?: string;
-};
-
-const DEFAULT_IMAGE = "/images/hero-desert.jpg";
-
-const STATIC_META: Record<string, Omit<SeoMeta, "canonical">> = {
-  "/": {
-    title: "Morocco Incoming Agency & DMC | Suenos Travel",
-    description:
-      "Licensed Morocco incoming agency and DMC for travel agencies and tour operators: tailor-made circuits, groups, MICE, net rates and local support.",
-    image: DEFAULT_IMAGE,
-  },
-  "/circuits": {
-    title: "Morocco Circuits for Travel Agencies | B2B Group Tours",
-    description:
-      "Explore tailor-made Morocco circuits for travel agencies, tour operators and groups: imperial cities, Sahara routes, coastal stays and private programs.",
-  },
-  "/destinations": {
-    title: "Morocco Destinations for B2B Tours | Suenos Travel DMC",
-    description:
-      "Plan Morocco programs for agencies and groups across Marrakech, Fes, Casablanca, Rabat, Tangier, Agadir, Essaouira, the Atlas Mountains and Sahara.",
-  },
-  "/services": {
-    title: "Morocco Ground Services for Agencies & Groups",
-    description:
-      "Explore local Morocco ground services for agencies and groups, including hotels, guides, transport, tailor-made tours, activities, MICE and incentives.",
-  },
-  "/about": {
-    title: "About Suenos Travel | Licensed Morocco DMC",
-    description:
-      "Learn about Suenos Travel, a licensed Morocco DMC based in Agadir and Casablanca serving agencies, tour operators, companies and B2B travel partners.",
-  },
-  "/mice": {
-    title: "Corporate Events & Incentive Travel Services | Morocco",
-    description:
-      "Explore venue sourcing, delegate management, event planning, staging, transport and gala support for corporate events and incentive travel in Morocco.",
-  },
-  "/b2b": {
-    title: "Morocco B2B Travel Agency Partner | Incoming DMC Morocco",
-    description:
-      "Partner with Suenos Travel for Morocco B2B travel services, net agency rates, tailor-made tours, group programs, MICE and incoming support.",
-  },
-  "/blog": {
-    title: "Morocco DMC & Group Travel Insights for Agencies",
-    description:
-      "Practical Morocco DMC guidance for travel agencies: group operations, MICE planning, destination advice, sample programs and local travel expertise.",
-  },
-  "/contact": {
-    title: "Contact Suenos Travel | DMC Morocco for Agencies",
-    description:
-      "Contact Suenos Travel, a Morocco DMC for agencies, tour operators, companies, MICE and group travel requests.",
-  },
-  "/quote": {
-    title: "Request a Morocco DMC Quote | B2B Tours, Groups & MICE",
-    description:
-      "Request a custom Morocco travel quote for agencies, groups, private tours, MICE and incentives with Suenos Travel DMC.",
-  },
-  "/dmc-morocco": {
-    title: "DMC in Morocco for Travel Agencies | Licensed Local Partner",
-    description:
-      "Licensed Morocco DMC for travel agencies and tour operators. Get tailor-made itineraries, net rates, group and MICE operations, and local support.",
-  },
-  "/incoming-agency-morocco": {
-    title: "Incoming Agency Morocco | B2B Travel Partner for Groups",
-    description:
-      "Morocco incoming agency for foreign travel agencies, groups and tour operators. Hotels, guides, transport, circuits and tailor-made B2B services.",
-  },
-  "/morocco-tours-for-travel-agencies": {
-    title: "Morocco Tours for Travel Agencies | B2B DMC Programs",
-    description:
-      "Morocco tours for travel agencies and tour operators. Imperial cities, Sahara, Atlas, coast, MICE and tailor-made group programs with net agency rates.",
-  },
-  "/morocco-group-tours": {
-    title: "Morocco Group Tours for Travel Agencies | B2B DMC",
-    description:
-      "Plan Morocco group tours with a licensed local DMC: custom itineraries, hotels, coaches, guides, net agency rates and on-site support.",
-  },
-  "/mice-morocco": {
-    title: "MICE Morocco DMC | Incentives, Corporate Groups & Events",
-    description:
-      "Plan MICE and incentive travel in Morocco with a licensed local DMC: venues, hotels, transport, gala dinners, team building and delegate logistics.",
-  },
-  "/privacy": {
-    title: "Privacy Policy | Suenos Travel",
-    description: "Privacy policy of Suenos Travel DMC Morocco.",
-    noindex: true,
-  },
-  "/terms": {
-    title: "Terms & Conditions | Suenos Travel",
-    description: "Terms and conditions of Suenos Travel DMC Morocco.",
-    noindex: true,
-  },
-};
-
-const BLOG_META: Record<string, Omit<SeoMeta, "canonical">> = {
-  "/blog/what-does-a-dmc-in-morocco-do-for-travel-agencies": {
-    title: "Best DMC in Morocco for Travel Agencies | Selection Guide",
-    description:
-      "A practical guide to choosing the best DMC in Morocco for your travel agency: licensing, B2B rates, group operations, communication and local support.",
-    type: "article",
-    image: "/images/about-riad.jpg",
-    datePublished: "2026-06-19",
-    dateModified: "2026-09-10",
-  },
-  "/blog/how-to-choose-a-morocco-incoming-agency": {
-    title: "How to Choose a Morocco Incoming Agency | B2B Guide",
-    description:
-      "A practical guide for agencies choosing a Morocco incoming partner: licensing, net rates, communication, group logistics and local support.",
-    type: "article",
-    image: "/images/circuit-imperial.jpg",
-    datePublished: "2026-06-19",
-    dateModified: "2026-06-19",
-  },
-  "/blog/mice-morocco-best-destinations-for-incentive-groups": {
-    title: "MICE Morocco: Best Destinations for Incentive Groups",
-    description:
-      "Compare Marrakech, Agadir, Casablanca, Fes, Essaouira and the Sahara for meetings, incentives and corporate groups in Morocco.",
-    type: "article",
-    image: "/images/circuit-luxury.jpg",
-    datePublished: "2026-06-19",
-    dateModified: "2026-06-19",
-  },
-  "/blog/morocco-tours-for-travel-agencies-b2b-programs": {
-    title: "Morocco Tours for Travel Agencies: How B2B Programs Work",
-    description:
-      "Learn how B2B Morocco programs are built for travel agencies, including itinerary design, net rates, white-label support and group logistics.",
-    type: "article",
-    image: "/images/circuit-imperial.jpg",
-    datePublished: "2026-05-28",
-    dateModified: "2026-05-28",
-  },
-  "/blog/morocco-travel-guide-2026": {
-    title: "Morocco Travel Guide 2026 | Best Time, Places & Tips",
-    description:
-      "Plan Morocco travel in 2026 with practical advice on the best time to visit, key destinations, transport, culture and itinerary ideas.",
-    type: "article",
-    image: "/images/hero-desert.jpg",
-    datePublished: "2026-01-15",
-    dateModified: "2026-01-15",
-  },
-  "/blog/sahara-desert-camps": {
-    title: "Best Sahara Desert Camps in Morocco | Practical Guide",
-    description:
-      "Compare Morocco Sahara desert camp experiences, comfort levels, locations and planning tips for private clients, groups and agencies.",
-    type: "article",
-    image: "/images/circuit-sahara.jpg",
-    datePublished: "2026-02-01",
-    dateModified: "2026-02-01",
-  },
-  "/blog/marrakech-hidden-gems": {
-    title: "Hidden Gems of Marrakech | Local Morocco Guide",
-    description:
-      "Discover lesser-known places and authentic experiences beyond Marrakech's famous landmarks for tailor-made Morocco itineraries.",
-    type: "article",
-    image: "/images/circuit-imperial.jpg",
-    datePublished: "2026-02-20",
-    dateModified: "2026-02-20",
-  },
-};
-
-const STATIC_DESTINATION_PATHS = new Set([
-  "/destinations/marrakech",
-  "/destinations/fes",
-  "/destinations/casablanca",
-  "/destinations/agadir",
-  "/destinations/essaouira",
-  "/destinations/chefchaouen",
-  "/destinations/merzouga",
-  "/destinations/ouarzazate",
-  "/destinations/rabat",
-  "/destinations/tangier",
-]);
-
-function normalizePath(pathname: string) {
-  if (pathname === "/") return pathname;
-  return pathname.replace(/\/+$/, "") || "/";
-}
-
-export function isKnownStaticContentPath(pathname: string) {
-  const path = normalizePath(pathname);
-  return Boolean(STATIC_META[path] || BLOG_META[path] || STATIC_DESTINATION_PATHS.has(path));
-}
-
-function titleFromSlug(slug: string) {
-  return slug
-    .split("-")
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
-export function getSeoMeta(pathname: string): SeoMeta {
-  const path = normalizePath(pathname);
-  const staticMeta = STATIC_META[path] ?? BLOG_META[path];
-  if (staticMeta) {
-    return { ...staticMeta, canonical: `${PUBLIC_ORIGIN}${path === "/" ? "/" : path}` };
-  }
-
-  if (path.startsWith("/circuits/")) {
-    const name = titleFromSlug(path.slice("/circuits/".length));
-    return {
-      title: `${name} | Morocco Circuit | Suenos Travel`,
-      description: `Explore the ${name} itinerary with Suenos Travel, a local Morocco DMC for agencies, groups and tailor-made travel programs.`,
-      canonical: `${PUBLIC_ORIGIN}${path}`,
-    };
-  }
-
-  if (path.startsWith("/destinations/")) {
-    const name = titleFromSlug(path.slice("/destinations/".length));
-    return {
-      title: `${name} Morocco Programs & Excursions | Local DMC`,
-      description: `Plan ${name} programs, excursions and B2B Morocco itineraries for agencies and groups with Suenos Travel DMC.`,
-      canonical: `${PUBLIC_ORIGIN}${path}`,
-    };
-  }
-
-  if (path.startsWith("/blog/")) {
-    const name = titleFromSlug(path.slice("/blog/".length));
-    return {
-      title: `${name} | Suenos Travel Morocco Blog`,
-      description:
-        "Practical Morocco destination and DMC guidance for travel agencies, tour operators, groups and corporate travel planners.",
-      canonical: `${PUBLIC_ORIGIN}${path}`,
-      type: "article",
-    };
-  }
-
-  if (path === "/admin" || path.startsWith("/admin/")) {
-    return {
-      title: "Suenos Travel Administration",
-      description: "Secure administration area for Suenos Travel.",
-      canonical: `${PUBLIC_ORIGIN}${path}`,
-      noindex: true,
-    };
-  }
-
-  return {
-    title: "Page Not Found | Suenos Travel DMC Morocco",
-    description: "The requested page could not be found.",
-    canonical: `${PUBLIC_ORIGIN}${path}`,
-    noindex: true,
-  };
-}
+export { getSeoMeta, isKnownStaticContentPath, PUBLIC_ORIGIN };
+export type { SeoMeta, SeoOverrides } from "../../src/lib/seo-meta";
 
 function escapeHtml(value: string) {
   return value
@@ -262,42 +20,22 @@ function escapeHtml(value: string) {
     .replaceAll(">", "&gt;");
 }
 
-type SeoOverrides = {
-  title?: string | null;
-  description?: string | null;
-  canonical?: string | null;
-  image?: string | null;
-  type?: "website" | "article";
-  datePublished?: string | null;
-  dateModified?: string | null;
-  noindex?: boolean;
-};
-
-export function renderSeoHtml(template: string, pathname: string, overrides?: SeoOverrides) {
-  const fallback = getSeoMeta(pathname);
-  const meta: SeoMeta = {
-    ...fallback,
-    title: overrides?.title?.trim() || fallback.title,
-    description: overrides?.description?.trim() || fallback.description,
-    canonical: overrides?.canonical?.trim() || fallback.canonical,
-    image: overrides?.image?.trim() || fallback.image,
-    type: overrides?.type ?? fallback.type,
-    datePublished: overrides?.datePublished?.trim() || fallback.datePublished,
-    dateModified: overrides?.dateModified?.trim() || fallback.dateModified,
-    noindex: overrides?.noindex ?? fallback.noindex,
-  };
+export function renderSeoHtml(
+  template: string,
+  pathname: string,
+  overrides?: SeoOverrides,
+  extraStructuredData?: Array<{ id: string; value: unknown }>,
+) {
+  const meta = resolveSeoMeta(pathname, overrides);
+  const normalizedPath = normalizeSeoPath(pathname);
   const title = escapeHtml(meta.title);
   const description = escapeHtml(meta.description);
   const canonical = escapeHtml(meta.canonical);
-  const image = escapeHtml(
-    meta.image?.startsWith("http")
-      ? meta.image
-      : `${PUBLIC_ORIGIN}${meta.image ?? DEFAULT_IMAGE}`,
-  );
+  const image = escapeHtml(meta.image ?? `${PUBLIC_ORIGIN}${DEFAULT_SEO_IMAGE}`);
   const robots = meta.noindex ? "noindex, nofollow" : "index, follow";
   const structuredData = !meta.noindex
     ? safeJsonLd(buildSeoGraph({
-        pathname,
+        pathname: normalizedPath,
         title: meta.title,
         description: meta.description,
         canonical: meta.canonical,
@@ -305,16 +43,17 @@ export function renderSeoHtml(template: string, pathname: string, overrides?: Se
         type: meta.type,
         datePublished: meta.datePublished,
         dateModified: meta.dateModified,
+        locale: meta.locale,
       }))
     : null;
-  const preload = normalizePath(pathname) === "/"
+  const preload = normalizedPath === "/"
     ? '<link rel="preload" as="image" href="/images/hero-desert.jpg" fetchpriority="high" />'
     : "";
   const tags = `<!-- SEO_META_START -->
     <title data-rh="true">${title}</title>
     <meta data-rh="true" name="description" content="${description}" />
     <meta data-rh="true" name="robots" content="${robots}" />
-    <link data-rh="true" rel="canonical" href="${canonical}" />
+    <link data-rh="true" data-seo-path="${escapeHtml(normalizedPath)}" rel="canonical" href="${canonical}" />
     <meta data-rh="true" property="og:site_name" content="Morocco Incoming by Suenos Travel" />
     <meta data-rh="true" property="og:title" content="${title}" />
     <meta data-rh="true" property="og:description" content="${description}" />
@@ -323,12 +62,16 @@ export function renderSeoHtml(template: string, pathname: string, overrides?: Se
     <meta data-rh="true" property="og:image" content="${image}" />
     <meta data-rh="true" property="og:image:width" content="1344" />
     <meta data-rh="true" property="og:image:height" content="768" />
-    <meta data-rh="true" property="og:locale" content="en_US" />
+    <meta data-rh="true" property="og:locale" content="${meta.locale === "fr" ? "fr_FR" : "en_US"}" />
     <meta data-rh="true" name="twitter:card" content="summary_large_image" />
     <meta data-rh="true" name="twitter:title" content="${title}" />
     <meta data-rh="true" name="twitter:description" content="${description}" />
     <meta data-rh="true" name="twitter:image" content="${image}" />
-    ${structuredData ? `<script data-rh="true" type="application/ld+json">${structuredData}</script>` : ""}
+    ${meta.alternates ? `<link data-rh="true" rel="alternate" hreflang="en" href="${escapeHtml(meta.alternates.en)}" />
+    <link data-rh="true" rel="alternate" hreflang="fr" href="${escapeHtml(meta.alternates.fr)}" />
+    <link data-rh="true" rel="alternate" hreflang="x-default" href="${escapeHtml(meta.alternates.xDefault)}" />` : ""}
+    ${structuredData ? `<script data-rh="true" id="route-seo-graph" type="application/ld+json">${structuredData}</script>` : ""}
+    ${extraStructuredData?.map(({ id, value }) => `<script id="${escapeHtml(id)}" type="application/ld+json">${safeJsonLd(value)}</script>`).join("\n    ") ?? ""}
     ${preload}
     <!-- SEO_META_END -->`;
 

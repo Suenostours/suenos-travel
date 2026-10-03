@@ -20,12 +20,7 @@ export default function MICE() {
 
   return (
     <>
-      <SEO
-        title="Corporate Events & Incentive Travel Services | Morocco"
-        description="Explore venue sourcing, delegate management, event planning, staging, transport and gala support for corporate events and incentive travel in Morocco."
-        canonical="/mice"
-        image="/images/circuit-luxury.jpg"
-      />
+      <SEO />
 
       <section className="bg-[#0F172A] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">

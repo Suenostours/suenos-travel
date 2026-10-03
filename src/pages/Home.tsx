@@ -95,12 +95,7 @@ export default function Home() {
 
   return (
     <>
-      <SEO
-        title="Morocco Incoming Agency & DMC | Suenos Travel"
-        description="Licensed Morocco incoming agency and DMC for travel agencies and tour operators: tailor-made circuits, groups, MICE, net rates and local support."
-        canonical="/"
-        image="/images/hero-desert.jpg"
-      />
+      <SEO />
 
       {/* ─── HERO ─── */}
       <section className="relative bg-[#F9F7F4] overflow-hidden">

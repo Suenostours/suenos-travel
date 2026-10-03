@@ -8,16 +8,11 @@ export default function About() {
 
   return (
     <>
-      <SEO
-        title="About Suenos Travel | Licensed Morocco DMC"
-        description="Learn about Suenos Travel, a licensed Morocco DMC based in Agadir and Casablanca serving agencies, tour operators, companies and B2B travel partners."
-        canonical="/about"
-        image="/images/about-riad.jpg"
-      />
+      <SEO />
 
       <section className="bg-[#F9F7F4]">
         <div className="relative h-[300px] md:h-[400px]">
-          <img src="/images/about-riad.jpg" alt="Traditional Moroccan riad interior" width={1184} height={864} fetchPriority="high" decoding="async" className="w-full h-full object-cover" />
+          <img src="/images/about-riad.jpg" alt={isFr ? "Intérieur d'un riad marocain" : "Traditional Moroccan riad interior"} width={1184} height={864} fetchPriority="high" decoding="async" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
@@ -36,16 +31,19 @@ export default function About() {
               </h2>
               <p className="text-[#4B5563] leading-relaxed">
                 {isFr
-                  ? "Suenos Travel est une DMC marocaine agréée basée à Agadir et Casablanca. Depuis 2015, nous accompagnons les agences de voyage internationales, les tour-opérateurs et les groupes corporate pour découvrir le Maroc authentique."
+                  ? "Suenos Travel est une agence de voyages marocaine agréée (ODV-0564), avec des équipes à Agadir et Casablanca. Notre activité réceptive accompagne les agences de voyage, tour-opérateurs, entreprises et organisateurs de groupes dans la préparation de programmes au Maroc."
                   : "Suenos Travel is a fully licensed Moroccan DMC based in Agadir and Casablanca. Since 2015, we have been helping international travel agencies, tour operators, and corporate groups discover authentic Morocco."}
               </p>
               <p className="text-[#4B5563] leading-relaxed">
                 {isFr
-                  ? "Nous combinons une expertise locale profonde avec des standards de service internationaux pour offrir des expériences de voyage sans faille. De la première demande au départ final, nous gérons chaque détail."
+                  ? "À partir du brief du partenaire, nous pouvons coordonner l'itinéraire, l'hébergement, le transport, les guides, les visites, les activités et les autres prestations retenues dans le devis. Les services proposés dépendent des dates, des disponibilités et des besoins du dossier."
                   : "We combine deep local expertise with international service standards to deliver seamless travel experiences. From the first inquiry to the final departure, we handle every detail."}
               </p>
               <div className="flex flex-wrap gap-3 pt-2">
-                {["Tailor-Made", "MICE", "B2B", "Sahara", "Luxury", "Family"].map((tag) => (
+                {(isFr
+                  ? ["Sur mesure", "MICE", "B2B", "Sahara", "Haut de gamme", "Familles"]
+                  : ["Tailor-Made", "MICE", "B2B", "Sahara", "Luxury", "Family"]
+                ).map((tag) => (
                   <span key={tag} className="px-3 py-1 rounded-full bg-white text-xs font-medium text-[#4B5563] border border-gray-200">
                     {tag}
                   </span>
@@ -53,7 +51,7 @@ export default function About() {
               </div>
             </div>
             <div className="rounded-2xl overflow-hidden shadow-xl">
-              <img src="/images/hero-desert.jpg" alt="Suenos Travel Morocco destination specialists" width={1344} height={768} loading="lazy" decoding="async" className="w-full h-[350px] object-cover" />
+              <img src="/images/hero-desert.jpg" alt={isFr ? "Programme de voyage dans le désert marocain" : "Suenos Travel Morocco destination specialists"} width={1344} height={768} loading="lazy" decoding="async" className="w-full h-[350px] object-cover" />
             </div>
           </div>
 
@@ -64,12 +62,12 @@ export default function About() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
-              { icon: Shield, title: "Trust & Reliability", titleFr: "Confiance & Fiabilité", desc: "Licensed agency (ODV-0564) with a proven track record of delivering on promises.", descFr: "Agence agréée (ODV-0564) avec un bilan éprouvé de tenue des promesses." },
-              { icon: Globe, title: "Local Expertise", titleFr: "Expertise Locale", desc: "Deep knowledge of Morocco's culture, hidden gems, and logistics.", descFr: "Connaissance profonde de la culture marocaine, des trésors cachés et de la logistique." },
-              { icon: Heart, title: "Passion for Service", titleFr: "Passion du Service", desc: "We genuinely love what we do, and it shows in every trip we organize.", descFr: "Nous aimons sincèrement ce que nous faisons, et cela se voit dans chaque voyage organisé." },
-              { icon: Users, title: "B2B Partnership", titleFr: "Partenariat B2B", desc: "We view our clients as partners. Your success is our success.", descFr: "Nous considérons nos clients comme des partenaires. Votre succès est notre succès." },
-              { icon: Award, title: "Quality First", titleFr: "Qualité Avant Tout", desc: "From guides to hotels to transport, we never compromise on quality.", descFr: "Des guides aux hôtels en passant par le transport, nous ne compromettons jamais la qualité." },
-              { icon: MapPin, title: "Nationwide Network", titleFr: "Réseau National", desc: "Strong local network covering every region of Morocco from north to south.", descFr: "Réseau local solide couvrant chaque région du Maroc du nord au sud." },
+              { icon: Shield, title: "Trust & Reliability", titleFr: "Agence agréée", desc: "Licensed agency (ODV-0564) with a proven track record of delivering on promises.", descFr: "Suenos Travel exerce comme agence de voyages marocaine agréée sous la licence ODV-0564." },
+              { icon: Globe, title: "Local Expertise", titleFr: "Connaissance opérationnelle", desc: "Deep knowledge of Morocco's culture, hidden gems, and logistics.", descFr: "Des propositions qui tiennent compte des distances, de la saison, du rythme et du profil des voyageurs." },
+              { icon: Heart, title: "Passion for Service", titleFr: "Suivi des prestations", desc: "We genuinely love what we do, and it shows in every trip we organize.", descFr: "Un interlocuteur local pour préparer et suivre les prestations confirmées dans le dossier." },
+              { icon: Users, title: "B2B Partnership", titleFr: "Collaboration B2B", desc: "We view our clients as partners. Your success is our success.", descFr: "Des échanges avec l'agence partenaire pour ajuster le programme et ses inclusions." },
+              { icon: Award, title: "Quality First", titleFr: "Sélection des prestations", desc: "From guides to hotels to transport, we never compromise on quality.", descFr: "Hôtels, transport, guides et activités proposés selon le cahier des charges et les disponibilités." },
+              { icon: MapPin, title: "Nationwide Network", titleFr: "Programmes au Maroc", desc: "Strong local network covering every region of Morocco from north to south.", descFr: "Des itinéraires et prestations préparés selon les régions incluses dans le brief du partenaire." },
             ].map((v) => (
               <div key={v.title} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                 <div className="w-10 h-10 rounded-lg bg-[#A91D2D]/10 flex items-center justify-center mb-4">

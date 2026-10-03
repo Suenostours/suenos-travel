@@ -1337,18 +1337,6 @@ function toAbsoluteUrl(value: string) {
   return `${BASE_URL}${value.startsWith("/") ? value : `/${value}`}`;
 }
 
-function stripMarkup(value: string) {
-  return value
-    .replace(/<[^>]+>/g, " ")
-    .replace(/[#*_`-]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function toMetaDescription(value: string) {
-  return stripMarkup(value).slice(0, 155);
-}
-
 function formatInline(value: string) {
   return value
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
@@ -1365,13 +1353,19 @@ export default function BlogDetail() {
   }
 
   const post = slug ? blogPosts[slug] : null;
-  if (!post) return <div className="py-24 text-center">Article not found</div>;
+  if (!post) {
+    return (
+      <>
+        <SEO />
+        <div className="py-24 text-center">Article not found</div>
+      </>
+    );
+  }
 
   const hasFrenchContent = post.titleFr !== post.title || post.contentFr !== post.content;
   const title = isFr && hasFrenchContent ? post.titleFr : post.title;
   const content = isFr && hasFrenchContent ? post.contentFr : post.content;
   const canonicalPath = `/blog/${slug}`;
-  const description = post.metaDescription ?? toMetaDescription(content);
   const relatedPosts = Object.entries(blogPosts)
     .filter(([relatedSlug, relatedPost]) => !legacyBlogRedirects[relatedSlug] && relatedSlug !== slug && relatedPost.category.includes("B2B"))
     .slice(0, 2);
@@ -1393,15 +1387,7 @@ export default function BlogDetail() {
 
   return (
     <>
-      <SEO
-        title={post.metaTitle ?? `${title} | Suenos Travel Blog`}
-        description={description}
-        canonical={canonicalPath}
-        image={post.image}
-        type="article"
-        datePublished={post.date}
-        dateModified={post.updated ?? post.date}
-      />
+      <SEO />
       <Helmet>
         {faqJsonLd && <script type="application/ld+json">{safeJsonLd(faqJsonLd)}</script>}
       </Helmet>

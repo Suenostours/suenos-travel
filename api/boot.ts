@@ -70,7 +70,7 @@ app.use("*", async (c, next) => {
   const pathname = new URL(c.req.url).pathname;
   if (pathname.startsWith("/assets/")) {
     c.header("Cache-Control", "public, max-age=31536000, immutable");
-  } else if (pathname.startsWith("/images/") || pathname === "/favicon.svg") {
+  } else if (pathname.startsWith("/images/") || pathname.startsWith("/favicon")) {
     c.header("Cache-Control", "public, max-age=604800, stale-while-revalidate=86400");
   } else if (c.res.headers.get("Content-Type")?.includes("text/html")) {
     c.header("Cache-Control", "no-cache");

@@ -260,38 +260,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── SERVICES ─── */}
-      <section className="bg-[#F9F7F4] py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#1F2937]">{t("services.title")}</h2>
-            <p className="mt-4 text-[#4B5563] max-w-2xl mx-auto">
-              Comprehensive ground services for travel agencies, tour operators, and corporate clients visiting Morocco.
-            </p>
-            <p className="mt-3 text-sm text-[#6B7280] max-w-3xl mx-auto">
-              Need net agency rates? Review our <Link to="/b2b" className="text-[#A91D2D] font-medium hover:underline">Morocco B2B partner</Link> conditions or <Link to="/quote" className="text-[#A91D2D] font-medium hover:underline">request a Morocco program</Link> for your next group.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {servicesData.map((s) => (
-              <Link
-                key={s.title}
-                to={s.path}
-                className="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-[#A91D2D]/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A91D2D] focus-visible:ring-offset-2 transition-all"
-              >
-                <div className="w-10 h-10 rounded-lg bg-[#A91D2D]/10 flex items-center justify-center mb-4">
-                  <s.icon className="h-5 w-5 text-[#A91D2D]" />
-                </div>
-                <h3 className="font-semibold text-[#1F2937] group-hover:text-[#A91D2D] text-sm mb-2 transition-colors">{s.title}</h3>
-                <p className="text-xs text-[#6B7280] leading-relaxed">{s.desc}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ─── FEATURED CIRCUITS ─── */}
-      <section className="bg-white py-20 md:py-28">
+      <section className="bg-[#F9F7F4] py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-12">
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#1F2937]">{t("circuits.title")}</h2>
@@ -345,6 +315,36 @@ export default function Home() {
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* ─── SERVICES ─── */}
+      <section className="bg-white py-20 md:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#1F2937]">{t("services.title")}</h2>
+            <p className="mt-4 text-[#4B5563] max-w-2xl mx-auto">
+              Comprehensive ground services for travel agencies, tour operators, and corporate clients visiting Morocco.
+            </p>
+            <p className="mt-3 text-sm text-[#6B7280] max-w-3xl mx-auto">
+              Need net agency rates? Review our <Link to="/b2b" className="text-[#A91D2D] font-medium hover:underline">Morocco B2B partner</Link> conditions or <Link to="/quote" className="text-[#A91D2D] font-medium hover:underline">request a Morocco program</Link> for your next group.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {servicesData.map((s) => (
+              <Link
+                key={s.title}
+                to={s.path}
+                className="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-[#A91D2D]/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A91D2D] focus-visible:ring-offset-2 transition-all"
+              >
+                <div className="w-10 h-10 rounded-lg bg-[#A91D2D]/10 flex items-center justify-center mb-4">
+                  <s.icon className="h-5 w-5 text-[#A91D2D]" />
+                </div>
+                <h3 className="font-semibold text-[#1F2937] group-hover:text-[#A91D2D] text-sm mb-2 transition-colors">{s.title}</h3>
+                <p className="text-xs text-[#6B7280] leading-relaxed">{s.desc}</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 

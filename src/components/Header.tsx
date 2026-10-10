@@ -65,6 +65,7 @@ export default function Header() {
       ]
     : [
         { label: t("nav.home"), path: "/" },
+        { label: "DMC Morocco", path: "/dmc-morocco" },
         { label: t("nav.circuits"), path: "/circuits" },
         { label: t("nav.destinations"), path: "/destinations" },
         { label: t("nav.services"), path: "/services" },
@@ -88,10 +89,18 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to={localizedPath("/", locale)} className="flex items-center gap-2 shrink-0">
-            <span className="text-xl md:text-2xl font-serif font-semibold text-[#1F2937]">
-              Suenos Travel
-            </span>
+          <Link
+            to={localizedPath("/", locale)}
+            className="flex items-center shrink-0"
+            aria-label={locale === "fr" ? "Accueil Suenos Travel" : "Suenos Travel — DMC Morocco home"}
+          >
+            <img
+              src="/images/suenos-travel-logo.webp"
+              alt={locale === "fr" ? "Suenos Travel — DMC au Maroc" : "Suenos Travel — DMC Morocco"}
+              width={300}
+              height={188}
+              className="h-11 md:h-14 w-auto object-contain"
+            />
           </Link>
 
           {/* Desktop Nav */}

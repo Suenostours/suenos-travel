@@ -54,8 +54,23 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
           {/* Col 1: Brand */}
           <div className="space-y-4">
-            <h3 className="text-xl font-serif font-semibold text-white">
-              Morocco Incoming by Suenos Travel
+            <Link
+              to={pathFor("/")}
+              className="inline-flex rounded-lg bg-white px-3 py-2"
+              aria-label="Morocco Incoming by Suenos Travel home"
+            >
+              <img
+                src="/images/suenos-travel-logo.webp"
+                alt={isFr ? "Suenos Travel — DMC au Maroc" : "Suenos Travel — DMC Morocco"}
+                width={300}
+                height={188}
+                loading="lazy"
+                decoding="async"
+                className="h-16 w-auto object-contain"
+              />
+            </Link>
+            <h3 className="text-lg font-serif font-semibold text-white">
+              {isFr ? "Morocco Incoming — DMC au Maroc" : "Morocco Incoming — DMC Morocco"}
             </h3>
             <p className="text-sm text-gray-400 leading-relaxed">
               {isFr

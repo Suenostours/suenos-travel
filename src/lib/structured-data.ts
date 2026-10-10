@@ -106,12 +106,14 @@ export function buildSeoGraph({
     name: "Suenos Travel",
     alternateName: "Morocco Incoming by Suenos Travel",
     url: SITE_ORIGIN,
-    logo: `${SITE_ORIGIN}/favicon.svg`,
+    logo: `${SITE_ORIGIN}/images/suenos-travel-logo.webp`,
     email: "resa@suenos-travel.com",
     telephone: PRIMARY_PHONE_E164,
     sameAs: [
+      "https://www.suenos-travel.com",
       "https://www.facebook.com/suenos.travel1",
       "https://www.instagram.com/suenos.travel1",
+      "https://www.linkedin.com/company/suenos-travel",
     ],
   };
 
@@ -121,7 +123,7 @@ export function buildSeoGraph({
     name: "Morocco Incoming by Suenos Travel",
     legalName: "Suenos Travel",
     url: SITE_ORIGIN,
-    logo: `${SITE_ORIGIN}/favicon.svg`,
+    logo: `${SITE_ORIGIN}/images/suenos-travel-logo.webp`,
     description: locale === "fr"
       ? "DMC et agence réceptive au Maroc pour agences de voyage, tour-opérateurs, groupes et MICE."
       : "Licensed Morocco DMC and incoming travel agency for travel agencies, tour operators, groups and MICE.",

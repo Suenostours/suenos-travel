@@ -12,6 +12,24 @@ import {
 export { getSeoMeta, isKnownStaticContentPath, PUBLIC_ORIGIN };
 export type { SeoMeta, SeoOverrides } from "../../src/lib/seo-meta";
 
+const STATIC_H1: Record<string, string> = {
+  "/": "Your Local B2B Travel Partner in Morocco",
+  "/circuits": "Morocco Circuits and Group Tours for Travel Agencies",
+  "/destinations": "Morocco Destinations for Travel Agencies",
+  "/services": "Morocco DMC Services for International Travel Agencies",
+  "/about": "About Suenos Travel DMC Morocco",
+  "/mice": "Corporate Events and Incentive Travel in Morocco",
+  "/b2b": "Your B2B Travel Partner in Morocco",
+  "/blog": "Morocco DMC and Group Travel Insights",
+  "/contact": "Contact Our Morocco DMC Team",
+  "/quote": "Request a Morocco DMC Quote",
+  "/dmc-morocco": "DMC in Morocco for Travel Agencies and Tour Operators",
+  "/incoming-agency-morocco": "Morocco Incoming Agency for Travel Professionals",
+  "/morocco-tours-for-travel-agencies": "Morocco Tours for Travel Agencies",
+  "/morocco-group-tours": "Morocco Group Tours for Travel Agencies",
+  "/mice-morocco": "MICE Morocco DMC for Incentives and Corporate Groups",
+};
+
 function escapeHtml(value: string) {
   return value
     .replaceAll("&", "&amp;")
@@ -76,7 +94,20 @@ export function renderSeoHtml(
     <!-- SEO_META_END -->`;
 
   const blockPattern = /<!-- SEO_META_START -->[\s\S]*?<!-- SEO_META_END -->/;
-  if (blockPattern.test(template)) return template.replace(blockPattern, tags);
+  const withSeoHead = blockPattern.test(template)
+    ? template.replace(blockPattern, tags)
+    : template.replace(/<title>[\s\S]*?<\/title>/i, "").replace("</head>", `${tags}\n  </head>`);
 
-  return template.replace(/<title>[\s\S]*?<\/title>/i, "").replace("</head>", `${tags}\n  </head>`);
+  if (meta.noindex) return withSeoHead;
+
+  const h1 = escapeHtml(STATIC_H1[normalizedPath] ?? meta.title.split("|")[0]?.trim() ?? meta.title);
+  const fallbackBody = `<main data-seo-fallback="true" style="max-width:72rem;margin:0 auto;padding:3rem 1.5rem;font-family:system-ui,sans-serif">
+      <h1>${h1}</h1>
+      <p>${description}</p>
+    </main>`;
+  const emptyRootPattern = /<div\s+id=["']root["']\s*>\s*<\/div>/i;
+
+  return emptyRootPattern.test(withSeoHead)
+    ? withSeoHead.replace(emptyRootPattern, `<div id="root">${fallbackBody}</div>`)
+    : withSeoHead;
 }

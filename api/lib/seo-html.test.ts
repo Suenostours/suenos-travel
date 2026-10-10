@@ -4,7 +4,7 @@ import { getSeoMeta, isKnownStaticContentPath, renderSeoHtml } from "./seo-html"
 describe("SEO HTML rendering", () => {
   it("injects crawlable metadata for a public page", () => {
     const html = renderSeoHtml(
-      '<html><head><!-- SEO_META_START --><title>Old</title><!-- SEO_META_END --></head><body></body></html>',
+      '<html><head><!-- SEO_META_START --><title>Old</title><!-- SEO_META_END --></head><body><div id="root"></div></body></html>',
       "/dmc-morocco",
     );
 
@@ -12,6 +12,17 @@ describe("SEO HTML rendering", () => {
     expect(html).toContain('rel="canonical" href="https://www.morocco-incoming.com/dmc-morocco"');
     expect(html).toContain('data-seo-path="/dmc-morocco"');
     expect(html).toContain('name="robots" content="index, follow"');
+    expect(html).toContain("<h1>DMC in Morocco for Travel Agencies and Tour Operators</h1>");
+    expect(html).toContain('data-seo-fallback="true"');
+  });
+
+  it("does not inject an indexable fallback into noindex pages", () => {
+    const html = renderSeoHtml(
+      '<html><head><title>Old</title></head><body><div id="root"></div></body></html>',
+      "/admin",
+    );
+
+    expect(html).not.toContain('data-seo-fallback="true"');
   });
 
   it("marks unknown and admin pages as noindex", () => {

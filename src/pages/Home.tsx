@@ -20,7 +20,6 @@ import {
   UserCheck,
   Mountain,
   Gift,
-  Star,
   Check,
   Clock,
   Phone,
@@ -45,12 +44,6 @@ const servicesData = [
   { icon: UserCheck, title: "Guides & Local Experiences", desc: "Multilingual, licensed guides with deep cultural knowledge and storytelling expertise.", path: "/services" },
   { icon: Mountain, title: "Sahara & Adventure", desc: "Trekking, mountain expeditions, and outdoor adventures for thrill-seeking travelers.", path: "/destinations/merzouga" },
   { icon: Gift, title: "Incentive Travel", desc: "Reward programs and motivational trips that create lasting memories for teams and clients.", path: "/mice-morocco" },
-];
-
-const testimonials = [
-  { name: "Sarah Mitchell", role: "Tour Operator, UK", text: "Suenos Travel has been our Morocco DMC for 3 years. Their attention to detail and local knowledge is unmatched. Every group comes back delighted." },
-  { name: "Jean-Pierre Dubois", role: "Travel Agency Director, France", text: "A reliable partner who understands the B2B relationship. Competitive rates, excellent guides, and seamless logistics every time." },
-  { name: "Maria Gonzalez", role: "MICE Planner, Spain", text: "We organized a 200-person corporate event in Marrakech. Suenos handled everything flawlessly from venue to transport to activities." },
 ];
 
 const typeLabels: Record<string, string> = {
@@ -440,27 +433,64 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── TESTIMONIALS ─── */}
+      {/* ─── VERIFIABLE TRUST SIGNALS ─── */}
       <section className="bg-[#F9F7F4] py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#1F2937]">{t("testimonials.title")}</h2>
+          <div className="max-w-3xl mx-auto text-center mb-12">
+            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-[#A91D2D] mb-3">
+              A Reliable Local DMC in Morocco
+            </p>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#1F2937]">
+              Why Travel Agencies Work With Suenos Travel
+            </h2>
+            <p className="mt-4 text-[#4B5563] leading-relaxed">
+              Clear credentials, local teams and dedicated B2B coordination for travel agencies,
+              tour operators, groups and MICE planners across Morocco.
+            </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((t) => (
-              <div key={t.name} className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-                <div className="flex gap-1 mb-4">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <Star key={s} className="h-4 w-4 text-amber-400 fill-amber-400" />
-                  ))}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                icon: Shield,
+                title: "Licensed Moroccan Agency",
+                desc: "Moroccan travel agency licence ODV-0564.",
+              },
+              {
+                icon: Check,
+                title: "IATA Accredited",
+                desc: "IATA accreditation number 54273844.",
+              },
+              {
+                icon: MapPin,
+                title: "Local Presence",
+                desc: "Operational presence in Agadir and Casablanca.",
+              },
+              {
+                icon: Network,
+                title: "B2B Coordination",
+                desc: "Net agency quotations, white-label programs and on-site support.",
+              },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.title} className="bg-white rounded-2xl p-7 shadow-sm border border-gray-100">
+                  <div className="w-11 h-11 rounded-xl bg-[#A91D2D]/10 flex items-center justify-center mb-5">
+                    <Icon className="h-5 w-5 text-[#A91D2D]" aria-hidden="true" />
+                  </div>
+                  <h3 className="font-semibold text-[#1F2937]">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">{item.desc}</p>
                 </div>
-                <p className="text-[#4B5563] text-sm leading-relaxed mb-6">"{t.text}"</p>
-                <div>
-                  <p className="font-semibold text-sm text-[#1F2937]">{t.name}</p>
-                  <p className="text-xs text-[#6B7280]">{t.role}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
+          </div>
+          <div className="text-center mt-10">
+            <Link
+              to="/about"
+              className="inline-flex items-center text-sm font-semibold text-[#A91D2D] hover:text-[#8a1824]"
+            >
+              Learn more about Suenos Travel
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>

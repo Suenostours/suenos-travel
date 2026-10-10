@@ -103,7 +103,7 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="space-y-8">
               <p className="text-xs font-semibold tracking-[0.2em] uppercase text-[#6B7280]">
-                SUENOS TRAVEL INCOMING MOROCCO
+                SUENOS TRAVEL — DMC MOROCCO
               </p>
               <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-[#1F2937] leading-[1.15]">
                 Your Local{" "}
@@ -122,8 +122,8 @@ export default function Home() {
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="border-[#1F2937] text-[#1F2937] hover:bg-[#1F2937] hover:text-white px-6 py-3 rounded-full text-sm font-medium h-auto">
-                  <Link to="/circuits">
-                    {t("hero.cta.explore")}
+                  <Link to="/dmc-morocco">
+                    Explore DMC Morocco Services
                   </Link>
                 </Button>
               </div>

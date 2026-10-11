@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { getStaticBlogLastModified, PRIORITY_SEO_LAST_MODIFIED, SITE_CONTENT_LAST_MODIFIED, STATIC_BLOG_PAGES, STATIC_SITEMAP_PAGES } from "./sitemap-pages";
+import {
+  DESTINATION_CONTENT_LAST_MODIFIED,
+  getStaticBlogLastModified,
+  PRIORITY_SEO_LAST_MODIFIED,
+  SITE_CONTENT_LAST_MODIFIED,
+  STATIC_BLOG_PAGES,
+  STATIC_DESTINATION_PAGES,
+  STATIC_SITEMAP_PAGES,
+} from "./sitemap-pages";
 
 describe("STATIC_SITEMAP_PAGES", () => {
   it("includes every targeted B2B landing page once", () => {
@@ -35,6 +43,17 @@ describe("STATIC_SITEMAP_PAGES", () => {
   it("includes every editorial article once", () => {
     expect(STATIC_BLOG_PAGES).toHaveLength(7);
     expect(new Set(STATIC_BLOG_PAGES).size).toBe(STATIC_BLOG_PAGES.length);
+  });
+
+  it("publishes every static destination with its verified content date", () => {
+    const paths = STATIC_DESTINATION_PAGES.map((destination) => destination.path);
+
+    expect(paths).toHaveLength(10);
+    expect(new Set(paths).size).toBe(paths.length);
+    expect(paths).toContain("/destinations/fes");
+    expect(paths).toContain("/destinations/merzouga");
+    expect(STATIC_DESTINATION_PAGES.every((page) => page.lastmod === DESTINATION_CONTENT_LAST_MODIFIED)).toBe(true);
+    expect(DESTINATION_CONTENT_LAST_MODIFIED).toBe("2026-10-03");
   });
 
   it("marks the refreshed DMC selection guide with its real update date", () => {

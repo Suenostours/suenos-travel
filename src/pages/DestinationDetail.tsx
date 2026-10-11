@@ -22,6 +22,7 @@ type RelatedCircuit = {
   title: string;
   type: string;
   description: string;
+  path?: string;
 };
 
 type Destination = {
@@ -218,9 +219,9 @@ const destinationDetails: Record<string, Destination> = {
       { title: "Sunset & Sunrise Desert Experience", type: "Scenic moment", duration: "Flexible", description: "Photographic and quiet desert moments planned around camp logistics.", bestFor: "Photography groups, premium clients" },
     ],
     relatedCircuits: [
-      { title: "Fes to Merzouga Desert Circuit", type: "Desert route", description: "Middle Atlas, Ziz Valley and Erg Chebbi for agencies starting from Fes." },
-      { title: "Marrakech to Sahara Program", type: "Classic B2B circuit", description: "Ait Ben Haddou, Dades, Merzouga and return or onward to Fes." },
-      { title: "Luxury Sahara Extension", type: "Premium add-on", description: "A curated desert extension for private clients and VIP groups." },
+      { title: "Fes to Merzouga Desert Circuit", type: "Desert route", description: "Middle Atlas, Ziz Valley and Erg Chebbi for agencies starting from Fes.", path: "/circuits/sahara-desert-experience" },
+      { title: "Marrakech to Sahara Program", type: "Classic B2B circuit", description: "Ait Ben Haddou, Dades, Merzouga and return or onward to Fes.", path: "/circuits/sahara-desert-experience" },
+      { title: "Luxury Sahara Extension", type: "Premium add-on", description: "A curated desert extension for private clients and VIP groups.", path: "/circuits/morocco-luxury-escape" },
     ],
   },
   ouarzazate: {
@@ -294,6 +295,77 @@ const destinationDetails: Record<string, Destination> = {
   },
 };
 
+function getDestinationFaqItems(title: string, isFr: boolean) {
+  return [
+    {
+      question: isFr ? `Ces excursions à ${title} sont-elles adaptées aux groupes ?` : `Are these ${title} excursions suitable for groups?`,
+      answer: isFr
+        ? "Oui. Les horaires, guides, véhicules, repas et niveaux d'activité peuvent être adaptés selon la taille du groupe et le profil client."
+        : "Yes. Timings, guides, vehicles, meals and activity levels can be adapted according to group size and client profile.",
+    },
+    {
+      question: isFr ? "Peut-on intégrer ces expériences dans un programme MICE ?" : "Can these experiences be integrated into a MICE program?",
+      answer: isFr
+        ? "Oui. Certaines expériences peuvent devenir activités incentives, extensions pré/post événement ou moments premium selon le timing et le budget."
+        : "Yes. Selected experiences can become incentive activities, pre/post-event extensions or premium moments depending on timing and budget.",
+    },
+    {
+      question: isFr ? "Comment demander les tarifs nets B2B ?" : "How can agencies request B2B net rates?",
+      answer: isFr
+        ? "Envoyez vos dates, taille de groupe, marché, budget cible et niveau d'hôtels via notre formulaire de devis."
+        : "Send your dates, group size, market, target budget and hotel level through our quote request form.",
+    },
+  ];
+}
+
+// Kept with the destination source so server and client schemas cannot drift.
+// eslint-disable-next-line react-refresh/only-export-components
+export function getDestinationPageStructuredData(slug: string, locale: "en" | "fr") {
+  const dest = destinationDetails[slug];
+  if (!dest) return null;
+
+  const isFr = locale === "fr";
+  const title = isFr ? dest.nameFr : dest.name;
+  const description = isFr ? dest.aboutFr : dest.about;
+  const faqItems = getDestinationFaqItems(title, isFr);
+  const destinationJsonLd: WithContext<TouristDestination> = {
+    "@context": "https://schema.org",
+    "@type": "TouristDestination",
+    "@id": `${BASE_URL}/destinations/${slug}#destination`,
+    name: `${title}, Morocco`,
+    description,
+    image: `${BASE_URL}${dest.image}`,
+    url: `${BASE_URL}/destinations/${slug}`,
+    touristType: "Travel agencies, tour operators, groups, MICE and private travelers",
+    includesAttraction: dest.excursions.slice(0, 8).map((excursion) => ({
+      "@type": "TouristAttraction",
+      name: excursion.title,
+      description: excursion.description,
+    })),
+  };
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${BASE_URL}/destinations/${slug}#faq`,
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+
+  return {
+    faqItems,
+    schemas: [
+      { id: "destination-schema", value: destinationJsonLd },
+      { id: "destination-faq-schema", value: faqJsonLd },
+    ],
+  };
+}
+
 function getQuotePath(slug?: string) {
   return `/quote${slug ? `?destination=${encodeURIComponent(slug)}` : ""}`;
 }
@@ -317,61 +389,18 @@ export default function DestinationDetail() {
   const description = isFr ? dest.aboutFr : dest.about;
   const quotePath = getQuotePath(slug);
   const relatedCircuits = dest.relatedCircuits.length > 0 ? dest.relatedCircuits : defaultRelatedCircuits;
-  const faqItems = [
-    {
-      question: isFr ? `Ces excursions à ${title} sont-elles adaptées aux groupes ?` : `Are these ${title} excursions suitable for groups?`,
-      answer: isFr
-        ? "Oui. Les horaires, guides, véhicules, repas et niveaux d'activité peuvent être adaptés selon la taille du groupe et le profil client."
-        : "Yes. Timings, guides, vehicles, meals and activity levels can be adapted according to group size and client profile.",
-    },
-    {
-      question: isFr ? "Peut-on intégrer ces expériences dans un programme MICE ?" : "Can these experiences be integrated into a MICE program?",
-      answer: isFr
-        ? "Oui. Certaines expériences peuvent devenir activités incentives, extensions pré/post événement ou moments premium selon le timing et le budget."
-        : "Yes. Selected experiences can become incentive activities, pre/post-event extensions or premium moments depending on timing and budget.",
-    },
-    {
-      question: isFr ? "Comment demander les tarifs nets B2B ?" : "How can agencies request B2B net rates?",
-      answer: isFr
-        ? "Envoyez vos dates, taille de groupe, marché, budget cible et niveau d'hôtels via notre formulaire de devis."
-        : "Send your dates, group size, market, target budget and hotel level through our quote request form.",
-    },
-  ];
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "@id": `${BASE_URL}/destinations/${slug}#faq`,
-    mainEntity: faqItems.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.answer,
-      },
-    })),
-  };
-  const destinationJsonLd: WithContext<TouristDestination> = {
-    "@context": "https://schema.org",
-    "@type": "TouristDestination",
-    "@id": `${BASE_URL}/destinations/${slug}#destination`,
-    name: `${title}, Morocco`,
-    description,
-    image: `${BASE_URL}${dest.image}`,
-    url: `${BASE_URL}/destinations/${slug}`,
-    touristType: "Travel agencies, tour operators, groups, MICE and private travelers",
-    includesAttraction: dest.excursions.slice(0, 8).map((excursion) => ({
-      "@type": "TouristAttraction",
-      name: excursion.title,
-      description: excursion.description,
-    })),
-  };
+  const structuredData = getDestinationPageStructuredData(slug!, locale)!;
+  const { faqItems } = structuredData;
 
   return (
     <>
       <SEO />
       <Helmet>
-        <script type="application/ld+json">{safeJsonLd(destinationJsonLd)}</script>
-        <script type="application/ld+json">{safeJsonLd(faqJsonLd)}</script>
+        {structuredData.schemas.map((schema) => (
+          <script key={schema.id} id={schema.id} type="application/ld+json">
+            {safeJsonLd(schema.value)}
+          </script>
+        ))}
       </Helmet>
 
       <section className="bg-[#F9F7F4]">
@@ -451,7 +480,7 @@ export default function DestinationDetail() {
                 </p>
                 <div className="grid sm:grid-cols-3 gap-5">
                   {relatedCircuits.map((circuit) => (
-                    <Link key={circuit.title} to="/circuits" className="block bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:border-[#A91D2D]/40 hover:shadow-md transition-all">
+                    <Link key={circuit.title} to={circuit.path ?? "/circuits"} className="block bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:border-[#A91D2D]/40 hover:shadow-md transition-all">
                       <p className="text-xs font-medium text-[#A91D2D] mb-2">{circuit.type}</p>
                       <h3 className="font-semibold text-[#1F2937]">{circuit.title}</h3>
                       <p className="mt-2 text-sm text-[#4B5563] leading-relaxed">{circuit.description}</p>

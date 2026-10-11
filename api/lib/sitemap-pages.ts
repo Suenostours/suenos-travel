@@ -1,3 +1,5 @@
+import { PUBLIC_DESTINATIONS } from "../../src/lib/public-destinations";
+
 type StaticSitemapPage = {
   path: string;
   changefreq: string;
@@ -7,6 +9,16 @@ type StaticSitemapPage = {
 
 export const SITE_CONTENT_LAST_MODIFIED = "2026-09-04";
 export const PRIORITY_SEO_LAST_MODIFIED = "2026-09-10";
+export const DESTINATION_CONTENT_LAST_MODIFIED = "2026-10-03";
+
+export const STATIC_DESTINATION_PAGES: readonly StaticSitemapPage[] = PUBLIC_DESTINATIONS.map(
+  (destination) => ({
+    path: `/destinations/${destination.slug}`,
+    changefreq: "monthly",
+    priority: 0.7,
+    lastmod: DESTINATION_CONTENT_LAST_MODIFIED,
+  }),
+);
 
 export const STATIC_SITEMAP_PAGES: readonly StaticSitemapPage[] = [
   { path: "/", changefreq: "weekly", priority: 1.0, lastmod: SITE_CONTENT_LAST_MODIFIED },

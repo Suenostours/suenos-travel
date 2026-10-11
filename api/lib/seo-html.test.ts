@@ -29,6 +29,17 @@ describe("SEO HTML rendering", () => {
     expect(html).not.toContain('data-seo-fallback="true"');
   });
 
+  it("preserves real server-rendered content instead of replacing it with the fallback", () => {
+    const html = renderSeoHtml(
+      '<html><head><title>Old</title></head><body><div id="root"><main id="main-content"><h1>Real destination content</h1></main></div></body></html>',
+      "/destinations/fes",
+    );
+
+    expect(html).toContain("Real destination content");
+    expect(html).toContain('id="main-content"');
+    expect(html).not.toContain('data-seo-fallback="true"');
+  });
+
   it("marks unknown and admin pages as noindex", () => {
     expect(getSeoMeta("/does-not-exist").noindex).toBe(true);
     expect(getSeoMeta("/admin/login").noindex).toBe(true);

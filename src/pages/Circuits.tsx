@@ -7,40 +7,24 @@ import { Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { optimizedImageUrl } from "@/lib/images";
 import { useSsrData } from "@/providers/ssr-data";
-import { localizeTourDuration } from "@/lib/tour-display";
+import { localizeTourDuration, localizeTourType } from "@/lib/tour-display";
 
 const typeFilters = [
-  { key: "all", label: "All", labelFr: "Tous" },
-  { key: "private", label: "Private", labelFr: "Privé" },
-  { key: "small_group", label: "Small Group", labelFr: "Petit groupe" },
-  { key: "corporate", label: "Corporate", labelFr: "Corporate" },
-  { key: "desert", label: "Desert", labelFr: "Désert" },
-  { key: "family", label: "Family", labelFr: "Famille" },
-  { key: "luxury", label: "Luxury", labelFr: "Luxe" },
-  { key: "cultural", label: "Cultural", labelFr: "Culturel" },
-  { key: "adventure", label: "Adventure", labelFr: "Aventure" },
-  { key: "short_break", label: "Short Break", labelFr: "Court séjour" },
-  { key: "coast", label: "Coast", labelFr: "Côte" },
-  { key: "sports", label: "Sports", labelFr: "Sports" },
-  { key: "wellness", label: "Wellness", labelFr: "Bien-être" },
-  { key: "romantic", label: "Romantic", labelFr: "Romantique" },
-];
-
-const typeLabels: Record<string, string> = {
-  private: "Private",
-  small_group: "Small Group",
-  corporate: "Corporate",
-  desert: "Desert",
-  family: "Family",
-  luxury: "Luxury & Wellness",
-  cultural: "Cultural & Historical",
-  adventure: "Adventure & Nature",
-  short_break: "City & Nature",
-  coast: "Coast",
-  sports: "Sports",
-  wellness: "Wellness",
-  romantic: "Romantic & Luxury",
-};
+  "all",
+  "private",
+  "small_group",
+  "corporate",
+  "desert",
+  "family",
+  "luxury",
+  "cultural",
+  "adventure",
+  "short_break",
+  "coast",
+  "sports",
+  "wellness",
+  "romantic",
+] as const;
 
 const typeColors: Record<string, string> = {
   private: "bg-teal-100 text-teal-800",
@@ -57,26 +41,6 @@ const typeColors: Record<string, string> = {
   wellness: "bg-green-100 text-green-800",
   romantic: "bg-rose-100 text-rose-800",
 };
-
-const frenchTypeLabels: Record<string, string> = {
-  private: "Privé",
-  small_group: "Petit groupe",
-  corporate: "Entreprise",
-  desert: "Désert",
-  family: "Famille",
-  luxury: "Luxe et bien-être",
-  cultural: "Culture et histoire",
-  adventure: "Aventure et nature",
-  short_break: "Ville et nature",
-  coast: "Côte",
-  sports: "Sports",
-  wellness: "Bien-être",
-  romantic: "Romantique et luxe",
-};
-
-function getTypeLabel(type: string, locale: "en" | "fr") {
-  return (locale === "fr" ? frenchTypeLabels[type] : typeLabels[type]) ?? type.replace(/_/g, " ");
-}
 
 export default function Circuits() {
   const { locale } = useI18n();
@@ -141,17 +105,17 @@ export default function Circuits() {
           </div>
 
           <div className="flex flex-wrap justify-center gap-2 mb-12">
-            {typeFilters.map((f) => (
+            {typeFilters.map((type) => (
               <button
-                key={f.key}
-                onClick={() => setFilter(f.key)}
+                key={type}
+                onClick={() => setFilter(type)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  filter === f.key
+                  filter === type
                     ? "bg-[#A91D2D] text-white"
                     : "bg-white text-[#4B5563] hover:bg-gray-50 border border-gray-200"
                 }`}
               >
-                {isFr ? f.labelFr : f.label}
+                {type === "all" ? (isFr ? "Tous" : "All") : localizeTourType(type, locale)}
               </button>
             ))}
           </div>
@@ -182,6 +146,7 @@ export default function Circuits() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {filtered.map((tour) => {
                 const localizedDuration = localizeTourDuration(tour.duration, locale);
+                const localizedType = localizeTourType(tour.type, locale);
                 return (
                 <div key={tour.slug} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all">
                   <div className="relative h-56 overflow-hidden">
@@ -192,11 +157,13 @@ export default function Circuits() {
                         {tour.title ?? tour.slug}
                       </div>
                     )}
-                    <div className="absolute top-3 left-3">
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${typeColors[tour.type] ?? "bg-gray-100 text-gray-700"}`}>
-                        {getTypeLabel(tour.type, locale)}
-                      </span>
-                    </div>
+                    {localizedType && (
+                      <div className="absolute top-3 left-3">
+                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${typeColors[tour.type] ?? "bg-gray-100 text-gray-700"}`}>
+                          {localizedType}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <div className="p-5 space-y-3">
                     <h3 className="font-semibold text-lg text-[#1F2937]">{tour.title ?? tour.slug}</h3>

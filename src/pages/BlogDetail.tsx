@@ -256,8 +256,6 @@ Yes. A B2B-focused Morocco DMC can prepare net agency rates so the travel agency
 
 Send your dates, group size, destinations, hotel level, budget range and client profile through the <a href="/quote">quote request form</a>.`,
     faq: [
-      { question: "How do I choose the best DMC in Morocco for my travel agency?", answer: "Compare verified company credentials, B2B terms, itinerary realism, relevant group or FIT experience, proposal clarity, response quality, supplier control and on-site support using the same sample brief." },
-      { question: "Is there one best DMC in Morocco for every agency?", answer: "No. The best-fit DMC depends on your client market, trip type, group size, destinations, service level, guide language and commercial expectations." },
       { question: "What does a DMC in Morocco do?", answer: "A DMC in Morocco coordinates local travel services such as hotels, riads, transport, licensed guides, restaurants, excursions, Sahara camps, MICE logistics and on-site support for agencies and tour operators." },
       { question: "Is a Morocco DMC only for groups?", answer: "No. A Morocco DMC can support private FIT clients, luxury travel, family programs, group tours, MICE, incentives and series departures." },
       { question: "Can a DMC provide net rates for agencies?", answer: "Yes. A B2B-focused Morocco DMC can prepare net agency rates so the travel agency or tour operator can add its own margin." },
@@ -1343,6 +1341,30 @@ function formatInline(value: string) {
     .replace(/<a href="([^"]+)">([^<]+)<\/a>/g, '<a href="$1" class="text-[#A91D2D] font-medium underline underline-offset-2">$2</a>');
 }
 
+// Kept with the article source so server and client schemas cannot drift.
+// eslint-disable-next-line react-refresh/only-export-components
+export function getBlogPageStructuredData(slug: string) {
+  const post = blogPosts[slug];
+  if (!post?.faq) return [];
+
+  return [{
+    id: "blog-faq-schema",
+    value: {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "@id": `${toAbsoluteUrl(`/blog/${slug}`)}#faq`,
+      mainEntity: post.faq.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer,
+        },
+      })),
+    },
+  }];
+}
+
 export default function BlogDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { locale } = useI18n();
@@ -1365,31 +1387,20 @@ export default function BlogDetail() {
   const hasFrenchContent = post.titleFr !== post.title || post.contentFr !== post.content;
   const title = isFr && hasFrenchContent ? post.titleFr : post.title;
   const content = isFr && hasFrenchContent ? post.contentFr : post.content;
-  const canonicalPath = `/blog/${slug}`;
   const relatedPosts = Object.entries(blogPosts)
     .filter(([relatedSlug, relatedPost]) => !legacyBlogRedirects[relatedSlug] && relatedSlug !== slug && relatedPost.category.includes("B2B"))
     .slice(0, 2);
-  const faqJsonLd = post.faq
-    ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "@id": `${toAbsoluteUrl(canonicalPath)}#faq`,
-        mainEntity: post.faq.map((item) => ({
-          "@type": "Question",
-          name: item.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: item.answer,
-          },
-        })),
-      }
-    : null;
+  const structuredData = getBlogPageStructuredData(slug!);
 
   return (
     <>
       <SEO />
       <Helmet>
-        {faqJsonLd && <script type="application/ld+json">{safeJsonLd(faqJsonLd)}</script>}
+        {structuredData.map((schema) => (
+          <script key={schema.id} id={schema.id} type="application/ld+json">
+            {safeJsonLd(schema.value)}
+          </script>
+        ))}
       </Helmet>
 
       <section className="bg-[#F9F7F4]">

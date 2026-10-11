@@ -199,6 +199,11 @@ export default function CircuitDetail() {
               {programItems.length > 0 && (
                 <div>
                   <h2 className="font-serif text-2xl font-bold text-[#1F2937] mb-4">{isFr ? "Programme" : "Itinerary"}</h2>
+                  <p className="mb-4 text-sm leading-relaxed text-[#6B7280]">
+                    {isFr
+                      ? "Cette idée de programme peut être adaptée au brief de votre agence, aux dates, à la taille du groupe et au budget cible."
+                      : "This sample program can be adapted to your agency brief, travel dates, group size and target budget."}
+                  </p>
                   <div className="space-y-3">
                     {programItems.map((day, i) => (
                       <div key={`${i}-${day}`} className="flex gap-4 p-4 bg-white rounded-xl border border-gray-100">

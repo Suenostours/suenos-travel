@@ -1059,7 +1059,7 @@ function QuotesManager() {
               <div>
                 <h2 className="font-semibold text-[#1F2937]">{q.agencyName || q.contactPerson || "Quote Request"}</h2>
                 <p className="text-sm text-[#6B7280]">{q.email}</p>
-                <p className="mt-1 text-xs text-[#6B7280]">{[q.travelType, q.dates].filter(Boolean).join(" | ") || formatRequestDate(q.createdAt)}</p>
+                <p className="mt-1 text-xs text-[#6B7280]">MI-Q-{q.id} · {[q.travelType, q.dates].filter(Boolean).join(" | ") || formatRequestDate(q.createdAt)}</p>
               </div>
               <div className="flex items-center gap-3">
                 <StatusBadge status={q.status} />

@@ -207,10 +207,11 @@ export const formsRouter = createRouter({
         input.specialRequests?.trim(),
         numberOfPax ? `Number of Pax: ${numberOfPax}` : "",
       ].filter(Boolean).join("\n");
-      await db.insert(quoteRequests).values({
+      const result = await db.insert(quoteRequests).values({
         ...storedInput,
         specialRequests: storedBrief || undefined,
       });
+      const reference = `MI-Q-${Number(result[0].insertId)}`;
       console.info('[forms] submission stored: type="Quote Request"');
       const legacyPax = (input.adults ?? 0) + (input.children ?? 0);
       const totalPax = numberOfPax ?? (legacyPax || undefined);
@@ -218,6 +219,7 @@ export const formsRouter = createRouter({
         type: "Quote Request",
         replyTo: input.email,
         fields: [
+          { label: "Request Reference", value: reference },
           { label: "Agency Name", value: input.agencyName },
           { label: "Contact Person", value: input.contactPerson },
           { label: "Email", value: input.email },
@@ -239,7 +241,7 @@ export const formsRouter = createRouter({
           { label: "Created At", value: new Date().toISOString() },
         ],
       });
-      return { success: true };
+      return { success: true, reference };
     }),
 
   listQuotes: editorQuery.query(async () => {

@@ -10,14 +10,18 @@ import { registerUploadRoutes } from "./upload-handler";
 import { getDb } from "./queries/connection";
 import {
   tours,
-  cities,
   seoSettings,
 } from "@db/schema";
 import { eq } from "drizzle-orm";
 import path from "path";
 import fs from "fs";
 import { getCanonicalRedirect } from "./lib/canonical-url";
-import { getStaticBlogLastModified, STATIC_BLOG_PAGES, STATIC_SITEMAP_PAGES } from "./lib/sitemap-pages";
+import {
+  getStaticBlogLastModified,
+  STATIC_BLOG_PAGES,
+  STATIC_DESTINATION_PAGES,
+  STATIC_SITEMAP_PAGES,
+} from "./lib/sitemap-pages";
 import { isKnownStaticContentPath, renderSeoHtml } from "./lib/seo-html";
 import { buildTourSeoMeta, type SeoOverrides } from "../src/lib/seo-meta";
 import { getSeoResponseStatus, type DynamicContentState } from "./lib/seo-response";
@@ -43,7 +47,6 @@ import {
   getTourSitemapAlternates,
   type SitemapAlternates,
 } from "./lib/sitemap-locales";
-import { shouldPublishDatabaseDestination } from "./lib/sitemap-content";
 
 type SeoOverride = SeoOverrides;
 
@@ -149,7 +152,7 @@ async function loadDynamicTour(pathname: string, slug: string, locale: PublicLoc
 }
 
 function isSsrRoute(pathname: string) {
-  return hasReviewedFrenchEquivalent(pathname);
+  return hasReviewedFrenchEquivalent(pathname) || isKnownStaticContentPath(pathname);
 }
 
 const FRENCH_LANDING_KEYS: Partial<Record<string, FrenchCommercialPageKey>> = {
@@ -205,6 +208,14 @@ app.get("/sitemap.xml", async (c) => {
   for (const slug of STATIC_BLOG_PAGES) {
     urls.push(sitemapEntry(`${baseUrl}/blog/${slug}`, getStaticBlogLastModified(slug), "monthly", "0.6"));
   }
+  for (const destination of STATIC_DESTINATION_PAGES) {
+    urls.push(sitemapEntry(
+      `${baseUrl}${destination.path}`,
+      destination.lastmod,
+      destination.changefreq,
+      destination.priority.toFixed(1),
+    ));
+  }
 
   try {
     const db = getDb();
@@ -228,12 +239,6 @@ app.get("/sitemap.xml", async (c) => {
       if (alternates) {
         urls.push(sitemapEntry(fr, formatSitemapDate(t.updatedAt), "monthly", "0.8", alternates));
       }
-    }
-    const cityRows = await db.select({ slug: cities.slug, updatedAt: cities.updatedAt }).from(cities).where(eq(cities.active, 1));
-    for (const c of cityRows) {
-      const route = `/destinations/${c.slug}`;
-      if (!shouldPublishDatabaseDestination(c.slug)) continue;
-      urls.push(sitemapEntry(`${baseUrl}${route}`, formatSitemapDate(c.updatedAt), "monthly", "0.7"));
     }
   } catch {
     console.warn("[sitemap] Database unavailable; serving static URLs only.");
@@ -407,14 +412,14 @@ async function serveIndexHtml(c: Context<{ Bindings: HttpBindings }>) {
       };
     }
 
-    const seoContent = renderSeoHtml(template, pathname, override, extraStructuredData);
-    const content = isSsrRoute(pathname)
+    const appTemplate = isSsrRoute(pathname)
       ? injectSsrHtml(
-          seoContent,
+          template,
           renderApp(`${pathname}${requestUrl.search}`, ssrData),
           ssrData,
         )
-      : seoContent;
+      : template;
+    const content = renderSeoHtml(appTemplate, pathname, override, extraStructuredData);
     if (status === 503) c.header("Retry-After", "300");
     return c.html(content, status);
   } catch (error) {

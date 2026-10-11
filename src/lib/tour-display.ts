@@ -26,20 +26,32 @@ export function localizeTourType(type: string | null | undefined, locale: Locale
 export function localizeTourDuration(duration: string | null | undefined, locale: Locale) {
   const value = duration?.trim();
   if (!value) return null;
-  if (locale === "en") return value;
 
   const numberOnly = value.match(/^(\d+)$/);
   if (numberOnly) {
     const count = Number(numberOnly[1]);
-    return `${count} ${count === 1 ? "jour" : "jours"}`;
+    return locale === "fr"
+      ? `${count} ${count === 1 ? "jour" : "jours"}`
+      : `${count} ${count === 1 ? "day" : "days"}`;
   }
 
   const englishDays = value.match(/^(\d+)\s*days?$/i);
   if (englishDays) {
     const count = Number(englishDays[1]);
-    return `${count} ${count === 1 ? "jour" : "jours"}`;
+    return locale === "fr"
+      ? `${count} ${count === 1 ? "jour" : "jours"}`
+      : `${count} ${count === 1 ? "day" : "days"}`;
   }
 
-  if (/^\d+\s*(jours?|nuits?)$/i.test(value)) return value;
+  const frenchDays = value.match(/^(\d+)\s*jours?$/i);
+  if (frenchDays) {
+    const count = Number(frenchDays[1]);
+    return locale === "fr"
+      ? `${count} ${count === 1 ? "jour" : "jours"}`
+      : `${count} ${count === 1 ? "day" : "days"}`;
+  }
+
+  if (locale === "en") return value;
+  if (/^\d+\s*nuits?$/i.test(value)) return value;
   return null;
 }

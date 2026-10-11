@@ -1,9 +1,14 @@
 import { z } from "zod";
 import { createRouter, publicQuery, adminQuery } from "./middleware";
 import { getDb } from "./queries/connection";
-import { seoSettings, tours, cities, blogPosts } from "@db/schema";
+import { seoSettings, tours, blogPosts } from "@db/schema";
 import { eq, and } from "drizzle-orm";
-import { getStaticBlogLastModified, STATIC_BLOG_PAGES, STATIC_SITEMAP_PAGES } from "./lib/sitemap-pages";
+import {
+  getStaticBlogLastModified,
+  STATIC_BLOG_PAGES,
+  STATIC_DESTINATION_PAGES,
+  STATIC_SITEMAP_PAGES,
+} from "./lib/sitemap-pages";
 
 const seoPath = z
   .string()
@@ -75,15 +80,18 @@ export const seoRouter = createRouter({
     for (const slug of STATIC_BLOG_PAGES) {
       pages.push({ url: `${baseUrl}/blog/${slug}`, lastmod: getStaticBlogLastModified(slug), changefreq: "monthly", priority: 0.6 });
     }
+    for (const destination of STATIC_DESTINATION_PAGES) {
+      pages.push({
+        url: `${baseUrl}${destination.path}`,
+        lastmod: destination.lastmod,
+        changefreq: destination.changefreq,
+        priority: destination.priority,
+      });
+    }
 
     const tourRows = await db.select({ slug: tours.slug, updatedAt: tours.updatedAt }).from(tours).where(eq(tours.active, 1));
     for (const t of tourRows) {
       pages.push({ url: `${baseUrl}/circuits/${t.slug}`, lastmod: formatSitemapDate(t.updatedAt), changefreq: "monthly", priority: 0.8 });
-    }
-
-    const cityRows = await db.select({ slug: cities.slug, updatedAt: cities.updatedAt }).from(cities).where(eq(cities.active, 1));
-    for (const c of cityRows) {
-      pages.push({ url: `${baseUrl}/destinations/${c.slug}`, lastmod: formatSitemapDate(c.updatedAt), changefreq: "monthly", priority: 0.7 });
     }
 
     const blogRows = await db

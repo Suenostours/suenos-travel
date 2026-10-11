@@ -102,7 +102,7 @@ export function renderSeoHtml(
     <link data-rh="true" rel="alternate" hreflang="fr" href="${escapeHtml(meta.alternates.fr)}" />
     <link data-rh="true" rel="alternate" hreflang="x-default" href="${escapeHtml(meta.alternates.xDefault)}" />` : ""}
     ${structuredData ? `<script data-rh="true" id="route-seo-graph" type="application/ld+json">${structuredData}</script>` : ""}
-    ${extraStructuredData?.map(({ id, value }) => `<script id="${escapeHtml(id)}" type="application/ld+json">${safeJsonLd(value)}</script>`).join("\n    ") ?? ""}
+    ${extraStructuredData?.map(({ id, value }) => `<script data-rh="true" id="${escapeHtml(id)}" type="application/ld+json">${safeJsonLd(value)}</script>`).join("\n    ") ?? ""}
     ${preload}
     <!-- SEO_META_END -->`;
 

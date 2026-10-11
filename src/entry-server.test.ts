@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { renderApp } from "./entry-server";
 import type { PublicTourData, PublicTourListData, SsrData } from "@/providers/ssr-data";
+import { getBlogPageStructuredData } from "@/pages/BlogDetail";
+import { getDestinationPageStructuredData } from "@/pages/DestinationDetail";
 
 function syntheticTour(locale: "en" | "fr"): PublicTourData {
   return {
@@ -201,6 +203,86 @@ describe("incremental SSR", () => {
     expect(unavailableQuote).not.toContain("Vérification du programme...");
   });
 
+  it("server-renders the real content for the remaining public SEO routes", () => {
+    const routes = [
+      ["/destinations", "Discover Morocco&#x27;s key destinations"],
+      ["/destinations/fes", "Fes Guided Medina Tour"],
+      ["/mice", "Corporate Events &amp; Incentive Travel Services"],
+      ["/b2b", "Partnership Form"],
+      ["/blog", "Travel guides, tips, and insights about Morocco"],
+      ["/blog/morocco-tours-for-travel-agencies-b2b-programs", "A B2B Morocco program must be designed"],
+      ["/contact", "Contact Us"],
+      ["/dmc-morocco", "DMC in Morocco for Travel Agencies"],
+      ["/morocco-group-tours", "Morocco Group Tours for Travel Agencies"],
+    ] as const;
+
+    for (const [pathname, expectedContent] of routes) {
+      const html = renderApp(pathname, {
+        pathname,
+        locale: "en",
+        routeData: { kind: "none" },
+      });
+
+      expect(html).toContain(expectedContent);
+      expect(html).toContain('id="main-content"');
+    }
+  });
+
+  it("builds server-visible FAQ and destination schemas from the page content", () => {
+    const destination = getDestinationPageStructuredData("fes", "en");
+    const blog = getBlogPageStructuredData("what-does-a-dmc-in-morocco-do-for-travel-agencies");
+
+    expect(destination?.schemas.map((schema) => schema.id)).toEqual([
+      "destination-schema",
+      "destination-faq-schema",
+    ]);
+    expect(JSON.stringify(destination?.schemas)).toContain("TouristDestination");
+    expect(JSON.stringify(destination?.schemas)).toContain("Fes Guided Medina Tour");
+    expect(blog.map((schema) => schema.id)).toEqual(["blog-faq-schema"]);
+    expect(JSON.stringify(blog)).toContain("FAQPage");
+    const blogQuestions = blog[0]?.value && typeof blog[0].value === "object" && "mainEntity" in blog[0].value
+      ? (blog[0].value.mainEntity as Array<{ name: string }>).map((item) => item.name)
+      : [];
+    expect(blogQuestions).toEqual([
+      "What does a DMC in Morocco do?",
+      "Is a Morocco DMC only for groups?",
+      "Can a DMC provide net rates for agencies?",
+      "How do I request a Morocco DMC proposal?",
+    ]);
+  });
+
+  it("emits each page-owned schema exactly once in server-rendered content", () => {
+    const destination = renderApp("/destinations/fes", {
+      pathname: "/destinations/fes",
+      locale: "en",
+      routeData: { kind: "none" },
+    });
+    const blog = renderApp("/blog/what-does-a-dmc-in-morocco-do-for-travel-agencies", {
+      pathname: "/blog/what-does-a-dmc-in-morocco-do-for-travel-agencies",
+      locale: "en",
+      routeData: { kind: "none" },
+    });
+
+    expect(destination.match(/id="destination-schema"/g)).toHaveLength(1);
+    expect(destination.match(/id="destination-faq-schema"/g)).toHaveLength(1);
+    expect(destination).toContain("Are these Fes excursions suitable for groups?");
+    expect(blog.match(/id="blog-faq-schema"/g)).toHaveLength(1);
+    expect(blog).toContain("What does a DMC in Morocco do?");
+    expect(blog).not.toContain("How do I choose the best DMC in Morocco for my travel agency?");
+    expect(blog).not.toContain("Is there one best DMC in Morocco for every agency?");
+  });
+
+  it("links Merzouga recommendations to verified live circuit pages", () => {
+    const html = renderApp("/destinations/merzouga", {
+      pathname: "/destinations/merzouga",
+      locale: "en",
+      routeData: { kind: "none" },
+    });
+
+    expect(html).toContain('href="/circuits/sahara-desert-experience"');
+    expect(html).toContain('href="/circuits/morocco-luxury-escape"');
+  });
+
   it("keeps simultaneous English and French renders request-scoped", async () => {
     const [en, fr] = await Promise.all([
       Promise.resolve(renderApp("/services", {
@@ -233,6 +315,47 @@ describe("incremental SSR", () => {
     expect(html).not.toContain("Loading tour");
   });
 
+  it("surfaces normalized programme facts and adaptable sample positioning", () => {
+    const englishTour = syntheticTour("en");
+    if (!englishTour?.tours || !englishTour.tour_translations) throw new Error("Synthetic English tour is incomplete");
+    englishTour.tours.duration = "8";
+    englishTour.tour_translations.program = "Day 1: Casablanca\nDay 2: Rabat";
+    const english = renderApp("/circuits/imperial-cities-morocco", {
+      pathname: "/circuits/imperial-cities-morocco",
+      locale: "en",
+      routeData: {
+        kind: "tour",
+        slug: "imperial-cities-morocco",
+        locale: "en",
+        state: "found",
+        data: englishTour,
+      },
+    });
+
+    expect(english).toContain("8 days");
+    expect(english).toContain("Cultural");
+    expect(english).toContain("This sample program can be adapted to your agency brief");
+
+    const frenchTour = syntheticTour("fr");
+    if (!frenchTour?.tours || !frenchTour.tour_translations) throw new Error("Synthetic French tour is incomplete");
+    frenchTour.tour_translations.program = "Jour 1 : Casablanca\nJour 2 : Rabat";
+    const french = renderApp("/fr/circuits/imperial-cities-morocco", {
+      pathname: "/fr/circuits/imperial-cities-morocco",
+      locale: "fr",
+      routeData: {
+        kind: "tour",
+        slug: "imperial-cities-morocco",
+        locale: "fr",
+        state: "found",
+        data: frenchTour,
+      },
+    });
+
+    expect(french).toContain("8 jours");
+    expect(french).toContain("Culturel");
+    expect(french).toContain("Cette idée de programme peut être adaptée au brief de votre agence");
+  });
+
   it("renders French catalogue data, empty state, and unavailable state without an English fallback", () => {
     const found = renderApp("/fr/circuits", {
       pathname: "/fr/circuits",
@@ -258,14 +381,21 @@ describe("incremental SSR", () => {
   });
 
   it("keeps the English catalogue route and links unchanged", () => {
+    const numericDurationCatalog: PublicTourListData = [{
+      ...englishCatalog[0],
+      duration: "8",
+    }];
     const html = renderApp("/circuits", {
       pathname: "/circuits",
       locale: "en",
-      routeData: { kind: "tour-catalog", locale: "en", state: "found", data: englishCatalog },
+      routeData: { kind: "tour-catalog", locale: "en", state: "found", data: numericDurationCatalog },
     });
 
     expect(html).toContain("Morocco Circuits and Group Tours for Travel Agencies");
     expect(html).toContain("Imperial Cities Morocco");
+    expect(html).toContain("8 days");
+    expect(html).toContain("Cultural");
+    expect(html).not.toContain("Cultural &amp; Historical");
     expect(html).toContain('href="/circuits/imperial-cities-morocco"');
     expect(html).not.toContain('href="/fr/circuits/imperial-cities-morocco"');
   });

@@ -22,7 +22,8 @@ export const CONTENT_SECURITY_POLICY = [
   "form-action 'self'",
   "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net",
   "style-src 'self' 'unsafe-inline'",
-  `img-src 'self' data: https://res.cloudinary.com ${googleConnections.join(" ")}`,
+  // Regional Ads image endpoint observed in the production mobile audit.
+  `img-src 'self' data: https://res.cloudinary.com https://www.google.nl ${googleConnections.join(" ")}`,
   `connect-src 'self' ${googleConnections.join(" ")}`,
   "frame-src https://www.googletagmanager.com https://td.doubleclick.net",
   "font-src 'self' data:",

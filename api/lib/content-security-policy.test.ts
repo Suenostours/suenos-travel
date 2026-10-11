@@ -20,6 +20,14 @@ describe("Google tag CSP compatibility", () => {
     expect(directives["img-src"]).toContain(new URL(url).origin);
   });
 
+  it("allows the observed regional Ads endpoint only for images", () => {
+    const origin = new URL("https://www.google.nl/pagead/1p-user-list/18188447838/").origin;
+    expect(directives["img-src"]).toContain(origin);
+    for (const [name, sources] of Object.entries(directives)) {
+      if (name !== "img-src") expect(sources).not.toContain(origin);
+    }
+  });
+
   it("allows the observed Google Ads script without allowing arbitrary scripts", () => {
     expect(directives["script-src"]).toContain("https://googleads.g.doubleclick.net");
     expect(directives["script-src"]).toContain("https://www.googletagmanager.com");

@@ -15,6 +15,9 @@ import {
 import { eq } from "drizzle-orm";
 import path from "path";
 import fs from "fs";
+import type { Manifest } from "vite";
+import { CONTENT_SECURITY_POLICY } from "./lib/content-security-policy";
+import { addRoutePreloads } from "./lib/route-preloads";
 import { getCanonicalRedirect } from "./lib/canonical-url";
 import {
   getStaticBlogLastModified,
@@ -63,7 +66,7 @@ app.use("*", async (c, next) => {
   c.header("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
   c.header(
     "Content-Security-Policy",
-    "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://res.cloudinary.com https://www.google-analytics.com https://www.googleadservices.com https://googleads.g.doubleclick.net; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net; frame-src https://www.googletagmanager.com https://td.doubleclick.net; font-src 'self' data:",
+    CONTENT_SECURITY_POLICY,
   );
 
   if (env.isProduction) {
@@ -262,6 +265,21 @@ app.get("/robots.txt", (c) => {
 });
 
 // ─── SEO: Explicit frontend routes (serve index.html) ───
+let assetManifest: Manifest | undefined;
+function getAssetManifest(): Manifest {
+  if (assetManifest) return assetManifest;
+  try {
+    assetManifest = JSON.parse(fs.readFileSync(
+      path.resolve(import.meta.dirname, "../dist/public/.vite/manifest.json"),
+      "utf-8",
+    )) as Manifest;
+    return assetManifest;
+  } catch {
+    // Older builds and development must still render if the optional hints are absent.
+    return {};
+  }
+}
+
 async function serveIndexHtml(c: Context<{ Bindings: HttpBindings }>) {
   try {
     const filePath = path.resolve(import.meta.dirname, "../dist/public/index.html");
@@ -419,7 +437,10 @@ async function serveIndexHtml(c: Context<{ Bindings: HttpBindings }>) {
           ssrData,
         )
       : template;
-    const content = renderSeoHtml(appTemplate, pathname, override, extraStructuredData);
+    const seoContent = renderSeoHtml(appTemplate, pathname, override, extraStructuredData);
+    const content = pathname === "/dmc-morocco"
+      ? addRoutePreloads(seoContent, pathname, getAssetManifest())
+      : seoContent;
     if (status === 503) c.header("Retry-After", "300");
     return c.html(content, status);
   } catch (error) {

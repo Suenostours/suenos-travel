@@ -10,6 +10,8 @@ function sendToGoogleAnalytics(metric: Metric) {
   if (typeof window.gtag !== "function") return;
 
   window.gtag("event", metric.name, {
+    // Performance diagnostics belong to GA4, not the default Ads destination.
+    send_to: "G-BHGBSCVJ1Y",
     value: Math.round(metric.name === "CLS" ? metric.value * 1000 : metric.value),
     event_category: "Web Vitals",
     event_label: metric.id,

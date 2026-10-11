@@ -21,14 +21,21 @@
     <meta data-rh="true" name="twitter:card" content="summary_large_image" />
     <!-- SEO_META_END -->
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BHGBSCVJ1Y"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-BHGBSCVJ1Y');
-      gtag('config', 'AW-18188447838');
+      // Local/preview sessions must not pollute production visitor/conversion data.
+      if (['www.morocco-incoming.com', 'morocco-incoming.com'].includes(location.hostname)) {
+        gtag('js', new Date());
+        gtag('config', 'G-BHGBSCVJ1Y');
+        gtag('config', 'AW-18188447838');
+        const googleTag = document.createElement('script');
+        googleTag.async = true;
+        // Prefer the page stylesheet and route chunks on constrained connections.
+        googleTag.fetchPriority = 'low';
+        googleTag.src = 'https://www.googletagmanager.com/gtag/js?id=G-BHGBSCVJ1Y';
+        document.head.append(googleTag);
+      }
     </script>
   </head>
   <body>

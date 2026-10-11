@@ -347,7 +347,7 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
     metaDescription: "Plan Morocco group tours with a licensed local DMC: custom itineraries, hotels, coaches, guides, net agency rates and on-site support.",
     h1: "Morocco Group Tours for Travel Agencies and Tour Operators",
     eyebrow: "Group travel operations across Morocco",
-    intro: "Suenos Travel creates Morocco group tours for agencies, tour operators and corporate planners who need organized logistics, reliable local suppliers, group-friendly pacing and destination expertise.",
+    intro: "Plan private Morocco group tours with Suenos Travel, your local Morocco DMC for travel agencies and tour operators. Start with a published itinerary or your own brief; we coordinate hotels, coaches, guides and local services around your group's pace, with a tailored net-rate proposal.",
     whyTitle: "Why group tours need careful Morocco operations",
     whyText: "Groups require stronger timing discipline than FIT travel: coach routing, luggage handling, guide coordination, meal planning, check-in flow, activity timing and support if plans change. A local DMC keeps these details connected.",
     providesTitle: "What we manage for Morocco groups",
@@ -359,7 +359,7 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
     ],
     useCasesTitle: "Group tour use cases",
     useCases: [
-      "Classic Morocco circuits for 15 to 45 passengers.",
+      "Private coach circuits for cultural and leisure groups, with services sized to the confirmed passenger count.",
       "Small premium groups with upgraded accommodation and private experiences.",
       "Corporate groups combining meetings, incentives and leisure extensions.",
       "Special-interest groups focused on culture, food, photography, wellness or desert travel.",
@@ -391,20 +391,36 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
         ],
       },
       {
-        title: "Popular Morocco group tour combinations",
-        intro: "Routes can be adapted by duration, gateway airport, season and the interests of the group.",
+        title: "Compare published itineraries for your group",
+        intro: "These programs are starting points for an agency proposal, not guaranteed shared departures. Open the detailed itinerary, then request adjustments for your dates, group size and hotel level. Availability and inclusions are confirmed in the quotation.",
         items: [
-          { title: "Imperial cities", description: "Casablanca, Rabat, Meknes, Fes and Marrakech for cultural and heritage groups.", path: "/circuits" },
-          { title: "Marrakech and the Atlas", description: "City visits, mountain scenery and local experiences for short group programs.", path: "/destinations/marrakech" },
-          { title: "Imperial cities and Sahara", description: "A multi-city circuit with valleys, kasbahs and a Merzouga desert stay.", path: "/destinations/merzouga" },
-          { title: "Northern Morocco", description: "Tangier, Tetouan, Chefchaouen, Volubilis and Fes for culture-focused groups.", path: "/destinations/tangier" },
-          { title: "Atlantic coast", description: "Agadir, Essaouira and Marrakech for leisure, culture and corporate groups.", path: "/destinations/agadir" },
-          { title: "MICE and incentives", description: "Corporate programs combining meetings, activities, dinners and destination extensions.", path: "/mice-morocco" },
+          { title: "Imperial Cities of Morocco", description: "Review the cultural route through Casablanca, Rabat, Meknes, Volubilis and Fes. A starting point for agencies prioritising medinas, heritage visits and guided city touring.", path: "/circuits/imperial-cities-morocco" },
+          { title: "Marrakech & Atlas Mountains", description: "Explore a compact city-and-mountain program. Discuss walking levels, time for independent exploration and optional activities before adapting it for your group.", path: "/circuits/marrakech-atlas-mountains" },
+          { title: "Sahara Desert Experience", description: "Follow the published Marrakech-to-Merzouga program through the High Atlas, kasbahs and valleys. Review the driving stages and desert-camp arrangements against the group's pace.", path: "/circuits/sahara-desert-experience" },
+          { title: "North Morocco Tour", description: "Compare the Tangier, Tetouan, Chefchaouen and Fes itinerary for a northern cultural program. Match the arrival and departure plans to the route before requesting group rates.", path: "/circuits/north-morocco-tour" },
+          { title: "Agadir & South Morocco Discovery", description: "Consider an Agadir-based departure for Atlantic, cultural and southern Morocco experiences. Request a proposal adapted to your preferred accommodation and group interests.", path: "/circuits/agadir-south-morocco-discovery" },
+          { title: "MICE and incentive operations", description: "For a corporate brief, explore our dedicated service page covering meetings, activities, dinners and destination extensions rather than a standard sightseeing circuit.", path: "/mice-morocco" },
         ],
       },
       {
-        title: "Information needed for a group quotation",
-        text: "For a precise group proposal, share the travel dates, estimated group size, arrival and departure airports, number of nights, preferred route, hotel category, rooming basis, guide language, meal plan and any mobility or dietary requirements. If the itinerary is still open, we can recommend a route based on the group profile and available duration.",
+        title: "How to choose a workable route for your group",
+        intro: "Choose the route around the available nights and the travellers, not just a list of destinations. A useful agency brief identifies the non-negotiable visits and leaves room to adjust the rest.",
+        items: [
+          { title: "Start with the gateways and available nights", description: "Arrival and departure times affect the usable touring time. Compare a regional stay with a multi-city circuit before adding a Sahara extension; a short visit does not need to cover every region." },
+          { title: "Allow time for the whole group to move", description: "Coach access, luggage, comfort stops, group meals and hotel check-in all affect the daily schedule. Flag walking or mobility needs early so medina visits and hotel locations can be assessed." },
+          { title: "Match accommodation to the operation", description: "Discuss twin, double and single rooms, meal arrangements, luggage access and the preferred hotel level. Attractive accommodation is only suitable if it also works for the rooming list and daily routing." },
+          { title: "Separate essentials from optional experiences", description: "Identify the visits and services that must be included, then list optional dinners, activities or extensions separately. This makes the agency proposal easier to compare and explain to clients." },
+        ],
+      },
+      {
+        title: "Request a group quote without a finished itinerary",
+        intro: "You do not need a final rooming list to start the conversation. Send the approximate dates, number of travellers and the type of experience you want. Mark unknown details as to be confirmed.",
+        items: [
+          { title: "Start your agency brief", description: "Share dates or a travel window, estimated group size, available nights and arrival city if known. Add a published program you like, or describe the group's main interests.", path: "/quote" },
+          { title: "Refine the net-rate proposal", description: "Hotel category, rooming basis, guide language, meal plan and budget range help refine the scope. Review the written inclusions, exclusions, optional services and quote validity before comparing offers." },
+          { title: "Confirm services before selling final arrangements", description: "Clarify supplier availability, payment schedule, cancellation conditions and any group-leader arrangements in the proposal. Do not assume a free place, reserved rooms or guaranteed departures unless explicitly confirmed." },
+          { title: "Prepare the operation", description: "Once arrangements are agreed, finalise flight details, rooming, dietary and mobility requirements and agency contacts. For repeated departures, identify which elements should stay consistent and which vary by date." },
+        ],
       },
     ],
     processTitle: "How we prepare and operate a Morocco group tour",
@@ -424,6 +440,9 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
       { question: "Do group programs include guides and transport?", answer: "Yes. Group programs can include licensed guides, private transport, airport transfers, visits, hotels, meals and local experiences." },
       { question: "Can you manage Morocco series departures for tour operators?", answer: "Yes. We can coordinate repeat group departures with consistent routing, guides, transport, hotels and supplier follow-up, subject to dates and availability." },
       { question: "Can you accommodate dietary or mobility requirements?", answer: "Yes. Agencies should share dietary, accessibility and mobility requirements at the quotation stage so suitable services and realistic routing can be planned." },
+      { question: "Are these private agency groups or shared departures?", answer: "This page is for private group programs arranged for travel agencies and tour operators. Published itineraries are planning examples, not a schedule of guaranteed shared departures. Dates, passenger numbers and services are agreed for each request." },
+      { question: "What is included in a Morocco group net-rate proposal?", answer: "The written proposal should specify the requested accommodation, rooming basis, transport, guiding, meals and visits, together with exclusions and optional services. Inclusions depend on the brief; flights, tips, insurance and group-leader places should not be assumed included unless stated." },
+      { question: "Can we request a proposal before the group size is final?", answer: "Yes. Send an estimated passenger count and mark it as provisional. Explain whether you are considering more than one group size so the proposal can be discussed on clear assumptions. Final services and rates remain subject to the agreed numbers, dates and availability." },
     ],
   },
   miceMorocco: {
@@ -535,7 +554,7 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
   },
 };
 
-function buildLandingSchemas(pageKey: LandingPageKey) {
+export function buildLandingSchemas(pageKey: LandingPageKey) {
   const page = landingPages[pageKey];
   const absoluteUrl = `${BASE_URL}${page.path}`;
   return [

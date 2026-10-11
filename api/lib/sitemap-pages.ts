@@ -34,7 +34,7 @@ export const STATIC_SITEMAP_PAGES: readonly StaticSitemapPage[] = [
   { path: "/dmc-morocco", changefreq: "monthly", priority: 0.9, lastmod: PRIORITY_SEO_LAST_MODIFIED },
   { path: "/incoming-agency-morocco", changefreq: "monthly", priority: 0.9, lastmod: SITE_CONTENT_LAST_MODIFIED },
   { path: "/morocco-tours-for-travel-agencies", changefreq: "monthly", priority: 0.8, lastmod: "2026-10-11" },
-  { path: "/morocco-group-tours", changefreq: "monthly", priority: 0.8, lastmod: PRIORITY_SEO_LAST_MODIFIED },
+  { path: "/morocco-group-tours", changefreq: "monthly", priority: 0.8, lastmod: "2026-10-11" },
   { path: "/mice-morocco", changefreq: "monthly", priority: 0.8, lastmod: PRIORITY_SEO_LAST_MODIFIED },
 ];
 

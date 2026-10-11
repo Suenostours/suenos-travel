@@ -34,11 +34,16 @@ describe("STATIC_SITEMAP_PAGES", () => {
   });
 
   it("marks the freshly optimized SEO pages with their real update date", () => {
-    const priorityPaths = ["/blog", "/dmc-morocco", "/morocco-group-tours", "/mice-morocco"];
+    const priorityPaths = ["/blog", "/dmc-morocco", "/mice-morocco"];
 
     for (const path of priorityPaths) {
       expect(STATIC_SITEMAP_PAGES.find((page) => page.path === path)?.lastmod).toBe(PRIORITY_SEO_LAST_MODIFIED);
     }
+  });
+
+  it("dates the group planning refresh without changing unrelated landing pages", () => {
+    expect(STATIC_SITEMAP_PAGES.find((page) => page.path === "/morocco-group-tours")?.lastmod).toBe("2026-10-11");
+    expect(STATIC_SITEMAP_PAGES.find((page) => page.path === "/incoming-agency-morocco")?.lastmod).toBe(SITE_CONTENT_LAST_MODIFIED);
   });
 
   it("includes every editorial article once", () => {

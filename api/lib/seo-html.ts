@@ -30,6 +30,19 @@ const STATIC_H1: Record<string, string> = {
   "/mice-morocco": "MICE Morocco DMC for Incentives and Corporate Groups",
 };
 
+const SEO_FALLBACK_LINKS = [
+  ["/dmc-morocco", "DMC Morocco"],
+  ["/incoming-agency-morocco", "Incoming Agency Morocco"],
+  ["/circuits", "Morocco Circuits"],
+  ["/morocco-group-tours", "Morocco Group Tours"],
+  ["/morocco-tours-for-travel-agencies", "Tours for Travel Agencies"],
+  ["/mice-morocco", "MICE Morocco"],
+  ["/destinations", "Morocco Destinations"],
+  ["/services", "DMC Services"],
+  ["/b2b", "B2B Partnership"],
+  ["/quote", "Request a Quote"],
+] as const;
+
 function escapeHtml(value: string) {
   return value
     .replaceAll("&", "&amp;")
@@ -101,9 +114,14 @@ export function renderSeoHtml(
   if (meta.noindex) return withSeoHead;
 
   const h1 = escapeHtml(STATIC_H1[normalizedPath] ?? meta.title.split("|")[0]?.trim() ?? meta.title);
+  const fallbackLinks = SEO_FALLBACK_LINKS
+    .filter(([href]) => href !== normalizedPath)
+    .map(([href, label]) => `<a href="${href}">${escapeHtml(label)}</a>`)
+    .join(" · ");
   const fallbackBody = `<main data-seo-fallback="true" style="max-width:72rem;margin:0 auto;padding:3rem 1.5rem;font-family:system-ui,sans-serif">
       <h1>${h1}</h1>
       <p>${description}</p>
+      <nav aria-label="Main SEO pages">${fallbackLinks}</nav>
     </main>`;
   const emptyRootPattern = /<div\s+id=["']root["']\s*>\s*<\/div>/i;
 

@@ -14,6 +14,10 @@ describe("SEO HTML rendering", () => {
     expect(html).toContain('name="robots" content="index, follow"');
     expect(html).toContain("<h1>DMC in Morocco for Travel Agencies and Tour Operators</h1>");
     expect(html).toContain('data-seo-fallback="true"');
+    expect(html).toContain('<nav aria-label="Main SEO pages">');
+    expect(html).toContain('<a href="/circuits">Morocco Circuits</a>');
+    expect(html).toContain('<a href="/mice-morocco">MICE Morocco</a>');
+    expect(html).not.toContain('<a href="/dmc-morocco">DMC Morocco</a>');
   });
 
   it("does not inject an indexable fallback into noindex pages", () => {

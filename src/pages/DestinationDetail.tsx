@@ -28,6 +28,8 @@ type RelatedCircuit = {
 type Destination = {
   name: string;
   nameFr: string;
+  heading?: string;
+  headingFr?: string;
   image: string;
   about: string;
   aboutFr: string;
@@ -87,6 +89,8 @@ const destinationDetails: Record<string, Destination> = {
   fes: {
     name: "Fes",
     nameFr: "Fès",
+    heading: "Fes DMC Services & Tours for Travel Agencies",
+    headingFr: "Services DMC à Fès et circuits pour agences",
     image: "/images/circuit-grand.jpg",
     about: "Fes is Morocco's spiritual and craft capital, known for its UNESCO medina, artisan heritage, religious schools and deep cultural value.",
     aboutFr: "Fès est la capitale spirituelle et artisanale du Maroc, connue pour sa médina UNESCO, son patrimoine artisanal et sa valeur culturelle profonde.",
@@ -102,9 +106,9 @@ const destinationDetails: Record<string, Destination> = {
       { title: "Sefrou & Bhalil Experience", type: "Local culture", duration: "Half-day or full-day", description: "Smaller towns, cave houses and local heritage for agencies seeking less standard programs.", bestFor: "Special-interest groups, private tours" },
     ],
     relatedCircuits: [
-      { title: "Fes, Chefchaouen & Northern Morocco", type: "Cultural route", description: "A northern circuit for agencies combining medina heritage with Rif Mountain scenery." },
-      { title: "Imperial Cities of Morocco", type: "Classic group tour", description: "Rabat, Meknes, Fes and Marrakech with guided heritage programming." },
-      { title: "Fes to Sahara Extension", type: "Desert circuit", description: "A strong route from Fes through the Middle Atlas to Merzouga dunes." },
+      { title: "North Morocco Tour", type: "7-day cultural route", description: "Explore the published Tangier, Tetouan, Chefchaouen and Fes itinerary for agencies.", path: "/circuits/north-morocco-tour" },
+      { title: "Imperial Cities of Morocco", type: "8-day group tour", description: "See the Casablanca, Rabat, Meknes, Volubilis and Fes program with guided heritage visits.", path: "/circuits/imperial-cities-morocco" },
+      { title: "Tailor-Made Fes to Sahara Extension", type: "Custom itinerary request", description: "Ask for a Fes and Merzouga route adapted to your available nights, arrival city and departure plans.", path: "/quote?destination=fes" },
     ],
   },
   casablanca: {
@@ -412,7 +416,7 @@ export default function DestinationDetail() {
               <Link to="/destinations" className="inline-flex items-center gap-1 text-white/80 text-sm mb-4 hover:text-white">
                 <ArrowLeft className="h-4 w-4" /> {isFr ? "Retour aux destinations" : "Back to destinations"}
               </Link>
-              <h1 className="font-serif text-3xl md:text-5xl font-bold text-white">{title}</h1>
+              <h1 className="font-serif text-3xl md:text-5xl font-bold text-white">{isFr ? dest.headingFr ?? title : dest.heading ?? title}</h1>
             </div>
           </div>
         </div>
@@ -420,6 +424,43 @@ export default function DestinationDetail() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2 space-y-10">
+              {slug === "fes" ? (
+                <section aria-labelledby="fes-agency-planning">
+                  <h2 id="fes-agency-planning" className="font-serif text-2xl font-bold text-[#1F2937] mb-4">
+                    {isFr ? "Préparer un programme Fès pour votre agence" : "Planning a Fes program for your agency"}
+                  </h2>
+                  <div className="space-y-4 text-[#4B5563] leading-relaxed">
+                    <p>
+                      {isFr ? (
+                        <>Intégrez Fès dans un circuit culturel, un séjour privé ou un programme de groupe avec Suenos Travel, votre <Link to="/dmc-morocco" className="text-[#A91D2D] font-medium hover:underline">partenaire DMC au Maroc</Link>. Le devis précise les hébergements, transferts, visites guidées et services retenus selon votre demande.</>
+                      ) : (
+                        <>Build Fes into a cultural circuit, private stay or agency group program with Suenos Travel, your <Link to="/dmc-morocco" className="text-[#A91D2D] font-medium hover:underline">DMC partner in Morocco</Link>. The proposal sets out the accommodation, transfers, guided visits and other services selected for your brief.</>
+                      )}
+                    </p>
+                    <h3 className="font-semibold text-[#1F2937]">{isFr ? "Visites, accès et hébergement" : "Visits, access and accommodation"}</h3>
+                    <p>
+                      {isFr
+                        ? "Précisez le rythme de marche, la langue du guide et les besoins de mobilité avant de choisir les visites de la médina. Pour l'hébergement, comparez l'atmosphère d'un riad avec les besoins d'accès véhicule, de bagages et de répartition des chambres du groupe. Demandez que les points de rendez-vous, repas et entrées incluses soient précisés dans la proposition."
+                        : "Share the preferred walking pace, guiding language and any mobility needs before selecting medina visits. When choosing accommodation, balance a riad stay with the group's vehicle access, luggage and rooming requirements. Ask for meeting points, meal arrangements and included entrance fees to be specified in the proposal."}
+                    </p>
+                    <h3 className="font-semibold text-[#1F2937]">{isFr ? "Relier Fès au reste du voyage" : "Connecting Fes with the rest of the journey"}</h3>
+                    <p>
+                      {isFr ? (
+                        <>Pour une arrivée à Tanger, consultez le <Link to="/circuits/north-morocco-tour" className="text-[#A91D2D] font-medium hover:underline">circuit du nord du Maroc</Link> via Tétouan et Chefchaouen. Pour une extension vers <Link to="/destinations/merzouga" className="text-[#A91D2D] font-medium hover:underline">Merzouga et le Sahara</Link>, faites confirmer les étapes et les nuits disponibles avant de promettre l'itinéraire au client. Une excursion à Chefchaouen et une étape avec nuit sur place ne répondent pas au même rythme de voyage.</>
+                      ) : (
+                        <>For a Tangier arrival, explore the <Link to="/circuits/north-morocco-tour" className="text-[#A91D2D] font-medium hover:underline">North Morocco Tour</Link> through Tetouan and Chefchaouen. For a <Link to="/destinations/merzouga" className="text-[#A91D2D] font-medium hover:underline">Merzouga and Sahara extension</Link>, confirm the driving stages and available nights before promising the route to your client. A Chefchaouen day excursion and an overnight stop serve different travel paces.</>
+                      )}
+                    </p>
+                    <p>
+                      {isFr ? (
+                        <>Pour un <Link to={quotePath} className="text-[#A91D2D] font-medium hover:underline">devis B2B pour Fès</Link>, indiquez les dates, l'effectif, les villes d'arrivée et de départ, les nuits disponibles, le niveau d'hôtel et les visites prioritaires. Consultez aussi notre <Link to="/blog/morocco-tours-for-travel-agencies-b2b-programs" className="text-[#A91D2D] font-medium hover:underline">guide de préparation d'un programme B2B au Maroc</Link> en anglais.</>
+                      ) : (
+                        <>For a <Link to={quotePath} className="text-[#A91D2D] font-medium hover:underline">Fes B2B quotation</Link>, send dates, party size, arrival and departure cities, available nights, hotel level and priority visits. Our guide to <Link to="/blog/morocco-tours-for-travel-agencies-b2b-programs" className="text-[#A91D2D] font-medium hover:underline">planning a B2B Morocco program</Link> explains how to turn that brief into a comparable proposal.</>
+                      )}
+                    </p>
+                  </div>
+                </section>
+              ) : null}
               <div>
                 <h2 className="font-serif text-2xl font-bold text-[#1F2937] mb-4">{isFr ? "À propos" : "About"}</h2>
                 <p className="text-[#4B5563] leading-relaxed">{description}</p>

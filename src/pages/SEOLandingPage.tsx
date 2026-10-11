@@ -329,6 +329,7 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
       { label: "DMC Morocco services", path: "/dmc-morocco" },
       { label: "Incoming agency Morocco services", path: "/incoming-agency-morocco" },
       { label: "Morocco destinations", path: "/destinations" },
+      { label: "How B2B Morocco programs work", path: "/blog/morocco-tours-for-travel-agencies-b2b-programs" },
       { label: "Request a B2B quote", path: "/quote" },
     ],
     faq: [

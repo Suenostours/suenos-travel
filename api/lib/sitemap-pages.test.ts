@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { getSeoMeta } from "../../src/lib/seo-meta";
 import {
   DESTINATION_CONTENT_LAST_MODIFIED,
   getStaticBlogLastModified,
@@ -52,12 +53,22 @@ describe("STATIC_SITEMAP_PAGES", () => {
     expect(new Set(paths).size).toBe(paths.length);
     expect(paths).toContain("/destinations/fes");
     expect(paths).toContain("/destinations/merzouga");
-    expect(STATIC_DESTINATION_PAGES.every((page) => page.lastmod === DESTINATION_CONTENT_LAST_MODIFIED)).toBe(true);
+    expect(STATIC_DESTINATION_PAGES.filter((page) => page.path !== "/destinations/fes").every((page) => page.lastmod === DESTINATION_CONTENT_LAST_MODIFIED)).toBe(true);
+    expect(STATIC_DESTINATION_PAGES.find((page) => page.path === "/destinations/fes")?.lastmod).toBe("2026-10-11");
     expect(DESTINATION_CONTENT_LAST_MODIFIED).toBe("2026-10-03");
   });
 
   it("marks the refreshed DMC selection guide with its real update date", () => {
     expect(getStaticBlogLastModified("what-does-a-dmc-in-morocco-do-for-travel-agencies")).toBe(PRIORITY_SEO_LAST_MODIFIED);
     expect(getStaticBlogLastModified("morocco-travel-guide-2026")).toBe(SITE_CONTENT_LAST_MODIFIED);
+  });
+
+  it("updates only the refreshed B2B article and landing page dates", () => {
+    const slug = "morocco-tours-for-travel-agencies-b2b-programs";
+    expect(getStaticBlogLastModified(slug)).toBe("2026-10-11");
+    expect(getStaticBlogLastModified(slug)).toBe(getSeoMeta(`/blog/${slug}`).dateModified);
+    expect(STATIC_SITEMAP_PAGES.find((page) => page.path === "/morocco-tours-for-travel-agencies")?.lastmod).toBe("2026-10-11");
+    expect(getStaticBlogLastModified("how-to-choose-a-morocco-incoming-agency")).toBe(SITE_CONTENT_LAST_MODIFIED);
+    expect(STATIC_SITEMAP_PAGES.find((page) => page.path === "/dmc-morocco")?.lastmod).toBe(PRIORITY_SEO_LAST_MODIFIED);
   });
 });

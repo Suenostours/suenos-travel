@@ -16,7 +16,7 @@ export const STATIC_DESTINATION_PAGES: readonly StaticSitemapPage[] = PUBLIC_DES
     path: `/destinations/${destination.slug}`,
     changefreq: "monthly",
     priority: 0.7,
-    lastmod: DESTINATION_CONTENT_LAST_MODIFIED,
+    lastmod: destination.slug === "fes" ? "2026-10-11" : DESTINATION_CONTENT_LAST_MODIFIED,
   }),
 );
 
@@ -33,7 +33,7 @@ export const STATIC_SITEMAP_PAGES: readonly StaticSitemapPage[] = [
   { path: "/quote", changefreq: "monthly", priority: 0.7, lastmod: SITE_CONTENT_LAST_MODIFIED },
   { path: "/dmc-morocco", changefreq: "monthly", priority: 0.9, lastmod: PRIORITY_SEO_LAST_MODIFIED },
   { path: "/incoming-agency-morocco", changefreq: "monthly", priority: 0.9, lastmod: SITE_CONTENT_LAST_MODIFIED },
-  { path: "/morocco-tours-for-travel-agencies", changefreq: "monthly", priority: 0.8, lastmod: SITE_CONTENT_LAST_MODIFIED },
+  { path: "/morocco-tours-for-travel-agencies", changefreq: "monthly", priority: 0.8, lastmod: "2026-10-11" },
   { path: "/morocco-group-tours", changefreq: "monthly", priority: 0.8, lastmod: PRIORITY_SEO_LAST_MODIFIED },
   { path: "/mice-morocco", changefreq: "monthly", priority: 0.8, lastmod: PRIORITY_SEO_LAST_MODIFIED },
 ];
@@ -49,6 +49,7 @@ export const STATIC_BLOG_PAGES = [
 ] as const;
 
 export function getStaticBlogLastModified(slug: (typeof STATIC_BLOG_PAGES)[number]) {
+  if (slug === "morocco-tours-for-travel-agencies-b2b-programs") return "2026-10-11";
   return slug === "what-does-a-dmc-in-morocco-do-for-travel-agencies"
     ? PRIORITY_SEO_LAST_MODIFIED
     : SITE_CONTENT_LAST_MODIFIED;

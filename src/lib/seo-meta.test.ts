@@ -23,10 +23,33 @@ describe("shared SEO metadata", () => {
 
   it("keeps known destination metadata canonical and marks missing routes noindex", () => {
     expect(getSeoMeta("/destinations/fes/").title).toBe(
-      "Fes Morocco B2B Excursions & Programs | Suenos Travel DMC",
+      "Fes DMC Services & Tours for Travel Agencies",
     );
     expect(getSeoMeta("/destinations/not-real").noindex).toBe(true);
     expect(getSeoMeta("/blog/not-real").noindex).toBe(true);
+  });
+
+  it("keeps Fes metadata identical on the server and client without changing its URL", () => {
+    const path = "/destinations/fes";
+    const meta = getSeoMeta(path);
+    const serverMeta = resolveSeoMeta(path);
+    expect(resolveClientSeoMeta(path, {}, undefined)).toEqual(serverMeta);
+    expect(serverMeta).toMatchObject({ title: meta.title, description: meta.description, canonical: meta.canonical });
+    expect(meta.canonical).toBe("https://www.morocco-incoming.com/destinations/fes");
+    expect(meta.description).toContain("Morocco DMC");
+    expect(meta.noindex).not.toBe(true);
+    expect(meta.alternates).toBeUndefined();
+    expect(getSeoMeta("/destinations/marrakech").title).toBe(
+      "Marrakech Morocco B2B Excursions & Programs | Suenos Travel DMC",
+    );
+  });
+
+  it("keeps the B2B guide informational and preserves its publication date", () => {
+    const meta = getSeoMeta("/blog/morocco-tours-for-travel-agencies-b2b-programs");
+    expect(meta.title).toBe("Morocco Tours for Travel Agencies: How B2B Programs Work");
+    expect(meta.datePublished).toBe("2026-05-28");
+    expect(meta.dateModified).toBe("2026-10-11");
+    expect(meta.canonical).toBe("https://www.morocco-incoming.com/blog/morocco-tours-for-travel-agencies-b2b-programs");
   });
 
   it("normalizes saved relative canonicals to the public origin", () => {

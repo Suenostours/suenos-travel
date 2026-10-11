@@ -283,6 +283,49 @@ describe("incremental SSR", () => {
     expect(html).toContain('href="/circuits/morocco-luxury-escape"');
   });
 
+  it("renders Fes agency planning and accurate related links without JavaScript", () => {
+    const html = renderApp("/destinations/fes", {
+      pathname: "/destinations/fes",
+      locale: "en",
+      routeData: { kind: "none" },
+    });
+    expect(html.match(/<h1\b/g)).toHaveLength(1);
+    expect(html).toMatch(/<h1[^>]*>Fes DMC Services &amp; Tours for Travel Agencies<\/h1>/);
+    const planning = html.match(/<section aria-labelledby="fes-agency-planning">([\s\S]*?)<\/section>/)?.[1];
+    expect(planning).toContain("walking pace");
+    expect(planning).toContain('href="/dmc-morocco"');
+    expect(planning).toContain('href="/circuits/north-morocco-tour"');
+    expect(planning).toContain('href="/blog/morocco-tours-for-travel-agencies-b2b-programs"');
+    const related = html.slice(html.indexOf("Related Morocco Circuits"), html.indexOf("B2B FAQ"));
+    expect(related).toContain('href="/circuits/north-morocco-tour"');
+    expect(related).toContain('href="/circuits/imperial-cities-morocco"');
+    expect(related).toContain('href="/quote?destination=fes"');
+    expect(related).not.toContain('href="/circuits"');
+    expect(related).not.toContain('href="/circuits/sahara-desert-experience"');
+    expect(related).toContain("Custom itinerary request");
+    const marrakech = renderApp("/destinations/marrakech", {
+      pathname: "/destinations/marrakech", locale: "en", routeData: { kind: "none" },
+    });
+    expect(marrakech).not.toContain('id="fes-agency-planning"');
+  });
+
+  it("connects the B2B guide to commercial pages within the article body", () => {
+    const pathname = "/blog/morocco-tours-for-travel-agencies-b2b-programs";
+    const html = renderApp(pathname, { pathname, locale: "en", routeData: { kind: "none" } });
+    const article = html.match(/<article\b[^>]*>([\s\S]*?)<\/article>/)?.[1];
+    expect(article).toContain("Build Your Morocco Agency Brief");
+    expect(article).not.toContain("Internal Links That Help Agencies Plan");
+    for (const path of ["/dmc-morocco", "/morocco-tours-for-travel-agencies", "/circuits/north-morocco-tour", "/destinations/fes"]) {
+      expect(article).toContain(`href="${path}"`);
+    }
+    expect(html).toContain('<time dateTime="2026-10-11">2026-10-11</time>');
+    expect(html).toContain("2026-05-28");
+    const landing = renderApp("/morocco-tours-for-travel-agencies", {
+      pathname: "/morocco-tours-for-travel-agencies", locale: "en", routeData: { kind: "none" },
+    });
+    expect(landing).toContain(`href="${pathname}"`);
+  });
+
   it("keeps simultaneous English and French renders request-scoped", async () => {
     const [en, fr] = await Promise.all([
       Promise.resolve(renderApp("/services", {

@@ -45,6 +45,12 @@ const STATIC_META: Record<string, Omit<SeoMeta, "canonical">> = {
       "Plan Morocco programs for agencies and groups across Marrakech, Fes, Casablanca, Rabat, Tangier, Agadir, Essaouira, the Atlas Mountains and Sahara.",
     image: "/images/circuit-imperial.jpg",
   },
+  "/destinations/fes": {
+    title: "Fes DMC Services & Tours for Travel Agencies",
+    description:
+      "Plan Fes tours with a Morocco DMC: medina guides, hotels, transfers and tailored northern Morocco or imperial city programs for travel agencies.",
+    image: "/images/circuit-grand.jpg",
+  },
   "/services": {
     title: "Morocco Ground Services for Agencies & Groups",
     description:
@@ -223,7 +229,7 @@ const BLOG_META: Record<string, Omit<SeoMeta, "canonical">> = {
     type: "article",
     image: "/images/circuit-imperial.jpg",
     datePublished: "2026-05-28",
-    dateModified: "2026-05-28",
+    dateModified: "2026-10-11",
   },
   "/blog/morocco-travel-guide-2026": {
     title: "Morocco Travel Guide 2026 | Best Time, Places & Tips",

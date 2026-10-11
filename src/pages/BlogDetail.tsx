@@ -11,6 +11,14 @@ const legacyBlogRedirects: Record<string, string> = {
   "what-does-a-morocco-dmc-do-for-travel-agencies": "what-does-a-dmc-in-morocco-do-for-travel-agencies",
 };
 
+const B2B_PLANNING_RESOURCES = `## Build Your Morocco Agency Brief
+
+Use our <a href="/morocco-tours-for-travel-agencies">Morocco tours for travel agencies</a> service page to define the scope of your request, from private clients to group programs. Our <a href="/dmc-morocco">DMC Morocco services</a> page explains the local coordination behind that proposal, including accommodation, transport and guides.
+
+For a concrete route, compare the <a href="/circuits/north-morocco-tour">North Morocco Tour</a> linking Tangier, Tetouan, Chefchaouen and Fes with the <a href="/circuits/imperial-cities-morocco">Imperial Cities of Morocco</a> itinerary. Use the <a href="/destinations/fes">Fes agency planning guide</a> to consider guiding, accommodation access and onward routing before requesting changes.
+
+For other travel styles, browse the <a href="/circuits">Morocco circuit catalogue</a> and our destination guides for <a href="/destinations/marrakech">Marrakech</a>, <a href="/destinations/essaouira">Essaouira</a> and <a href="/destinations/merzouga">Merzouga</a>. Choose the places that fit the client's available nights and interests rather than including every destination in one brief.`;
+
 const BEST_DMC_SELECTION_GUIDE = `## What "best DMC in Morocco" should mean for an agency
 
 There is no single DMC that is best for every brief. The best DMC in Morocco for your travel agency is the one that fits your client market, group size, service level, destinations, response expectations and commercial model. A luxury FIT specialist and a high-volume group operator may both be excellent, but for different assignments.
@@ -917,6 +925,7 @@ Send your dates, group size, client profile, budget range and preferred destinat
     metaDescription: "How Morocco B2B tour programs work for travel agencies: net rates, white-label itineraries, group logistics, private tours and quote workflow.",
     image: "/images/circuit-imperial.jpg",
     date: "2026-05-28",
+    updated: "2026-10-11",
     category: "B2B Tours",
     tags: ["Morocco Tours for Agencies", "B2B Programs", "Net Rates"],
     content: `Morocco tours for travel agencies are not the same product as retail tours sold directly to travelers. A B2B Morocco program must be designed so an agency can sell it confidently, price it with margin, adapt it to its client profile and rely on a local operator to deliver the experience on the ground.
@@ -1013,11 +1022,7 @@ Many agencies want to sell Morocco under their own name. A white-label arrangeme
 
 White-label work depends on trust. The DMC must understand the agency's standards, response expectations and client communication style. Agencies interested in long-term cooperation can apply through our <a href="/b2b">B2B partner page</a>.
 
-## Internal Links That Help Agencies Plan
-
-If you are comparing product types, start with our <a href="/services">Morocco DMC services</a>. If you need route ideas, review <a href="/circuits">sample Morocco circuits</a>. For destination planning, see <a href="/destinations/marrakech">Marrakech</a>, <a href="/destinations/fes">Fes</a>, <a href="/destinations/essaouira">Essaouira</a> and <a href="/destinations/merzouga">Merzouga</a>.
-
-These pages help agencies shape a stronger brief before requesting rates.
+${B2B_PLANNING_RESOURCES}
 
 ## Request Net Rates, Become a B2B Partner, or Request a Morocco Program
 
@@ -1140,11 +1145,7 @@ Many agencies want to sell Morocco under their own name. A white-label arrangeme
 
 White-label work depends on trust. The DMC must understand the agency's standards, response expectations and client communication style. Agencies interested in long-term cooperation can apply through our <a href="/b2b">B2B partner page</a>.
 
-## Internal Links That Help Agencies Plan
-
-If you are comparing product types, start with our <a href="/services">Morocco DMC services</a>. If you need route ideas, review <a href="/circuits">sample Morocco circuits</a>. For destination planning, see <a href="/destinations/marrakech">Marrakech</a>, <a href="/destinations/fes">Fes</a>, <a href="/destinations/essaouira">Essaouira</a> and <a href="/destinations/merzouga">Merzouga</a>.
-
-These pages help agencies shape a stronger brief before requesting rates.
+${B2B_PLANNING_RESOURCES}
 
 ## Request Net Rates, Become a B2B Partner, or Request a Morocco Program
 
@@ -1428,8 +1429,9 @@ export default function BlogDetail() {
             <span className="mx-2">/</span>
             <span className="text-[#1F2937]">{title}</span>
           </nav>
-          <div className="flex items-center gap-4 text-sm text-[#6B7280] mb-8">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-[#6B7280] mb-8">
             <span className="flex items-center gap-1"><Calendar className="h-4 w-4" /> {post.date}</span>
+            {post.updated ? <span>{isFr ? "Mis à jour : " : "Updated: "}<time dateTime={post.updated}>{post.updated}</time></span> : null}
             <div className="flex gap-2 flex-wrap">
               {post.tags.map((tag) => (
                 <span key={tag} className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-xs">

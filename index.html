@@ -29,12 +29,66 @@
         gtag('js', new Date());
         gtag('config', 'G-BHGBSCVJ1Y');
         gtag('config', 'AW-18188447838');
-        const googleTag = document.createElement('script');
-        googleTag.async = true;
-        // Prefer the page stylesheet and route chunks on constrained connections.
-        googleTag.fetchPriority = 'low';
-        googleTag.src = 'https://www.googletagmanager.com/gtag/js?id=G-BHGBSCVJ1Y';
-        document.head.append(googleTag);
+        let started = false;
+        let paintObserver;
+        let deadline;
+        const queueGtag = window.gtag;
+        const startEvents = ['pointerdown', 'keydown', 'pagehide', 'load'];
+        function onVisibilityChange() {
+          if (document.visibilityState === 'hidden') loadGoogleTag();
+        }
+        function loadGoogleTag() {
+          if (started) return;
+          started = true;
+          paintObserver?.disconnect();
+          window.clearTimeout(deadline);
+          startEvents.forEach((event) => window.removeEventListener(event, loadGoogleTag, true));
+          document.removeEventListener('visibilitychange', onVisibilityChange);
+          window.gtag = queueGtag;
+          const googleTag = document.createElement('script');
+          googleTag.async = true;
+          googleTag.fetchPriority = 'low';
+          googleTag.src = 'https://www.googletagmanager.com/gtag/js?id=G-BHGBSCVJ1Y';
+          document.head.append(googleTag);
+        }
+
+        // Pilot on the audited landing page only. Config/events are queued now;
+        // the SDK starts after actual content paint, not an arbitrary SEO delay.
+        // Very short exits still cannot be guaranteed to reach Google.
+        if (location.pathname !== '/dmc-morocco' || document.visibilityState === 'hidden') {
+          loadGoogleTag();
+        } else {
+          window.gtag = function() {
+            queueGtag.apply(window, arguments);
+            if (arguments[0] === 'event' && ['conversion', 'generate_lead'].includes(arguments[1])) {
+              loadGoogleTag();
+            }
+          };
+          ['pointerdown', 'keydown', 'pagehide'].forEach((event) =>
+            window.addEventListener(event, loadGoogleTag, { once: true, capture: true, passive: true })
+          );
+          document.addEventListener('visibilitychange', onVisibilityChange);
+          // Safety ceiling if paint events are unavailable or never arrive.
+          deadline = window.setTimeout(loadGoogleTag, 3000);
+          let observingPaint = false;
+          try {
+            if (window.PerformanceObserver?.supportedEntryTypes?.includes('paint')) {
+              paintObserver = new PerformanceObserver((list) => {
+                if (list.getEntries().some((entry) => entry.name === 'first-contentful-paint')) {
+                  loadGoogleTag();
+                }
+              });
+              paintObserver.observe({ type: 'paint', buffered: true });
+              observingPaint = true;
+            }
+          } catch {
+            paintObserver?.disconnect();
+          }
+          if (!observingPaint) {
+            if (document.readyState === 'complete') loadGoogleTag();
+            else window.addEventListener('load', loadGoogleTag, { once: true, capture: true });
+          }
+        }
       }
     </script>
   </head>

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { renderApp } from "../entry-server";
-import { buildLandingSchemas } from "../pages/SEOLandingPage";
+import { buildLandingSchemas } from "./seo-landing-schemas";
 import { getSeoMeta } from "./seo-meta";
 
 const path = "/morocco-group-tours";
@@ -15,6 +15,23 @@ const escapeHtml = (value: string) => value
   .replaceAll(">", "&gt;")
   .replaceAll('"', "&quot;")
   .replaceAll("'", "&#x27;");
+
+const groupSchemaSource = {
+  path,
+  targetKeyword: "Morocco group tours for travel agencies",
+  metaDescription: "Plan Morocco group tours with a licensed local DMC: custom itineraries, hotels, coaches, guides, net agency rates and on-site support.",
+  h1: "Morocco Group Tours for Travel Agencies and Tour Operators",
+  faq: [
+    { question: "What group sizes can you support in Morocco?", answer: "We support small private groups, leisure groups, corporate groups and larger series depending on route, hotels and season." },
+    { question: "Can group tours be customized by market?", answer: "Yes. We adapt pacing, hotel category, guide language, meals and experiences according to the client market and agency brief." },
+    { question: "Do group programs include guides and transport?", answer: "Yes. Group programs can include licensed guides, private transport, airport transfers, visits, hotels, meals and local experiences." },
+    { question: "Can you manage Morocco series departures for tour operators?", answer: "Yes. We can coordinate repeat group departures with consistent routing, guides, transport, hotels and supplier follow-up, subject to dates and availability." },
+    { question: "Can you accommodate dietary or mobility requirements?", answer: "Yes. Agencies should share dietary, accessibility and mobility requirements at the quotation stage so suitable services and realistic routing can be planned." },
+    { question: "Are these private agency groups or shared departures?", answer: "This page is for private group programs arranged for travel agencies and tour operators. Published itineraries are planning examples, not a schedule of guaranteed shared departures. Dates, passenger numbers and services are agreed for each request." },
+    { question: "What is included in a Morocco group net-rate proposal?", answer: "The written proposal should specify the requested accommodation, rooming basis, transport, guiding, meals and visits, together with exclusions and optional services. Inclusions depend on the brief; flights, tips, insurance and group-leader places should not be assumed included unless stated." },
+    { question: "Can we request a proposal before the group size is final?", answer: "Yes. Send an estimated passenger count and mark it as provisional. Explain whether you are considering more than one group size so the proposal can be discussed on clear assumptions. Final services and rates remain subject to the agreed numbers, dates and availability." },
+  ],
+};
 
 describe("agency group planning content", () => {
   it("renders useful planning guidance and direct published itinerary links without JavaScript", () => {
@@ -40,7 +57,7 @@ describe("agency group planning content", () => {
 
   it("keeps every question and answer in the client FAQ schema identical to visible content", () => {
     const html = render();
-    const faq = buildLandingSchemas("moroccoGroupTours")
+    const faq = buildLandingSchemas(groupSchemaSource)
       .find((schema) => schema.id === "landing-faq-schema")?.value;
     expect(faq?.["@type"]).toBe("FAQPage");
     if (!faq || !("mainEntity" in faq) || !faq.mainEntity) throw new Error("Missing group FAQ");

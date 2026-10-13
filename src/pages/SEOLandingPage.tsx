@@ -3,8 +3,7 @@ import SEO from "@/components/SEO";
 import StructuredData from "@/components/StructuredData";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
-
-const BASE_URL = "https://www.morocco-incoming.com";
+import { buildLandingSchemas } from "@/lib/seo-landing-schemas";
 
 type LandingPageKey =
   | "dmcMorocco"
@@ -554,54 +553,9 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
   },
 };
 
-export function buildLandingSchemas(pageKey: LandingPageKey) {
-  const page = landingPages[pageKey];
-  const absoluteUrl = `${BASE_URL}${page.path}`;
-  return [
-    {
-      id: "landing-faq-schema",
-      value: {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "@id": `${absoluteUrl}#faq`,
-        inLanguage: "en",
-        mainEntity: page.faq.map((item) => ({
-          "@type": "Question",
-          name: item.question,
-          acceptedAnswer: { "@type": "Answer", text: item.answer },
-        })),
-      },
-    },
-    {
-      id: "landing-service-schema",
-      value: {
-        "@context": "https://schema.org",
-        "@type": "Service",
-        "@id": `${absoluteUrl}#service`,
-        name: page.h1,
-        serviceType: page.targetKeyword,
-        description: page.metaDescription,
-        url: absoluteUrl,
-        inLanguage: "en",
-        areaServed: { "@type": "Country", name: "Morocco" },
-        provider: {
-          "@type": "TravelAgency",
-          "@id": `${BASE_URL}/#travel-agency`,
-          name: "Morocco Incoming by Suenos Travel",
-          url: BASE_URL,
-        },
-        audience: {
-          "@type": "BusinessAudience",
-          audienceType: "Travel agencies, tour operators, MICE planners and corporate travel buyers",
-        },
-      },
-    },
-  ];
-}
-
 function LandingPage({ pageKey }: { pageKey: LandingPageKey }) {
   const page = landingPages[pageKey];
-  const schemas = buildLandingSchemas(pageKey);
+  const schemas = buildLandingSchemas(page);
   return (
     <>
       <SEO />

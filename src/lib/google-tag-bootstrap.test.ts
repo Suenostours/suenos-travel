@@ -61,7 +61,7 @@ function runBootstrap(options: {
       createElement: vi.fn(() => ({})), head: { append },
     },
     PerformanceObserver: options.observer === "missing" ? undefined : MockObserver,
-    setTimeout: vi.fn((callback: () => void, _ms: number) => {
+    setTimeout: vi.fn((callback: () => void) => {
       timers.set(++nextTimer, callback);
       return nextTimer;
     }),

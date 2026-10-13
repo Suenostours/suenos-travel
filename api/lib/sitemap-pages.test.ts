@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { getSeoMeta } from "../../src/lib/seo-meta";
+import { getStaticSitemapAlternates } from "./sitemap-locales";
 import {
   DESTINATION_CONTENT_LAST_MODIFIED,
   getStaticBlogLastModified,
   PRIORITY_SEO_LAST_MODIFIED,
+  QUOTE_CONTENT_LAST_MODIFIED,
   SITE_CONTENT_LAST_MODIFIED,
   STATIC_BLOG_PAGES,
   STATIC_DESTINATION_PAGES,
@@ -44,6 +46,44 @@ describe("STATIC_SITEMAP_PAGES", () => {
   it("dates the group planning refresh without changing unrelated landing pages", () => {
     expect(STATIC_SITEMAP_PAGES.find((page) => page.path === "/morocco-group-tours")?.lastmod).toBe("2026-10-11");
     expect(STATIC_SITEMAP_PAGES.find((page) => page.path === "/incoming-agency-morocco")?.lastmod).toBe(SITE_CONTENT_LAST_MODIFIED);
+  });
+
+  it("dates both localized quote URLs from the verified quote-page refresh only", () => {
+    const quote = STATIC_SITEMAP_PAGES.find((page) => page.path === "/quote");
+
+    expect(quote?.lastmod).toBe(QUOTE_CONTENT_LAST_MODIFIED);
+    expect(QUOTE_CONTENT_LAST_MODIFIED).toBe("2026-10-11");
+    expect(STATIC_SITEMAP_PAGES.find((page) => page.path === "/contact")?.lastmod).toBe(SITE_CONTENT_LAST_MODIFIED);
+  });
+
+  it("keeps the current 58-route sitemap inventory unique", () => {
+    const staticPaths = STATIC_SITEMAP_PAGES.flatMap((page) => {
+      const alternates = getStaticSitemapAlternates(page.path);
+      return alternates ? [page.path, new URL(alternates.fr).pathname] : [page.path];
+    });
+    const blogPaths = STATIC_BLOG_PAGES.map((slug) => `/blog/${slug}`);
+    const destinationPaths = STATIC_DESTINATION_PAGES.map((page) => page.path);
+    const tourSlugs = [
+      "imperial-cities-morocco",
+      "sahara-desert-experience",
+      "marrakech-atlas-mountains",
+      "morocco-luxury-escape",
+      "morocco-honeymoon-tour",
+      "grand-morocco-tour",
+      "north-morocco-tour",
+      "morocco-highlights-8-days",
+      "agadir-south-morocco-discovery",
+    ];
+    const tourPaths = tourSlugs.flatMap((slug) => [
+      `/circuits/${slug}`,
+      `/fr/circuits/${slug}`,
+    ]);
+    const paths = [...staticPaths, ...blogPaths, ...destinationPaths, ...tourPaths];
+
+    expect(paths).toHaveLength(58);
+    expect(new Set(paths).size).toBe(58);
+    expect(paths).toContain("/quote");
+    expect(paths).toContain("/fr/quote");
   });
 
   it("includes every editorial article once", () => {

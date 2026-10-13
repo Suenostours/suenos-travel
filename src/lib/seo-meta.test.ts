@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildTourSeoMeta, getSeoMeta, resolveClientSeoMeta, resolveSeoMeta } from "./seo-meta";
+import { reviewedTourMetaEntries } from "./reviewed-tour-content";
 
 describe("shared SEO metadata", () => {
   it("uses the same Imperial Cities metadata builder for server and client", () => {
@@ -19,6 +20,55 @@ describe("shared SEO metadata", () => {
     expect(meta.alternates?.fr).toBe(
       "https://www.morocco-incoming.com/fr/circuits/imperial-cities-morocco",
     );
+  });
+
+  it("uses reviewed complete metadata for the 16 long programme descriptions", () => {
+    const english = buildTourSeoMeta({
+      pathname: "/circuits/sahara-desert-experience",
+      title: "Sahara Desert Experience",
+      description: "A deliberately long database description that would otherwise be truncated. ".repeat(4),
+    });
+    const french = buildTourSeoMeta({
+      pathname: "/fr/circuits/agadir-south-morocco-discovery",
+      title: "Découverte d’Agadir & du Sud Marocain",
+      description: "Une description de base volontairement longue qui serait autrement tronquée. ".repeat(4),
+    });
+
+    expect(english.description).toContain("Ait Ben Haddou");
+    expect(english.description).not.toContain("...");
+    expect(french.description).toContain("Paradise Valley");
+    expect(french.description).not.toContain("...");
+  });
+
+  it("resolves every reviewed programme description with canonical reciprocal alternates", () => {
+    for (const entry of reviewedTourMetaEntries()) {
+      const prefix = entry.locale === "fr" ? "/fr" : "";
+      const pathname = `${prefix}/circuits/${entry.slug}`;
+      const meta = buildTourSeoMeta({
+        pathname,
+        description: "Long fallback description. ".repeat(10),
+        hasFrenchEquivalent: true,
+      });
+
+      expect(meta.description).toBe(entry.description);
+      expect(meta.canonical).toBe(`https://www.morocco-incoming.com${pathname}`);
+      expect(meta.alternates).toEqual({
+        en: `https://www.morocco-incoming.com/circuits/${entry.slug}`,
+        fr: `https://www.morocco-incoming.com/fr/circuits/${entry.slug}`,
+        xDefault: `https://www.morocco-incoming.com/circuits/${entry.slug}`,
+      });
+    }
+  });
+
+  it("still prefers a future explicit database meta description", () => {
+    const meta = buildTourSeoMeta({
+      pathname: "/circuits/sahara-desert-experience",
+      title: "Sahara Desert Experience",
+      description: "Long page description. ".repeat(10),
+      metaDescription: "Explicit reviewed database description.",
+    });
+
+    expect(meta.description).toBe("Explicit reviewed database description.");
   });
 
   it("keeps known destination metadata canonical and marks missing routes noindex", () => {

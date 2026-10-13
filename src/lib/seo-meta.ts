@@ -1,5 +1,6 @@
 import type { Locale } from "@/providers/i18n";
 import { hasReviewedFrenchEquivalent, localizedPath, splitLocalePath } from "@/lib/locale-routes";
+import { getReviewedTourMetaDescription } from "@/lib/reviewed-tour-content";
 
 export const PUBLIC_ORIGIN = "https://www.morocco-incoming.com";
 export const DEFAULT_SEO_IMAGE = "/images/hero-desert.jpg";
@@ -405,12 +406,17 @@ export function buildTourSeoMeta(input: {
   const path = normalizeSeoPath(input.pathname);
   const { locale, basePath } = splitLocalePath(path);
   const title = cleanText(input.title) || titleFromSlug(basePath.slice("/circuits/".length));
+  const reviewedDescription = getReviewedTourMetaDescription(
+    basePath.slice("/circuits/".length),
+    locale,
+  );
   return {
     title: cleanText(input.metaTitle) || (locale === "fr"
       ? `${title} | Circuit au Maroc pour agences`
       : `${title} | Morocco DMC Tour for Agencies`),
     description:
       trimDescription(input.metaDescription) ||
+      trimDescription(reviewedDescription) ||
       trimDescription(input.description) ||
       (locale === "fr"
         ? "Circuit au Maroc sur mesure pour agences de voyage, tour-opérateurs, groupes et partenaires B2B avec Suenos Travel."

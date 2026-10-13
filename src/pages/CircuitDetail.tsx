@@ -12,6 +12,7 @@ import { WHATSAPP_URL } from "@/lib/contact-details";
 import { useSsrData } from "@/providers/ssr-data";
 import { localizedPath } from "@/lib/locale-routes";
 import { localizeTourDuration, localizeTourType } from "@/lib/tour-display";
+import { applyReviewedTourDisplayCorrections } from "@/lib/reviewed-tour-content";
 
 function splitText(text?: string | null) {
   if (!text) return [];
@@ -47,7 +48,10 @@ export default function CircuitDetail() {
   const isError = isQueryError || matchingSsrTour?.state === "unavailable";
 
   const tour = data?.tours;
-  const translation = data?.tour_translations;
+  const rawTranslation = data?.tour_translations;
+  const translation = rawTranslation && slug
+    ? applyReviewedTourDisplayCorrections(slug, locale, rawTranslation)
+    : rawTranslation;
   const cities = data?.cities ?? [];
   const cityNames = cities
     .map((city) => city.name)

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { getSeoMeta, isKnownStaticContentPath, renderSeoHtml } from "./seo-html";
+import { buildTourSeoMeta } from "../../src/lib/seo-meta";
+import { reviewedTourMetaEntries } from "../../src/lib/reviewed-tour-content";
+import { buildTouristTripSchema } from "../../src/lib/tour-schema";
 
 describe("SEO HTML rendering", () => {
   it("injects crawlable metadata for a public page", () => {
@@ -104,6 +107,40 @@ describe("SEO HTML rendering", () => {
     expect(html).toContain("Imperial Cities Morocco | Morocco DMC Tour for Agencies");
     expect(html).toContain('name="robots" content="index, follow"');
     expect(html).toContain('id="route-seo-graph"');
+  });
+
+  it("renders complete reviewed programme metadata and one matching tour schema", () => {
+    for (const entry of reviewedTourMetaEntries()) {
+      const prefix = entry.locale === "fr" ? "/fr" : "";
+      const pathname = `${prefix}/circuits/${entry.slug}`;
+      const meta = buildTourSeoMeta({
+        pathname,
+        title: entry.slug,
+        description: "Long fallback description. ".repeat(10),
+        hasFrenchEquivalent: true,
+      });
+      const html = renderSeoHtml(
+        "<html><head><title>Old</title></head><body><div id=\"root\"></div></body></html>",
+        pathname,
+        meta,
+        [{
+          id: "tourist-trip-schema",
+          value: buildTouristTripSchema({
+            title: entry.slug,
+            description: meta.description,
+            canonical: meta.canonical,
+            locale: entry.locale,
+          }),
+        }],
+      );
+
+      expect(html).toContain(`name="description" content="${entry.description}"`);
+      expect(html).toContain(`rel="canonical" href="${meta.canonical}"`);
+      expect(html).toContain(`hreflang="en" href="https://www.morocco-incoming.com/circuits/${entry.slug}"`);
+      expect(html).toContain(`hreflang="fr" href="https://www.morocco-incoming.com/fr/circuits/${entry.slug}"`);
+      expect(html.match(/id="tourist-trip-schema"/g)).toHaveLength(1);
+      expect(html).toContain(`"description":"${entry.description}"`);
+    }
   });
 
   it("renders reciprocal hreflang and additional safe tour schema", () => {

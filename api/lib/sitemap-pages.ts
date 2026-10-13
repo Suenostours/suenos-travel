@@ -10,6 +10,7 @@ type StaticSitemapPage = {
 export const SITE_CONTENT_LAST_MODIFIED = "2026-09-04";
 export const PRIORITY_SEO_LAST_MODIFIED = "2026-09-10";
 export const DESTINATION_CONTENT_LAST_MODIFIED = "2026-10-03";
+export const QUOTE_CONTENT_LAST_MODIFIED = "2026-10-11";
 
 export const STATIC_DESTINATION_PAGES: readonly StaticSitemapPage[] = PUBLIC_DESTINATIONS.map(
   (destination) => ({
@@ -30,7 +31,7 @@ export const STATIC_SITEMAP_PAGES: readonly StaticSitemapPage[] = [
   { path: "/b2b", changefreq: "monthly", priority: 0.8, lastmod: SITE_CONTENT_LAST_MODIFIED },
   { path: "/blog", changefreq: "weekly", priority: 0.8, lastmod: PRIORITY_SEO_LAST_MODIFIED },
   { path: "/contact", changefreq: "monthly", priority: 0.7, lastmod: SITE_CONTENT_LAST_MODIFIED },
-  { path: "/quote", changefreq: "monthly", priority: 0.7, lastmod: SITE_CONTENT_LAST_MODIFIED },
+  { path: "/quote", changefreq: "monthly", priority: 0.7, lastmod: QUOTE_CONTENT_LAST_MODIFIED },
   { path: "/dmc-morocco", changefreq: "monthly", priority: 0.9, lastmod: PRIORITY_SEO_LAST_MODIFIED },
   { path: "/incoming-agency-morocco", changefreq: "monthly", priority: 0.9, lastmod: SITE_CONTENT_LAST_MODIFIED },
   { path: "/morocco-tours-for-travel-agencies", changefreq: "monthly", priority: 0.8, lastmod: "2026-10-11" },

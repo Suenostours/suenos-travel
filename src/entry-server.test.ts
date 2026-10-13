@@ -399,6 +399,36 @@ describe("incremental SSR", () => {
     expect(french).toContain("Cette idée de programme peut être adaptée au brief de votre agence");
   });
 
+  it("replaces duplicated French Agadir inclusions with itinerary-backed highlights", () => {
+    const agadir = syntheticTour("fr");
+    if (!agadir?.tours || !agadir.tour_translations) throw new Error("Synthetic French tour is incomplete");
+    agadir.tours.slug = "agadir-south-morocco-discovery";
+    agadir.tour_translations.title = "Découverte d’Agadir & du Sud Marocain";
+    agadir.tour_translations.program = "Jour 1 : Agadir\nJour 2 : Paradise Valley\nJour 3 : Taroudant\nJour 4 : Tafraoute\nJour 5 : Taghazout";
+    agadir.tour_translations.highlights = "Hébergement\nPetit-déjeuner\nTransport privé";
+    agadir.tour_translations.inclusions = "Hébergement\nPetit-déjeuner\nTransport privé";
+
+    const html = renderApp("/fr/circuits/agadir-south-morocco-discovery", {
+      pathname: "/fr/circuits/agadir-south-morocco-discovery",
+      locale: "fr",
+      routeData: {
+        kind: "tour",
+        slug: "agadir-south-morocco-discovery",
+        locale: "fr",
+        state: "found",
+        data: agadir,
+      },
+    });
+
+    expect(html).toContain("Points forts");
+    expect(html).toContain("Paysages de Paradise Valley");
+    expect(html).toContain("Remparts de Taroudant et souks traditionnels");
+    expect(html).toContain("Tafraoute et montagnes de l’Anti-Atlas");
+    expect(html).toContain("Expérience côtière à Taghazout");
+    expect(html).toContain("Inclus");
+    expect(html.match(/Hébergement/g)).toHaveLength(1);
+  });
+
   it("renders French catalogue data, empty state, and unavailable state without an English fallback", () => {
     const found = renderApp("/fr/circuits", {
       pathname: "/fr/circuits",

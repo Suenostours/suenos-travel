@@ -50,6 +50,7 @@ import {
   getTourSitemapAlternates,
   type SitemapAlternates,
 } from "./lib/sitemap-locales";
+import { getTourContentDateModified } from "../src/lib/reviewed-tour-content";
 
 type SeoOverride = SeoOverrides;
 
@@ -146,7 +147,7 @@ async function loadDynamicTour(pathname: string, slug: string, locale: PublicLoc
         metaTitle: translation.metaTitle,
         metaDescription: translation.metaDescription,
         image: tour.mainImage,
-        dateModified: tour.updatedAt?.toISOString(),
+        dateModified: getTourContentDateModified(slug, tour.updatedAt),
         hasFrenchEquivalent: data.hasFrenchTranslation,
       })
     : undefined;
@@ -238,9 +239,10 @@ app.get("/sitemap.xml", async (c) => {
       const en = `${baseUrl}/circuits/${t.slug}`;
       const fr = `${baseUrl}/fr/circuits/${t.slug}`;
       const alternates = getTourSitemapAlternates(t.slug, frenchEligibleSlugs.has(t.slug));
-      urls.push(sitemapEntry(en, formatSitemapDate(t.updatedAt), "monthly", "0.8", alternates));
+      const lastModified = formatSitemapDate(getTourContentDateModified(t.slug, t.updatedAt));
+      urls.push(sitemapEntry(en, lastModified, "monthly", "0.8", alternates));
       if (alternates) {
-        urls.push(sitemapEntry(fr, formatSitemapDate(t.updatedAt), "monthly", "0.8", alternates));
+        urls.push(sitemapEntry(fr, lastModified, "monthly", "0.8", alternates));
       }
     }
   } catch {

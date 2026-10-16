@@ -12,7 +12,10 @@ import { WHATSAPP_URL } from "@/lib/contact-details";
 import { useSsrData } from "@/providers/ssr-data";
 import { localizedPath } from "@/lib/locale-routes";
 import { localizeTourDuration, localizeTourType } from "@/lib/tour-display";
-import { applyReviewedTourDisplayCorrections } from "@/lib/reviewed-tour-content";
+import {
+  applyReviewedTourDisplayCorrections,
+  getTourContentDateModified,
+} from "@/lib/reviewed-tour-content";
 
 function splitText(text?: string | null) {
   if (!text) return [];
@@ -137,7 +140,7 @@ export default function CircuitDetail() {
     metaTitle: translation.metaTitle,
     metaDescription: translation.metaDescription,
     image: tour.mainImage,
-    dateModified: tour.updatedAt?.toISOString(),
+    dateModified: getTourContentDateModified(tourSlug, tour.updatedAt),
     hasFrenchEquivalent: data.hasFrenchTranslation,
   });
   const tripJsonLd = buildTouristTripSchema({

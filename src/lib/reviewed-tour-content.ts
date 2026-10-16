@@ -1,5 +1,8 @@
 export type ReviewedTourLocale = "en" | "fr";
 
+export const REVIEWED_TOUR_CONTENT_LAST_MODIFIED = "2026-10-13";
+const REVIEWED_TOUR_CONTENT_LAST_MODIFIED_ISO = `${REVIEWED_TOUR_CONTENT_LAST_MODIFIED}T00:00:00.000Z`;
+
 const REVIEWED_TOUR_META_DESCRIPTIONS: Readonly<
   Record<string, Partial<Record<ReviewedTourLocale, string>>>
 > = {
@@ -54,6 +57,23 @@ export function getReviewedTourMetaDescription(
   locale: ReviewedTourLocale,
 ) {
   return REVIEWED_TOUR_META_DESCRIPTIONS[slug]?.[locale] ?? null;
+}
+
+export function getTourContentDateModified(
+  slug: string,
+  databaseUpdatedAt?: Date | string | null,
+) {
+  const databaseDate = databaseUpdatedAt ? new Date(databaseUpdatedAt) : null;
+  const databaseIso = databaseDate && !Number.isNaN(databaseDate.getTime())
+    ? databaseDate.toISOString()
+    : undefined;
+
+  if (!(slug in REVIEWED_TOUR_META_DESCRIPTIONS)) return databaseIso;
+  if (!databaseDate || databaseDate < new Date(REVIEWED_TOUR_CONTENT_LAST_MODIFIED_ISO)) {
+    return REVIEWED_TOUR_CONTENT_LAST_MODIFIED_ISO;
+  }
+
+  return databaseIso;
 }
 
 function normalizedList(value?: string | null) {

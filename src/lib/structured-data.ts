@@ -156,6 +156,8 @@ export function buildSeoGraph({
     primaryImageOfPage: image ? { "@type": "ImageObject" as const, url: image } : undefined,
     breadcrumb: pathname === "/" || pathname === "/fr" ? undefined : { "@id": `${canonical}#breadcrumb` },
     inLanguage: locale,
+    datePublished,
+    dateModified,
   };
 
   const page: WebPage = { ...pageBase, "@type": "WebPage" };

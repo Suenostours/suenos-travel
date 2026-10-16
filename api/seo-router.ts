@@ -9,6 +9,7 @@ import {
   STATIC_DESTINATION_PAGES,
   STATIC_SITEMAP_PAGES,
 } from "./lib/sitemap-pages";
+import { getTourContentDateModified } from "../src/lib/reviewed-tour-content";
 
 const seoPath = z
   .string()
@@ -91,7 +92,12 @@ export const seoRouter = createRouter({
 
     const tourRows = await db.select({ slug: tours.slug, updatedAt: tours.updatedAt }).from(tours).where(eq(tours.active, 1));
     for (const t of tourRows) {
-      pages.push({ url: `${baseUrl}/circuits/${t.slug}`, lastmod: formatSitemapDate(t.updatedAt), changefreq: "monthly", priority: 0.8 });
+      pages.push({
+        url: `${baseUrl}/circuits/${t.slug}`,
+        lastmod: formatSitemapDate(getTourContentDateModified(t.slug, t.updatedAt)),
+        changefreq: "monthly",
+        priority: 0.8,
+      });
     }
 
     const blogRows = await db

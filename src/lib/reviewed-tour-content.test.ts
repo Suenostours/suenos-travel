@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   applyReviewedTourDisplayCorrections,
   getReviewedTourMetaDescription,
+  getTourContentDateModified,
   REVIEWED_AGADIR_FRENCH_HIGHLIGHTS,
+  REVIEWED_TOUR_CONTENT_LAST_MODIFIED,
   reviewedTourMetaEntries,
 } from "./reviewed-tour-content";
 
@@ -46,5 +48,33 @@ describe("reviewed programme content corrections", () => {
     expect(applyReviewedTourDisplayCorrections("agadir-south-morocco-discovery", "fr", reviewed)).toBe(reviewed);
     expect(applyReviewedTourDisplayCorrections("agadir-south-morocco-discovery", "en", english)).toBe(english);
     expect(applyReviewedTourDisplayCorrections("grand-morocco-tour", "fr", reviewed)).toBe(reviewed);
+  });
+
+  it("dates reviewed programme content from the release while preserving newer database edits", () => {
+    const reviewedSlugs = [...new Set(reviewedTourMetaEntries().map((entry) => entry.slug))].sort();
+    expect(reviewedSlugs).toEqual([
+      "agadir-south-morocco-discovery",
+      "grand-morocco-tour",
+      "marrakech-atlas-mountains",
+      "morocco-highlights-8-days",
+      "morocco-honeymoon-tour",
+      "morocco-luxury-escape",
+      "north-morocco-tour",
+      "sahara-desert-experience",
+    ]);
+    for (const slug of reviewedSlugs) {
+      expect(getTourContentDateModified(
+        slug,
+        new Date("2026-05-22T10:00:00.000Z"),
+      )).toBe(`${REVIEWED_TOUR_CONTENT_LAST_MODIFIED}T00:00:00.000Z`);
+    }
+    expect(getTourContentDateModified(
+      "marrakech-atlas-mountains",
+      new Date("2026-10-15T10:00:00.000Z"),
+    )).toBe("2026-10-15T10:00:00.000Z");
+    expect(getTourContentDateModified(
+      "imperial-cities-morocco",
+      new Date("2026-05-22T10:00:00.000Z"),
+    )).toBe("2026-05-22T10:00:00.000Z");
   });
 });

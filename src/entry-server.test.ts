@@ -280,7 +280,7 @@ describe("incremental SSR", () => {
     });
 
     expect(html).toContain('href="/circuits/sahara-desert-experience"');
-    expect(html).toContain('href="/circuits/morocco-luxury-escape"');
+    expect(html).toContain('href="/circuits/grand-morocco-tour"');
   });
 
   it("renders Fes agency planning and accurate related links without JavaScript", () => {

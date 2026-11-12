@@ -6,6 +6,7 @@ import { ArrowLeft, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { safeJsonLd } from "@/lib/structured-data";
 import type { TouristDestination, WithContext } from "schema-dts";
+import { getDestinationProgrammes } from "@/lib/destination-programmes";
 import { WHATSAPP_URL } from "@/lib/contact-details";
 
 const BASE_URL = "https://www.morocco-incoming.com";
@@ -16,13 +17,6 @@ type Excursion = {
   duration: string;
   description: string;
   bestFor: string;
-};
-
-type RelatedCircuit = {
-  title: string;
-  type: string;
-  description: string;
-  path?: string;
 };
 
 type Destination = {
@@ -38,26 +32,7 @@ type Destination = {
   bestTime: string;
   bestTimeFr: string;
   excursions: Excursion[];
-  relatedCircuits: RelatedCircuit[];
 };
-
-const defaultRelatedCircuits: RelatedCircuit[] = [
-  {
-    title: "Morocco Imperial Cities & Sahara",
-    type: "Cultural group circuit",
-    description: "A classic agency program combining heritage cities, scenic routes and desert experiences.",
-  },
-  {
-    title: "Tailor-Made Morocco Private Tour",
-    type: "Private B2B program",
-    description: "Flexible routing for agencies needing private clients, premium hotels and adapted pacing.",
-  },
-  {
-    title: "Morocco Incentive & MICE Extension",
-    type: "Corporate add-on",
-    description: "Short extensions for groups, incentives and corporate clients before or after meetings.",
-  },
-];
 
 const destinationDetails: Record<string, Destination> = {
   marrakech: {
@@ -80,11 +55,6 @@ const destinationDetails: Record<string, Destination> = {
       { title: "Moroccan Cooking Class", type: "Hands-on experience", duration: "Half-day", description: "Interactive culinary activity in a riad or local kitchen with market context when appropriate.", bestFor: "Private clients, incentives, small groups" },
       { title: "Hot Air Balloon Experience", type: "Premium activity", duration: "Morning", description: "Early morning ballooning near Marrakech with transfers and optional breakfast setup.", bestFor: "Luxury travelers, honeymooners, VIP groups" },
     ],
-    relatedCircuits: [
-      { title: "Marrakech, Agafay & Atlas Incentive", type: "MICE program", description: "A compact incentive route with city venues, desert dinner and Atlas activities." },
-      { title: "Imperial Cities & Sahara from Marrakech", type: "Group circuit", description: "A strong B2B route linking Marrakech, Dades, Merzouga, Fes and Casablanca." },
-      { title: "Marrakech & Essaouira Private Program", type: "Private tour", description: "A slower-paced option for premium clients combining city, coast and riad stays." },
-    ],
   },
   fes: {
     name: "Fes",
@@ -105,11 +75,6 @@ const destinationDetails: Record<string, Destination> = {
       { title: "Middle Atlas & Ifrane Excursion", type: "Nature excursion", duration: "Full-day", description: "Forest landscapes, Ifrane, Azrou and cedar areas for a softer nature day.", bestFor: "Families, leisure groups, repeat clients" },
       { title: "Sefrou & Bhalil Experience", type: "Local culture", duration: "Half-day or full-day", description: "Smaller towns, cave houses and local heritage for agencies seeking less standard programs.", bestFor: "Special-interest groups, private tours" },
     ],
-    relatedCircuits: [
-      { title: "North Morocco Tour", type: "7-day cultural route", description: "Explore the published Tangier, Tetouan, Chefchaouen and Fes itinerary for agencies.", path: "/circuits/north-morocco-tour" },
-      { title: "Imperial Cities of Morocco", type: "8-day group tour", description: "See the Casablanca, Rabat, Meknes, Volubilis and Fes program with guided heritage visits.", path: "/circuits/imperial-cities-morocco" },
-      { title: "Tailor-Made Fes to Sahara Extension", type: "Custom itinerary request", description: "Ask for a Fes and Merzouga route adapted to your available nights, arrival city and departure plans.", path: "/quote?destination=fes" },
-    ],
   },
   casablanca: {
     name: "Casablanca",
@@ -127,11 +92,6 @@ const destinationDetails: Record<string, Destination> = {
       { title: "Marrakech Day Trip from Casablanca", type: "Long full-day", duration: "Full-day", description: "Express Marrakech visit for business travelers with limited time in Morocco.", bestFor: "Corporate guests, cruise-style programs" },
       { title: "El Jadida & Azemmour Excursion", type: "Coastal heritage", duration: "Full-day", description: "Portuguese heritage, Atlantic views and relaxed coastal programming.", bestFor: "Repeat clients, culture groups" },
       { title: "Business Travel & Airport Transfers", type: "Logistics", duration: "Flexible", description: "VIP transfers, meet-and-greet and corporate movement coordination.", bestFor: "MICE planners, executives, delegations" },
-    ],
-    relatedCircuits: [
-      { title: "Casablanca to Imperial Cities", type: "Classic arrival route", description: "A practical circuit starting from Casablanca airport and moving to Rabat, Fes and Marrakech." },
-      { title: "Corporate Morocco Gateway Program", type: "Business travel", description: "Short business-focused programs with airport, hotel and meeting logistics." },
-      { title: "Casablanca, Rabat & Marrakech Extension", type: "Pre/post tour", description: "A compact extension for MICE or business travelers." },
     ],
   },
   agadir: {
@@ -152,11 +112,6 @@ const destinationDetails: Record<string, Destination> = {
       { title: "Massa Desert & Tiznit Excursion", type: "Nature and culture", duration: "Full-day", description: "Coastal desert landscapes, birdlife areas and silver town heritage.", bestFor: "Families, leisure groups, nature clients" },
       { title: "Essaouira Day Trip from Agadir", type: "Coastal excursion", duration: "Full-day", description: "Atlantic routing to Essaouira with medina, port and ramparts.", bestFor: "Private clients, coastal programs" },
     ],
-    relatedCircuits: [
-      { title: "Agadir Beach & Souss Discovery", type: "Leisure group program", description: "A relaxed coastal itinerary with excursions to Taroudant and Paradise Valley." },
-      { title: "Agadir Golf & Incentive Stay", type: "Corporate retreat", description: "Golf, beach hotels and light activities for company groups." },
-      { title: "South Morocco Soft Adventure", type: "Nature circuit", description: "Agadir, Anti-Atlas, Tafraoute and coastal landscapes for active small groups." },
-    ],
   },
   essaouira: {
     name: "Essaouira",
@@ -175,11 +130,6 @@ const destinationDetails: Record<string, Destination> = {
       { title: "Kitesurfing Experience", type: "Sport activity", duration: "Half-day", description: "Introductory or advanced wind sport session with local instructors.", bestFor: "Active groups, incentive teams" },
       { title: "Sidi Kaouki Excursion", type: "Coastal escape", duration: "Half-day", description: "Quiet beach village south of Essaouira for relaxed coastal programming.", bestFor: "Private clients, small groups" },
     ],
-    relatedCircuits: [
-      { title: "Marrakech & Essaouira Coastal Extension", type: "Private tour", description: "A popular city-and-coast pairing for agencies." },
-      { title: "Atlantic Morocco Group Program", type: "Group circuit", description: "Casablanca, El Jadida, Essaouira and Agadir for coastal heritage." },
-      { title: "Creative Incentive in Essaouira", type: "MICE add-on", description: "Art, music, coastal dinners and soft activities for corporate groups." },
-    ],
   },
   chefchaouen: {
     name: "Chefchaouen",
@@ -197,11 +147,6 @@ const destinationDetails: Record<string, Destination> = {
       { title: "Tetouan Day Trip", type: "Northern heritage", duration: "Full-day", description: "UNESCO medina and Andalusian heritage near the Mediterranean.", bestFor: "Cultural groups, repeat travelers" },
       { title: "Tangier Extension", type: "City extension", duration: "Full-day or overnight", description: "Add Tangier's port city atmosphere, Cape Spartel and international heritage.", bestFor: "Northern circuits, cruise-style programs" },
       { title: "Rif Mountains Experience", type: "Mountain program", duration: "Half-day or full-day", description: "Scenic roads, viewpoints and village context around Chefchaouen.", bestFor: "Small groups, nature clients" },
-    ],
-    relatedCircuits: [
-      { title: "Fes, Chefchaouen & Tangier", type: "Northern Morocco", description: "A strong route for agencies combining medinas, mountains and coast." },
-      { title: "Blue City Photography Extension", type: "Special-interest travel", description: "Chefchaouen as an add-on for photography and culture-focused clients." },
-      { title: "Northern Morocco Private Tour", type: "Private B2B program", description: "A flexible route linking Rabat, Fes, Chefchaouen and Tangier." },
     ],
   },
   merzouga: {
@@ -222,11 +167,6 @@ const destinationDetails: Record<string, Destination> = {
       { title: "Khamlia Village", type: "Music and culture", duration: "Short visit", description: "Gnawa music village experience near Merzouga with local context.", bestFor: "Culture groups, private clients" },
       { title: "Sunset & Sunrise Desert Experience", type: "Scenic moment", duration: "Flexible", description: "Photographic and quiet desert moments planned around camp logistics.", bestFor: "Photography groups, premium clients" },
     ],
-    relatedCircuits: [
-      { title: "Fes to Merzouga Desert Circuit", type: "Desert route", description: "Middle Atlas, Ziz Valley and Erg Chebbi for agencies starting from Fes.", path: "/circuits/sahara-desert-experience" },
-      { title: "Marrakech to Sahara Program", type: "Classic B2B circuit", description: "Ait Ben Haddou, Dades, Merzouga and return or onward to Fes.", path: "/circuits/sahara-desert-experience" },
-      { title: "Luxury Sahara Extension", type: "Premium add-on", description: "A curated desert extension for private clients and VIP groups.", path: "/circuits/morocco-luxury-escape" },
-    ],
   },
   ouarzazate: {
     name: "Ouarzazate",
@@ -246,11 +186,6 @@ const destinationDetails: Record<string, Destination> = {
       { title: "Todra Gorges", type: "Nature route", duration: "Full-day or overnight", description: "Dramatic gorge scenery for active or scenic itineraries.", bestFor: "Adventure groups, private tours" },
       { title: "Draa Valley Extension", type: "Desert gateway", duration: "Full-day or overnight", description: "Palm groves and kasbah landscapes toward Zagora and the southern routes.", bestFor: "Cultural circuits, repeat travelers" },
     ],
-    relatedCircuits: [
-      { title: "Marrakech, Ouarzazate & Merzouga", type: "Desert circuit", description: "A core Sahara route for agencies with kasbah and valley highlights." },
-      { title: "Kasbahs & Valleys of South Morocco", type: "Cultural route", description: "Ait Ben Haddou, Skoura, Dades and Todra for heritage-focused groups." },
-      { title: "Film Heritage Morocco Program", type: "Special-interest travel", description: "Ouarzazate and surrounding film landscapes for themed groups." },
-    ],
   },
   rabat: {
     name: "Rabat",
@@ -267,11 +202,6 @@ const destinationDetails: Record<string, Destination> = {
       { title: "Casablanca Day Trip", type: "Business and culture", duration: "Full-day", description: "Hassan II Mosque, Habous quarter and business city highlights.", bestFor: "Business groups, pre/post programs" },
       { title: "Meknes & Volubilis Extension", type: "Heritage excursion", duration: "Full-day", description: "Imperial Meknes and Roman Volubilis as a cultural extension from Rabat.", bestFor: "Education groups, culture-focused agencies" },
       { title: "Coastal Heritage Excursion", type: "Coastal visit", duration: "Half-day or full-day", description: "Coastal viewpoints, heritage sites and relaxed Atlantic programming.", bestFor: "Private clients, soft touring" },
-    ],
-    relatedCircuits: [
-      { title: "Rabat & Imperial Cities", type: "Cultural circuit", description: "A classic program linking Rabat, Meknes, Fes and Marrakech." },
-      { title: "Casablanca & Rabat Business Extension", type: "Corporate add-on", description: "Short extension for business and MICE travelers." },
-      { title: "Northern Morocco Heritage Route", type: "Group program", description: "Rabat, Fes, Chefchaouen and Tangier for cultural agencies." },
     ],
   },
   tangier: {
@@ -290,11 +220,6 @@ const destinationDetails: Record<string, Destination> = {
       { title: "Chefchaouen Day Trip", type: "Blue city excursion", duration: "Full-day", description: "Day trip to the Rif Mountains and Chefchaouen's photogenic medina.", bestFor: "Private clients, photography groups" },
       { title: "Tetouan Excursion", type: "Cultural visit", duration: "Full-day", description: "Andalusian-influenced UNESCO medina and northern heritage.", bestFor: "Culture groups, repeat travelers" },
       { title: "Asilah Day Trip", type: "Coastal art town", duration: "Half-day or full-day", description: "Whitewashed coastal town with art, walls and relaxed Atlantic rhythm.", bestFor: "Private clients, creative groups" },
-    ],
-    relatedCircuits: [
-      { title: "Tangier, Chefchaouen & Fes", type: "Northern route", description: "A strong route for Spain-connected agencies and cultural groups." },
-      { title: "Northern Morocco Private Tour", type: "Private program", description: "Tangier, Tetouan, Chefchaouen and Fes with flexible pacing." },
-      { title: "Tangier Pre/Post Spain Extension", type: "Cross-border add-on", description: "Short Morocco extension for agencies combining Spain and Morocco." },
     ],
   },
 };
@@ -392,7 +317,7 @@ export default function DestinationDetail() {
   const title = isFr ? dest.nameFr : dest.name;
   const description = isFr ? dest.aboutFr : dest.about;
   const quotePath = getQuotePath(slug);
-  const relatedCircuits = dest.relatedCircuits.length > 0 ? dest.relatedCircuits : defaultRelatedCircuits;
+  const relatedCircuits = getDestinationProgrammes(slug ?? "");
   const structuredData = getDestinationPageStructuredData(slug!, locale)!;
   const { faqItems } = structuredData;
 
@@ -521,7 +446,7 @@ export default function DestinationDetail() {
                 </p>
                 <div className="grid sm:grid-cols-3 gap-5">
                   {relatedCircuits.map((circuit) => (
-                    <Link key={circuit.title} to={circuit.path ?? "/circuits"} className="block bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:border-[#A91D2D]/40 hover:shadow-md transition-all">
+                    <Link key={circuit.title} to={circuit.path} className="block bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:border-[#A91D2D]/40 hover:shadow-md transition-all">
                       <p className="text-xs font-medium text-[#A91D2D] mb-2">{circuit.type}</p>
                       <h3 className="font-semibold text-[#1F2937]">{circuit.title}</h3>
                       <p className="mt-2 text-sm text-[#4B5563] leading-relaxed">{circuit.description}</p>

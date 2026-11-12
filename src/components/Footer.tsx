@@ -212,8 +212,8 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Suenos Travel. {t("footer.rights")}
           </p>
           <div className="flex items-center gap-4 text-xs text-gray-500">
-            {!isFr && <Link to="/privacy" className="hover:text-gray-300 transition-colors">{t("footer.privacy")}</Link>}
-            {!isFr && <Link to="/terms" className="hover:text-gray-300 transition-colors">{t("footer.terms")}</Link>}
+            <Link to="/privacy" className="hover:text-gray-300 transition-colors">{isFr ? "Confidentialité (en anglais)" : t("footer.privacy")}</Link>
+            <Link to="/terms" className="hover:text-gray-300 transition-colors">{isFr ? "Conditions générales (en anglais)" : t("footer.terms")}</Link>
             <Link to="/admin/login" className="hover:text-gray-300 transition-colors">
               {t("nav.admin")}
             </Link>

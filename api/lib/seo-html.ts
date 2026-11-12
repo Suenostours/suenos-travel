@@ -70,7 +70,7 @@ export function renderSeoHtml(
         title: meta.title,
         description: meta.description,
         canonical: meta.canonical,
-        image,
+        image: meta.image ?? `${PUBLIC_ORIGIN}${DEFAULT_SEO_IMAGE}`,
         type: meta.type,
         datePublished: meta.datePublished,
         dateModified: meta.dateModified,

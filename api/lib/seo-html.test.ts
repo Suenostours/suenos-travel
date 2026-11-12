@@ -23,6 +23,16 @@ describe("SEO HTML rendering", () => {
     expect(html).not.toContain('<a href="/dmc-morocco">DMC Morocco</a>');
   });
 
+  it("preserves image query parameters in JSON-LD while escaping HTML attributes", () => {
+    const image = "https://images.example.test/photo.jpg?width=1200&format=webp";
+    const html = renderSeoHtml("<html><head></head><body></body></html>", "/dmc-morocco", { image });
+    expect(html).toContain('property="og:image" content="https://images.example.test/photo.jpg?width=1200&amp;format=webp"');
+    const json = html.match(/id="route-seo-graph"[^>]*>([\s\S]*?)<\/script>/)?.[1];
+    expect(json).toBeDefined();
+    expect(JSON.stringify(JSON.parse(json!))).toContain(image);
+    expect(json).not.toContain("&amp;");
+  });
+
   it("does not inject an indexable fallback into noindex pages", () => {
     const html = renderSeoHtml(
       '<html><head><title>Old</title></head><body><div id="root"></div></body></html>',

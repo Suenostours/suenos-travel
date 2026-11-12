@@ -81,6 +81,22 @@ const landingPages: Record<LandingPageKey, LandingPageData> = {
     ],
     contentSections: [
       {
+        title: "Choose a starting itinerary for your agency",
+        intro: "Use these sample programmes to frame your brief. The final itinerary and services depend on your dates, group profile and selected options.",
+        items: [
+          { title: "Marrakech & Atlas Mountains: 5 days", description: "Combine Marrakech visits with an Atlas excursion to Ourika or Imlil. The published programme leaves Agafay as an optional experience.", path: "/circuits/marrakech-atlas-mountains" },
+          { title: "Casablanca, Rabat, Meknes & Fes: 8 days", description: "A cultural route through Casablanca, Rabat, Meknes, Volubilis and Fes, with guided visits and a departure plan adapted to the flight schedule.", path: "/circuits/imperial-cities-morocco" },
+          { title: "Marrakech to Merzouga: 6 days", description: "A sample desert route through the High Atlas, Ait Ben Haddou, Ouarzazate and Todra, with a camp stay and camel ride or 4x4 transfer. The final day returns to Marrakech or continues to another city.", path: "/circuits/sahara-desert-experience" },
+        ],
+      },
+      {
+        title: "What to include in your Morocco DMC brief",
+        text: "Share your travel dates, arrival and departure points, group size, client profile, preferred hotel level and target budget. Mention the visits and activities you want included, along with any optional extensions, so the proposal can distinguish the selected services from extras.",
+        items: [
+          { title: "Request a tailored B2B programme", description: "Send your brief with the route and services you would like us to consider.", path: "/quote" },
+        ],
+      },
+      {
         title: "What is a DMC in Morocco?",
         text: "A DMC in Morocco, or Destination Management Company in Morocco, is a local B2B partner that designs and operates travel programs inside Morocco for foreign travel agencies, tour operators, MICE planners and corporate groups. A Morocco DMC connects the full local operation: hotels, riads, guides, transport, restaurants, excursions, Sahara camps, event logistics and on-site assistance.",
       },

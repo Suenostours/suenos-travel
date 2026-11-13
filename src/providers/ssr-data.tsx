@@ -17,7 +17,7 @@ export type SsrRouteData =
       data?: PublicTourData;
     }
   | {
-      kind: "tour-catalog";
+      kind: "tour-catalog" | "featured-tours";
       locale: Locale;
       state: "found" | "empty" | "unavailable";
       data?: PublicTourListData;

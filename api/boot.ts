@@ -31,6 +31,7 @@ import { getSeoResponseStatus, type DynamicContentState } from "./lib/seo-respon
 import { getPublicTour, type PublicLocale } from "./queries/public-tour";
 import { listPublicTours } from "./queries/public-tours";
 import { hasReviewedFrenchEquivalent, splitLocalePath } from "../src/lib/locale-routes";
+import { loadFeaturedTours } from "./lib/featured-tours";
 import { renderApp } from "../src/entry-server";
 import {
   serializeSsrData,
@@ -298,6 +299,10 @@ async function serveIndexHtml(c: Context<{ Bindings: HttpBindings }>) {
     let ssrData: SsrData = { pathname, locale, routeData: { kind: "none" } };
     let extraStructuredData: Array<{ id: string; value: unknown }> | undefined;
     extraStructuredData = getLandingStructuredData(pathname);
+
+    if (pathname === "/") {
+      ssrData = { pathname, locale, routeData: await loadFeaturedTours(locale) };
+    }
 
     if (basePath === "/circuits") {
       try {

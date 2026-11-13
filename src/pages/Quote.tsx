@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { trackQuoteFormSubmit } from "@/lib/tracking";
-import { getRequestedTourSlug, getValidatedTourContext } from "@/lib/quote-tour-context";
+import { getRequestedTourSlug, getValidatedTourContext, isTourContextUnavailable } from "@/lib/quote-tour-context";
 import { PUBLIC_DESTINATIONS, getRequestedDestinationSlug, getValidatedDestinationContext } from "@/lib/public-destinations";
 import { QUOTE_ACTIVITIES, QUOTE_SERVICES, buildQuoteRequestInput, selectedOptionLabels, type QuoteAssistance } from "@/lib/quote-request";
 import { useSsrData } from "@/providers/ssr-data";
@@ -69,11 +69,14 @@ export default function Quote() {
       : null,
   );
   const needsBrief = assistance.requestKind === "specific" && !tourContext;
-  const isInvalidTourContext = hasTourParameter && (
-    !requestedTourSlug
-    || matchingSsrTour?.state === "unavailable"
-    || (!isTourLoading && (isTourError || !selectedTour))
-  );
+  const isInvalidTourContext = isTourContextUnavailable({
+    hasTourParameter,
+    requestedSlug: requestedTourSlug,
+    hasValidatedContext: Boolean(tourContext),
+    isLoading: isTourLoading,
+    isQueryError: isTourError,
+    isSsrUnavailable: matchingSsrTour?.state === "unavailable",
+  });
   const isInvalidDestinationContext = hasDestinationParameter
     && !getRequestedDestinationSlug(location.search);
   const isTourContextPending = Boolean(requestedTourSlug) && isTourLoading;
@@ -89,7 +92,7 @@ export default function Quote() {
   });
 
   const summaryRows = [
-    [isFr ? "Demande" : "Request", assistance.requestKind === "package" ? (isFr ? "Recevoir votre proposition de package" : "Receive your Morocco package proposal") : (isFr ? "Recevoir un devis pour notre programme" : "Get a quote for our existing itinerary")],
+    [isFr ? "Demande" : "Request", assistance.requestKind === "package" ? (isFr ? "Recevoir votre proposition de package" : "Receive your Morocco package proposal") : (tourContext ? (isFr ? "Devis pour le programme sélectionné" : "Quote for the selected programme") : (isFr ? "Recevoir un devis pour notre programme" : "Get a quote for our existing itinerary"))],
     ...(assistance.requestKind === "package" ? [
       [isFr ? "Marché" : "Source market", assistance.market],
       [isFr ? "Clients" : "Clients", assistance.clientProfile],
@@ -178,8 +181,6 @@ export default function Quote() {
                     {isFr ? "Votre projet" : "Your project"}
                   </h2>
 
-                  <QuotePreferences locale={locale} value={assistance} onChange={setAssistance} destinations={destinationSlugs} contextDestination={destinationContext?.slug} onDestinationsChange={setChosenDestinations} />
-
                   {tourContext && (
                     <div className="rounded-xl border border-[#A91D2D]/20 bg-[#A91D2D]/5 p-4">
                       <Label htmlFor="selected-programme">
@@ -198,6 +199,8 @@ export default function Quote() {
                       </p>
                     </div>
                   )}
+
+                  <QuotePreferences locale={locale} hasSelectedProgramme={Boolean(tourContext)} value={assistance} onChange={setAssistance} destinations={destinationSlugs} contextDestination={destinationContext?.slug} onDestinationsChange={setChosenDestinations} />
 
                   {destinationContext && (
                     <div className="rounded-xl border border-[#A91D2D]/20 bg-[#A91D2D]/5 p-4">

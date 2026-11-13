@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { useI18n } from "@/providers/i18n";
 import { trpc } from "@/providers/trpc";
+import { useSsrData } from "@/providers/ssr-data";
 import SEO from "@/components/SEO";
 import {
   ArrowRight,
@@ -84,7 +85,22 @@ function getTypeLabel(type: string) {
 
 export default function Home() {
   const { t, locale } = useI18n();
-  const { data: featuredTours = [], isLoading: featuredToursLoading } = trpc.public.listTours.useQuery({ locale, featured: true });
+  const ssrData = useSsrData();
+  const featuredSnapshot = ssrData.routeData.kind === "featured-tours"
+    && ssrData.routeData.locale === locale ? ssrData.routeData : undefined;
+  const initialTours = featuredSnapshot?.state === "found" || featuredSnapshot?.state === "empty"
+    ? featuredSnapshot.data ?? [] : undefined;
+  const { data: featuredTours, isLoading, error } = trpc.public.listTours.useQuery(
+    { locale, featured: true },
+    { initialData: initialTours, staleTime: initialTours !== undefined ? 5 * 60 * 1000 : 0 },
+  );
+  // A failed server lookup is not an empty catalogue. Keep the client query enabled
+  // so a transient server failure can recover without reloading the whole page.
+  const featuredToursUnavailable = featuredTours === undefined
+    && (Boolean(error) || featuredSnapshot?.state === "unavailable");
+  const featuredToursLoading = isLoading && !featuredToursUnavailable;
+  const displayedTours = featuredTours ?? [];
+  const circuitsPath = locale === "fr" ? "/fr/circuits" : "/circuits";
 
   return (
     <>
@@ -258,23 +274,32 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-12">
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#1F2937]">{t("circuits.title")}</h2>
-            <Link to="/circuits" className="hidden md:flex items-center gap-1 text-sm text-[#A91D2D] hover:text-[#8a1824] font-medium">
-              View All <ChevronRight className="h-4 w-4" />
+            <Link to={circuitsPath} className="hidden md:flex items-center gap-1 text-sm text-[#A91D2D] hover:text-[#8a1824] font-medium">
+              {locale === "fr" ? "Voir tous les circuits" : "View All"} <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
           {featuredToursLoading && (
-            <div className="text-center text-sm text-[#6B7280]">Loading featured tours...</div>
+            <div className="text-center text-sm text-[#6B7280]">{locale === "fr" ? "Chargement des circuits à la une…" : "Loading featured tours..."}</div>
           )}
 
-          {!featuredToursLoading && featuredTours.length === 0 && (
-            <div className="bg-[#F9F7F4] rounded-2xl border border-gray-100 p-8 text-center text-[#4B5563] shadow-sm">
-              No featured tours available yet.
+          {featuredToursUnavailable && (
+            <div role="status" className="rounded-2xl border border-gray-100 p-8 text-center text-[#4B5563]">
+              <p>{locale === "fr" ? "Les circuits à la une sont temporairement indisponibles." : "Featured tours are temporarily unavailable."}</p>
+              <Link to={circuitsPath} className="mt-2 inline-block text-[#A91D2D] underline">
+                {locale === "fr" ? "Consulter tous les circuits" : "Browse all circuits"}
+              </Link>
             </div>
           )}
 
-          {!featuredToursLoading && featuredTours.length > 0 && (
+          {!featuredToursLoading && !featuredToursUnavailable && displayedTours.length === 0 && (
+            <div className="bg-[#F9F7F4] rounded-2xl border border-gray-100 p-8 text-center text-[#4B5563] shadow-sm">
+              {locale === "fr" ? "Aucun circuit à la une pour le moment." : "No featured tours available yet."}
+            </div>
+          )}
+
+          {!featuredToursLoading && displayedTours.length > 0 && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredTours.map((tour) => (
+              {displayedTours.map((tour) => (
                 <div key={tour.slug} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all">
                   <div className="relative h-56 overflow-hidden">
                     {tour.mainImage ? (
@@ -299,7 +324,7 @@ export default function Home() {
                     )}
                     {tour.description && <p className="text-sm text-[#4B5563] line-clamp-2">{tour.description}</p>}
                     <Button asChild variant="ghost" className="text-[#A91D2D] hover:text-[#8a1824] p-0 h-auto text-sm font-medium">
-                      <Link to={`/circuits/${tour.slug}`}>
+                      <Link to={`${circuitsPath}/${tour.slug}`}>
                         {t("circuits.cta")} <ArrowRight className="ml-1 h-4 w-4" />
                       </Link>
                     </Button>

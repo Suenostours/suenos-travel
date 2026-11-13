@@ -3,6 +3,7 @@ import {
   formatPreferredCircuit,
   getRequestedTourSlug,
   getValidatedTourContext,
+  isTourContextUnavailable,
 } from "./quote-tour-context";
 
 describe("quote tour context", () => {
@@ -40,5 +41,31 @@ describe("quote tour context", () => {
         title: "Sahara Discovery",
       }),
     ).toBeNull();
+  });
+});
+
+describe("quote programme availability", () => {
+  const loaded = {
+    hasTourParameter: true,
+    requestedSlug: "imperial-cities-morocco",
+    hasValidatedContext: true,
+    isLoading: false,
+    isQueryError: false,
+    isSsrUnavailable: false,
+  };
+  it("keeps valid cached programme usable when a background refresh fails", () => {
+    expect(isTourContextUnavailable({ ...loaded, isQueryError: true })).toBe(false);
+  });
+  it("does not warn during the first programme load", () => {
+    expect(isTourContextUnavailable({ ...loaded, hasValidatedContext: false, isLoading: true })).toBe(false);
+  });
+  it("warns when no validated programme exists after loading or failure", () => {
+    expect(isTourContextUnavailable({ ...loaded, hasValidatedContext: false })).toBe(true);
+    expect(isTourContextUnavailable({ ...loaded, hasValidatedContext: false, isQueryError: true })).toBe(true);
+    expect(isTourContextUnavailable({ ...loaded, hasValidatedContext: false, isSsrUnavailable: true })).toBe(true);
+  });
+  it("warns for invalid requested slug but not a generic quote", () => {
+    expect(isTourContextUnavailable({ ...loaded, requestedSlug: null, hasValidatedContext: false })).toBe(true);
+    expect(isTourContextUnavailable({ ...loaded, requestedSlug: null, hasValidatedContext: false, hasTourParameter: false })).toBe(false);
   });
 });

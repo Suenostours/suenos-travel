@@ -190,6 +190,12 @@ export default function CircuitDetail() {
                 </div>
               )}
 
+              <Button asChild className="max-w-full whitespace-normal rounded-full bg-[#A91D2D] text-white hover:bg-[#8a1824]">
+                <Link to={quotePath}>
+                  {isFr ? "Demander ce programme" : "Request this programme"}
+                </Link>
+              </Button>
+
               {highlightItems.length > 0 && (
                 <div>
                   <h2 className="font-serif text-2xl font-bold text-[#1F2937] mb-4">{isFr ? "Points forts" : "Highlights"}</h2>

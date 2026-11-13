@@ -33,3 +33,18 @@ export function getValidatedTourContext(
     preferredCircuit: formatPreferredCircuit(title, tour.slug),
   };
 }
+
+/** A failed background refresh must not invalidate a still-usable cached programme. */
+export function isTourContextUnavailable({
+  hasTourParameter, requestedSlug, hasValidatedContext, isLoading, isQueryError, isSsrUnavailable,
+}: {
+  hasTourParameter: boolean;
+  requestedSlug: string | null;
+  hasValidatedContext: boolean;
+  isLoading: boolean;
+  isQueryError: boolean;
+  isSsrUnavailable: boolean;
+}) {
+  if (!hasTourParameter || hasValidatedContext) return false;
+  return !requestedSlug || isSsrUnavailable || (!isLoading || isQueryError);
+}

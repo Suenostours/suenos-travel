@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 
 type Props = {
   locale: "en" | "fr";
+  hasSelectedProgramme?: boolean;
   value: QuoteAssistance;
   onChange: (value: QuoteAssistance) => void;
   destinations: string[];
@@ -44,7 +45,7 @@ function ChoicePills({ title, options, selected, onChange, locked }: {
   );
 }
 
-export default function QuotePreferences({ locale, value, onChange, destinations, contextDestination, onDestinationsChange }: Props) {
+export default function QuotePreferences({ locale, hasSelectedProgramme = false, value, onChange, destinations, contextDestination, onDestinationsChange }: Props) {
   const isFr = locale === "fr";
   const selectedCount = destinations.length + value.services.length + value.activities.length;
   return (
@@ -54,7 +55,7 @@ export default function QuotePreferences({ locale, value, onChange, destinations
         <div className="grid gap-3 sm:grid-cols-2">
           {([
             { id: "package", title: isFr ? "Proposez-nous un package au Maroc" : "Recommend a Morocco package", description: isFr ? "Vous n’avez pas encore de programme ? Notre équipe prépare un itinéraire et une proposition tarifaire adaptés à vos clients." : "No itinerary yet? Our team will prepare a programme and quotation tailored to your clients." },
-            { id: "specific", title: isFr ? "Demandez un devis pour votre programme" : "Get a quote for your itinerary", description: isFr ? "Vous avez déjà un itinéraire ? Partagez-le avec nous pour recevoir notre devis et organiser les prestations sur place." : "Already have an itinerary? Share it with us for a quotation and local ground services." },
+            { id: "specific", title: hasSelectedProgramme ? (isFr ? "Demander un devis pour ce programme" : "Get a quote for this programme") : (isFr ? "Demandez un devis pour votre programme" : "Get a quote for your itinerary"), description: hasSelectedProgramme ? (isFr ? "Le programme sélectionné sera joint à votre demande. Précisez les adaptations souhaitées si nécessaire." : "The selected programme will be included in your request. Add any changes you would like, if needed.") : (isFr ? "Vous avez déjà un itinéraire ? Partagez-le avec nous pour recevoir notre devis et organiser les prestations sur place." : "Already have an itinerary? Share it with us for a quotation and local ground services.") },
           ] as const).map((choice) => (
             <label key={choice.id} className={`cursor-pointer rounded-xl border p-4 ${value.requestKind === choice.id ? "border-[#A91D2D] bg-[#A91D2D]/5" : "border-gray-200"}`}>
               <span className="flex items-start gap-2">
